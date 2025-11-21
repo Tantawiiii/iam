@@ -110,7 +110,6 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
             ),
-            // Main content
             Center(
               child: FadeTransition(
                 opacity: _fade,
@@ -137,17 +136,19 @@ class _SplashScreenState extends State<SplashScreen>
                             ),
                           ],
                         ),
-                        child: Image.asset(
-                          AppAssets.newLogoSplash,
-                          width: 140.w,
-                          height: 140.w,
-                          fit: BoxFit.contain,
+                        child: ClipOval(
+                          child: Image.asset(
+                            AppAssets.newLogoDark,
+                            width: 140.w,
+                            height: 140.w,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                       SizedBox(height: 40.h),
                       ShaderMask(
-                        shaderCallback: (bounds) => AppColors.horizontalGradient
-                            .createShader(bounds),
+                        shaderCallback: (bounds) =>
+                            AppColors.horizontalGradient.createShader(bounds),
                         child: Text(
                           'IAM',
                           style: TextStyle(

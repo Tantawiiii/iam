@@ -9,6 +9,7 @@ class ProductModel {
   final String oldPrice;
   final String discount;
   final String price;
+  final String productNumber;
   final String currency;
   final int quantity;
   final String? linkVideo;
@@ -47,6 +48,7 @@ class ProductModel {
     required this.oldPrice,
     required this.discount,
     required this.price,
+    required this.productNumber,
     required this.currency,
     required this.quantity,
     this.linkVideo,
@@ -87,6 +89,7 @@ class ProductModel {
       oldPrice: json['old_price'] as String,
       discount: json['discount'] as String,
       price: json['price'] as String,
+      productNumber: json['product_number'] as String? ?? '',
       currency: json['currency'] as String,
       quantity: json['quantity'] as int,
       linkVideo: json['link_video'] as String?,
@@ -135,6 +138,7 @@ class ProductModel {
       'old_price': oldPrice,
       'discount': discount,
       'price': price,
+      'product_number': productNumber,
       'currency': currency,
       'quantity': quantity,
       'link_video': linkVideo,

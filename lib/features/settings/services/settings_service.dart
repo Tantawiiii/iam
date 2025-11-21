@@ -65,4 +65,26 @@ class SettingsService {
       rethrow;
     }
   }
+
+  Future<Response> resellProduct({
+    required String name,
+    required String description,
+    required String price,
+    required String productNumber,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        ApiConstants.userProducts,
+        data: {
+          'name': name,
+          'description': description,
+          'price': price,
+          'product_number': productNumber,
+        },
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

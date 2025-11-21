@@ -50,8 +50,11 @@ Route<dynamic> onGenerateAppRoute(RouteSettings settings) {
     case AppRoutes.productDetails:
       final args = settings.arguments as Map<String, dynamic>?;
       return MaterialPageRoute(
-        builder: (_) =>
-            ProductDetailsScreen(productId: args?['productId'] as int),
+        builder: (_) => ProductDetailsScreen(
+          productId: args?['productId'] as int,
+          isForSale: args?['isForSale'] as bool? ?? false,
+          productNumber: args?['productNumber'] as String?,
+        ),
       );
     case AppRoutes.cart:
       return MaterialPageRoute(builder: (_) => const CartScreen());

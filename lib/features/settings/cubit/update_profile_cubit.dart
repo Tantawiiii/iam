@@ -16,7 +16,14 @@ class UpdateProfileCubit extends Cubit<UpdateProfileState> {
     required String email,
     required String phone,
     String? password,
+    String? age,
+    String? gender,
+    String? country,
+    String? city,
     File? avatar,
+    File? idImage,
+    File? bankStatementImage,
+    File? invoiceImage,
   }) async {
     emit(UpdateProfileLoading());
 
@@ -26,7 +33,14 @@ class UpdateProfileCubit extends Cubit<UpdateProfileState> {
         email: email,
         phone: phone,
         password: password,
+        age: age,
+        gender: gender,
+        country: country,
+        city: city,
         avatar: avatar,
+        idImage: idImage,
+        bankStatementImage: bankStatementImage,
+        invoiceImage: invoiceImage,
       );
 
       final updateProfileResponse = UpdateProfileResponseModel.fromJson(

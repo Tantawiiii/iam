@@ -25,5 +25,6 @@ final class ApiConstants {
   static String orderChangeStatus(int orderId) => '/api/orders/change-status/$orderId';
   static String orderById(int orderId) => '/api/orders/$orderId';
   static const String deleteAccount = '/api/user/delete';
+  static const String userProducts = '/api/user-products';
 }
 

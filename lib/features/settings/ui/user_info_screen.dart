@@ -20,7 +20,7 @@ class UserInfoScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: AppColors.white,
         appBar: AppBar(
-          title:  Text(AppTexts.myAccount),
+          title: Text(AppTexts.myAccount),
           backgroundColor: Colors.transparent,
           elevation: 0,
         ),
@@ -35,11 +35,7 @@ class UserInfoScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64.sp,
-                      color: Colors.red,
-                    ),
+                    Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
                     SizedBox(height: 16.h),
                     Text(
                       state.message,
@@ -73,6 +69,12 @@ class UserInfoScreen extends StatelessWidget {
                     // Orders Section
                     _buildOrdersSection(context, state.orders),
                     SizedBox(height: 32.h),
+                    // Products for Sale Section
+                    _buildProductsForSaleSection(
+                      context,
+                      state.productsForSale,
+                    ),
+                    SizedBox(height: 32.h),
                     _buildDeleteAccountSection(context),
                   ],
                 ),
@@ -97,7 +99,6 @@ class UserInfoScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-
           CircleAvatar(
             radius: 50.r,
             backgroundColor: AppColors.textFieldBorderColor,
@@ -220,17 +221,25 @@ class UserInfoScreen extends StatelessWidget {
     String? orderTotal;
 
     if (order is Map) {
-      orderId = order['id']?.toString() ?? order['orderId']?.toString() ?? 'N/A';
-      orderNumber = order['order_number']?.toString() ?? 
-                   order['orderNumber']?.toString() ?? 
-                   orderId;
-      orderStatus = order['status']?.toString() ?? order['orderStatus']?.toString() ?? 'Unknown';
-      orderDate = order['createdAt']?.toString() ?? 
-                  order['date']?.toString() ?? 
-                  order['created_at']?.toString() ?? '';
-      orderTotal = order['total']?.toString() ?? 
-                   order['amount']?.toString() ?? 
-                   order['price']?.toString();
+      orderId =
+          order['id']?.toString() ?? order['orderId']?.toString() ?? 'N/A';
+      orderNumber =
+          order['order_number']?.toString() ??
+          order['orderNumber']?.toString() ??
+          orderId;
+      orderStatus =
+          order['status']?.toString() ??
+          order['orderStatus']?.toString() ??
+          'Unknown';
+      orderDate =
+          order['createdAt']?.toString() ??
+          order['date']?.toString() ??
+          order['created_at']?.toString() ??
+          '';
+      orderTotal =
+          order['total']?.toString() ??
+          order['amount']?.toString() ??
+          order['price']?.toString();
     } else {
       orderId = order.toString();
       orderNumber = orderId;
@@ -259,82 +268,87 @@ class UserInfoScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: AppColors.textFieldBorderColor),
         ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Order #$orderId',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.blackTextColor,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-                decoration: BoxDecoration(
-                  color: _getStatusColor(orderStatus).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Text(
-                  orderStatus,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: _getStatusColor(orderStatus),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          if (orderDate.isNotEmpty) ...[
-            SizedBox(height: 8.h),
-            Row(
-              children: [
-                Icon(
-                  Icons.calendar_today,
-                  size: 14.sp,
-                  color: AppColors.greyTextColor,
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  orderDate.length > 20 ? orderDate.substring(0, 20) : orderDate,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.greyTextColor,
-                  ),
-                ),
-              ],
-            ),
-          ],
-          if (orderTotal != null) ...[
-            SizedBox(height: 8.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Total:',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: AppColors.greyTextColor,
-                  ),
-                ),
-                Text(
-                  orderTotal,
+                  'Order #$orderId',
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.primaryColor,
+                    color: AppColors.blackTextColor,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(orderStatus).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Text(
+                    orderStatus,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: _getStatusColor(orderStatus),
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ],
             ),
+            if (orderDate.isNotEmpty) ...[
+              SizedBox(height: 8.h),
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_today,
+                    size: 14.sp,
+                    color: AppColors.greyTextColor,
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    orderDate.length > 20
+                        ? orderDate.substring(0, 20)
+                        : orderDate,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.greyTextColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (orderTotal != null) ...[
+              SizedBox(height: 8.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total:',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: AppColors.greyTextColor,
+                    ),
+                  ),
+                  Text(
+                    orderTotal,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
-        ],
-      ),
+        ),
       ),
     );
   }
@@ -355,6 +369,195 @@ class UserInfoScreen extends StatelessWidget {
     }
   }
 
+  Widget _buildProductsForSaleSection(
+    BuildContext context,
+    List<dynamic> productsForSale,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'المنتجات القابلة للبيع',
+          style: TextStyle(
+            fontSize: 20.sp,
+            fontWeight: FontWeight.bold,
+            color: AppColors.blackTextColor,
+          ),
+        ),
+        SizedBox(height: 16.h),
+        if (productsForSale.isEmpty)
+          Container(
+            padding: EdgeInsets.all(40.w),
+            decoration: BoxDecoration(
+              color: AppColors.overlayColor,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.shopping_bag_outlined,
+                  size: 64.sp,
+                  color: AppColors.greyTextColor,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  'لا توجد منتجات قابلة للبيع',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: AppColors.greyTextColor,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ...productsForSale.asMap().entries.map((entry) {
+            final index = entry.key;
+            final product = entry.value;
+            return _buildProductForSaleCard(context, product, index);
+          }).toList(),
+      ],
+    );
+  }
+
+  Widget _buildProductForSaleCard(
+    BuildContext context,
+    dynamic product,
+    int index,
+  ) {
+    String productId = '';
+    String productName = '';
+    String? productImage;
+    String? productPrice;
+    String? productNumber;
+
+    if (product is Map) {
+      productId =
+          product['id']?.toString() ??
+          product['product_id']?.toString() ??
+          product['card_id']?.toString() ??
+          '';
+      productName = product['name']?.toString() ?? 'Product';
+      productImage = product['image']?.toString();
+      productPrice = product['price']?.toString();
+      productNumber = product['product_number']?.toString();
+    } else {
+      productId = product.toString();
+      productName = 'Product $productId';
+    }
+
+    return GestureDetector(
+      onTap: () {
+        if (productId.isNotEmpty) {
+          final productIdInt = int.tryParse(productId);
+          if (productIdInt != null) {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.productDetails,
+              arguments: {
+                'productId': productIdInt,
+                'isForSale': true,
+                'productNumber': productNumber,
+              },
+            );
+          }
+        }
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.textFieldBorderColor),
+        ),
+        child: Row(
+          children: [
+            if (productImage != null && productImage.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.r),
+                child: Image.network(
+                  productImage,
+                  width: 80.w,
+                  height: 80.w,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 80.w,
+                      height: 80.w,
+                      color: AppColors.overlayColor,
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: AppColors.greyTextColor,
+                      ),
+                    );
+                  },
+                ),
+              )
+            else
+              Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  color: AppColors.overlayColor,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.shopping_bag_outlined,
+                  color: AppColors.greyTextColor,
+                  size: 40.sp,
+                ),
+              ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    productName,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.blackTextColor,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (productNumber != null && productNumber.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      'رقم المنتج: $productNumber',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.greyTextColor,
+                      ),
+                    ),
+                  ],
+                  if (productPrice != null && productPrice.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      productPrice,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16.sp,
+              color: AppColors.greyTextColor,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDeleteAccountSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -373,10 +576,7 @@ class UserInfoScreen extends StatelessWidget {
           onPressed: () => _confirmDeleteAccount(context),
           child: Text(
             AppTexts.deleteAccount,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-            ),
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
           ),
         ),
       ],
@@ -433,12 +633,8 @@ class UserInfoScreen extends StatelessWidget {
       );
     } else {
       messenger.showSnackBar(
-        SnackBar(
-          content: Text(result),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(result), backgroundColor: Colors.red),
       );
     }
   }
 }
-

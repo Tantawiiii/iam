@@ -15,6 +15,10 @@ class SignupCubit extends Cubit<SignupState> {
     required String email,
     required String phone,
     required String password,
+    required String age,
+    required String gender,
+    required String country,
+    required String city,
     File? avatar,
   }) async {
     emit(SignupLoading());
@@ -25,6 +29,10 @@ class SignupCubit extends Cubit<SignupState> {
         email: email,
         phone: phone,
         password: password,
+        age: age,
+        gender: gender,
+        country: country,
+        city: city,
         avatar: avatar,
       );
 

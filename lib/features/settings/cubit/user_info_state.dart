@@ -9,8 +9,13 @@ class UserInfoLoading extends UserInfoState {}
 class UserInfoSuccess extends UserInfoState {
   final UserModel user;
   final List<dynamic> orders;
+  final List<dynamic> productsForSale;
 
-  UserInfoSuccess({required this.user, required this.orders});
+  UserInfoSuccess({
+    required this.user,
+    required this.orders,
+    required this.productsForSale,
+  });
 }
 
 class UserInfoFailure extends UserInfoState {

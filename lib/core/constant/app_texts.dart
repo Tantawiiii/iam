@@ -179,6 +179,45 @@ final class AppTexts {
   static String get anonymous => _text('anonymous');
   static String get failedToUpdateCart => _text('failedToUpdateCart');
   static String get off => _text('off');
+  static String get age => _text('age');
+  static String get pleaseEnterAge => _text('pleaseEnterAge');
+  static String get gender => _text('gender');
+  static String get pleaseSelectGender => _text('pleaseSelectGender');
+  static String get male => _text('male');
+  static String get female => _text('female');
+  static String get country => _text('country');
+  static String get pleaseEnterCountry => _text('pleaseEnterCountry');
+  static String get termsAndConditions => _text('termsAndConditions');
+  static String get acceptTermsAndConditions => _text('acceptTermsAndConditions');
+  static String get pleaseAcceptTerms => _text('pleaseAcceptTerms');
+  static String get accountCreatedSuccess => _text('accountCreatedSuccess');
+  static String get pleaseConfirmPassword => _text('pleaseConfirmPassword');
+  static String get passwordMinLength => _text('passwordMinLength');
+  static String get validAge => _text('validAge');
+  static String get creating => _text('creating');
+  static String get idImage => _text('idImage');
+  static String get pleaseUploadIdImage => _text('pleaseUploadIdImage');
+  static String get bankStatementImage => _text('bankStatementImage');
+  static String get invoiceImage => _text('invoiceImage');
+  static String get installment => _text('installment');
+  static String get selectInstallmentMonths => _text('selectInstallmentMonths');
+  static String get installmentMonths => _text('installmentMonths');
+  static String get originalAmount => _text('originalAmount');
+  static String get increaseAmount => _text('increaseAmount');
+  static String get totalAmount => _text('totalAmount');
+  static String get months => _text('months');
+  static String get updateYourData => _text('updateYourData');
+  static String get pleaseUpdateYourData => _text('pleaseUpdateYourData');
+  static String get uploadMissingImages => _text('uploadMissingImages');
+  static String get pleaseUploadMissingImages => _text('pleaseUploadMissingImages');
+  static String get dataUnderReview => _text('dataUnderReview');
+  static String get dataUnderReviewMessage => _text('dataUnderReviewMessage');
+  static String get goToUpdateProfile => _text('goToUpdateProfile');
+  static String get ok => _text('ok');
+  static String get confirmWhatsApp => _text('confirmWhatsApp');
+  static String get phoneWithWhatsApp => _text('phoneWithWhatsApp');
+  static String get pleaseSelectCountry => _text('pleaseSelectCountry');
+  static String get ageRange => _text('ageRange');
 
   static const Map<String, Map<AppLanguage, String>> _localizedValues = {
     'welcomeBack': {
@@ -616,6 +655,147 @@ final class AppTexts {
     'oneYearWarranty': {
       AppLanguage.en: '1-year warranty',
       AppLanguage.ar: 'ضمان لمدة عام',
+    },
+    'age': {AppLanguage.en: 'Age', AppLanguage.ar: 'العمر'},
+    'pleaseEnterAge': {
+      AppLanguage.en: 'Please enter your age',
+      AppLanguage.ar: 'يرجى إدخال عمرك',
+    },
+    'gender': {AppLanguage.en: 'Gender', AppLanguage.ar: 'الجنس'},
+    'pleaseSelectGender': {
+      AppLanguage.en: 'Please select gender',
+      AppLanguage.ar: 'يرجى اختيار الجنس',
+    },
+    'male': {AppLanguage.en: 'Male', AppLanguage.ar: 'ذكر'},
+    'female': {AppLanguage.en: 'Female', AppLanguage.ar: 'أنثى'},
+    'country': {AppLanguage.en: 'Country', AppLanguage.ar: 'الدولة'},
+    'pleaseEnterCountry': {
+      AppLanguage.en: 'Please enter country',
+      AppLanguage.ar: 'يرجى إدخال الدولة',
+    },
+    'termsAndConditions': {
+      AppLanguage.en: 'Terms and Conditions',
+      AppLanguage.ar: 'الشروط والأحكام',
+    },
+    'acceptTermsAndConditions': {
+      AppLanguage.en: 'I accept the Terms and Conditions',
+      AppLanguage.ar: 'أوافق على الشروط والأحكام',
+    },
+    'pleaseAcceptTerms': {
+      AppLanguage.en: 'Please accept the Terms and Conditions',
+      AppLanguage.ar: 'يرجى الموافقة على الشروط والأحكام',
+    },
+    'accountCreatedSuccess': {
+      AppLanguage.en: 'Account created successfully!',
+      AppLanguage.ar: 'تم إنشاء الحساب بنجاح!',
+    },
+    'pleaseConfirmPassword': {
+      AppLanguage.en: 'Please confirm your password',
+      AppLanguage.ar: 'يرجى تأكيد كلمة المرور',
+    },
+    'passwordMinLength': {
+      AppLanguage.en: 'Password must be at least 6 characters',
+      AppLanguage.ar: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل',
+    },
+    'validAge': {
+      AppLanguage.en: 'Please enter a valid age',
+      AppLanguage.ar: 'يرجى إدخال عمر صحيح',
+    },
+    'creating': {
+      AppLanguage.en: 'Creating...',
+      AppLanguage.ar: 'جارٍ الإنشاء...',
+    },
+    'idImage': {
+      AppLanguage.en: 'ID Image',
+      AppLanguage.ar: 'صورة الهوية',
+    },
+    'pleaseUploadIdImage': {
+      AppLanguage.en: 'Please upload ID image',
+      AppLanguage.ar: 'يرجى رفع صورة الهوية',
+    },
+    'bankStatementImage': {
+      AppLanguage.en: 'Bank Statement Image',
+      AppLanguage.ar: 'صورة كشف الحساب',
+    },
+    'invoiceImage': {
+      AppLanguage.en: 'Invoice Image',
+      AppLanguage.ar: 'صورة الفاتورة',
+    },
+    'installment': {
+      AppLanguage.en: 'Installment',
+      AppLanguage.ar: 'تقسيط',
+    },
+    'selectInstallmentMonths': {
+      AppLanguage.en: 'Select Installment Period',
+      AppLanguage.ar: 'اختر فترة التقسيط',
+    },
+    'installmentMonths': {
+      AppLanguage.en: 'Installment Months',
+      AppLanguage.ar: 'عدد أشهر التقسيط',
+    },
+    'originalAmount': {
+      AppLanguage.en: 'Original Amount',
+      AppLanguage.ar: 'المبلغ الأصلي',
+    },
+    'increaseAmount': {
+      AppLanguage.en: 'Increase Amount',
+      AppLanguage.ar: 'مبلغ الزيادة',
+    },
+    'totalAmount': {
+      AppLanguage.en: 'Total Amount',
+      AppLanguage.ar: 'المبلغ الإجمالي',
+    },
+    'months': {
+      AppLanguage.en: 'months',
+      AppLanguage.ar: 'شهر',
+    },
+    'updateYourData': {
+      AppLanguage.en: 'Update Your Data',
+      AppLanguage.ar: 'تحديث بياناتك',
+    },
+    'pleaseUpdateYourData': {
+      AppLanguage.en: 'Please update your data to complete your order. You need to upload your ID image.',
+      AppLanguage.ar: 'يرجى تحديث بياناتك لإتمام طلبك. تحتاج إلى رفع صورة الهوية.',
+    },
+    'uploadMissingImages': {
+      AppLanguage.en: 'Upload Missing Images',
+      AppLanguage.ar: 'رفع الصور المفقودة',
+    },
+    'pleaseUploadMissingImages': {
+      AppLanguage.en: 'Please upload the missing images (Bank Statement and/or Invoice) to complete your order.',
+      AppLanguage.ar: 'يرجى رفع الصور المفقودة (كشف الحساب و/أو الفاتورة) لإتمام طلبك.',
+    },
+    'dataUnderReview': {
+      AppLanguage.en: 'Data Under Review',
+      AppLanguage.ar: 'بياناتك قيد المراجعة',
+    },
+    'dataUnderReviewMessage': {
+      AppLanguage.en: 'Your data is under review. We will contact you soon.',
+      AppLanguage.ar: 'بياناتك قيد المراجعة. سوف نتصل بك قريباً.',
+    },
+    'goToUpdateProfile': {
+      AppLanguage.en: 'Go to Update Profile',
+      AppLanguage.ar: 'الذهاب لتحديث الملف الشخصي',
+    },
+    'ok': {
+      AppLanguage.en: 'OK',
+      AppLanguage.ar: 'حسناً',
+    },
+    'confirmWhatsApp': {
+      AppLanguage.en: 'Confirm WhatsApp',
+      AppLanguage.ar: 'تأكيد وتساب',
+    },
+    'phoneWithWhatsApp': {
+      AppLanguage.en: 'Phone number (Confirm WhatsApp)',
+      AppLanguage.ar: 'رقم الهاتف (تأكيد وتساب)',
+    },
+    'pleaseSelectCountry': {
+      AppLanguage.en: 'Please select country',
+      AppLanguage.ar: 'يرجى اختيار الدولة',
+    },
+    'ageRange': {
+      AppLanguage.en: 'Age must be between 21 and 55',
+      AppLanguage.ar: 'يجب أن يكون العمر بين 21 و 55',
     },
   };
 }

@@ -71,7 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
           body: SafeArea(
             child: Stack(
               children: [
-                // Background gradient orbs
                 Positioned(
                   top: -100.h,
                   right: -100.w,
@@ -106,7 +105,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                // Main content
                 SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
                   child: Form(
@@ -115,7 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: 40.h),
-                        // Logo with enhanced design
                         Container(
                           padding: EdgeInsets.all(24.w),
                           decoration: BoxDecoration(
@@ -134,15 +131,16 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          child: Image.asset(
-                            AppAssets.appLogoSplashWithoutBAckImg,
-                            width: 100.w,
-                            height: 120.w,
-                            fit: BoxFit.cover,
+                          child: ClipOval(
+                            child: Image.asset(
+                              AppAssets.newLogoDark,
+                              width: 110.w,
+                              height: 120.w,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         SizedBox(height: 50.h),
-                        // Welcome text with gradient
                         ShaderMask(
                           shaderCallback: (bounds) => AppColors.horizontalGradient
                               .createShader(bounds),
@@ -168,7 +166,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           textAlign: TextAlign.center,
                         ),
                         SizedBox(height: 56.h),
-                        // Email field
                         AppTextField(
                           controller: _emailController,
                           hint: AppTexts.email,
@@ -185,7 +182,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         SizedBox(height: 24.h),
-                        // Password field
                         AppTextField(
                           controller: _passwordController,
                           hint: AppTexts.password,
@@ -200,7 +196,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         SizedBox(height: 40.h),
-                        // Login button
                         BlocBuilder<LoginCubit, LoginState>(
                           builder: (context, state) {
                             final isLoading = state is LoginLoading;
@@ -214,7 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         SizedBox(height: 32.h),
-                        // Sign up link
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

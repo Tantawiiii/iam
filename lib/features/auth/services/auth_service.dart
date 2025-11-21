@@ -13,6 +13,10 @@ class AuthService {
     required String email,
     required String phone,
     required String password,
+    required String age,
+    required String gender,
+    required String country,
+    required String city,
     File? avatar,
   }) async {
     try {
@@ -21,6 +25,10 @@ class AuthService {
         'email': email,
         'phone': phone,
         'password': password,
+        'age': age,
+        'gender': gender,
+        'country': country,
+        'city': city,
         if (avatar != null)
           'avatar': await MultipartFile.fromFile(
             avatar.path,
@@ -60,7 +68,14 @@ class AuthService {
     required String email,
     required String phone,
     String? password,
+    String? age,
+    String? gender,
+    String? country,
+    String? city,
     File? avatar,
+    File? idImage,
+    File? bankStatementImage,
+    File? invoiceImage,
   }) async {
     try {
       final formData = FormData.fromMap({
@@ -68,10 +83,29 @@ class AuthService {
         'email': email,
         'phone': phone,
         if (password != null && password.isNotEmpty) 'password': password,
+        if (age != null && age.isNotEmpty) 'age': age,
+        if (gender != null && gender.isNotEmpty) 'gender': gender,
+        if (country != null && country.isNotEmpty) 'country': country,
+        if (city != null && city.isNotEmpty) 'city': city,
         if (avatar != null)
           'avatar': await MultipartFile.fromFile(
             avatar.path,
             filename: avatar.path.split('/').last,
+          ),
+        if (idImage != null)
+          'id_image': await MultipartFile.fromFile(
+            idImage.path,
+            filename: idImage.path.split('/').last,
+          ),
+        if (bankStatementImage != null)
+          'bank_statement_image': await MultipartFile.fromFile(
+            bankStatementImage.path,
+            filename: bankStatementImage.path.split('/').last,
+          ),
+        if (invoiceImage != null)
+          'invoice_image': await MultipartFile.fromFile(
+            invoiceImage.path,
+            filename: invoiceImage.path.split('/').last,
           ),
       });
 
@@ -90,6 +124,15 @@ class AuthService {
   Future<Response> logout() async {
     try {
       final response = await _apiService.post(ApiConstants.logout);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> checkAuth() async {
+    try {
+      final response = await _apiService.get(ApiConstants.checkAuth);
       return response;
     } catch (e) {
       rethrow;

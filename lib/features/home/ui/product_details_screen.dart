@@ -11,11 +11,20 @@ import '../models/product_model.dart';
 import '../widgets/product_image_slider.dart';
 import '../../cart/cubit/cart_cubit.dart';
 import '../../home/services/products_service.dart';
+import '../../settings/services/settings_service.dart';
+import 'package:dio/dio.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   final int productId;
+  final bool isForSale;
+  final String? productNumber;
 
-  const ProductDetailsScreen({super.key, required this.productId});
+  const ProductDetailsScreen({
+    super.key,
+    required this.productId,
+    this.isForSale = false,
+    this.productNumber,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -253,6 +262,37 @@ class ProductDetailsScreen extends StatelessWidget {
                                   AppTexts.quantityAvailable,
                                   currentProduct.quantity.toString(),
                                 ),
+                              if ((productNumber != null && productNumber!.isNotEmpty) ||
+                                  currentProduct.productNumber.isNotEmpty)
+                                _buildDetailRow(
+                                  'رقم المنتج',
+                                  (productNumber != null && productNumber!.isNotEmpty)
+                                      ? productNumber!
+                                      : currentProduct.productNumber,
+                                ),
+                              SizedBox(height: 24.h),
+                            ],
+                            if (isForSale) ...[
+                              Builder(
+                                builder: (context) {
+                                  final resellProductNumber = (productNumber != null &&
+                                          productNumber!.isNotEmpty)
+                                      ? productNumber!
+                                      : (currentProduct.productNumber.isNotEmpty
+                                          ? currentProduct.productNumber
+                                          : null);
+                                  
+                                  if (resellProductNumber == null ||
+                                      resellProductNumber.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  
+                                  return _ResellButton(
+                                    product: currentProduct,
+                                    productNumber: resellProductNumber,
+                                  );
+                                },
+                              ),
                               SizedBox(height: 24.h),
                             ],
                             _buildConfidenceSection(currentProduct),
@@ -650,6 +690,89 @@ class ProductDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ResellButton extends StatefulWidget {
+  final ProductModel product;
+  final String productNumber;
+
+  const _ResellButton({
+    required this.product,
+    required this.productNumber,
+  });
+
+  @override
+  State<_ResellButton> createState() => _ResellButtonState();
+}
+
+class _ResellButtonState extends State<_ResellButton> {
+  bool _isLoading = false;
+
+  Future<void> _handleResell() async {
+    if (_isLoading) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final settingsService = di.sl<SettingsService>();
+      final response = await settingsService.resellProduct(
+        name: widget.product.name,
+        description: widget.product.description,
+        price: widget.product.price,
+        productNumber: widget.productNumber,
+      );
+
+      if (mounted) {
+        final responseData = response.data as Map<String, dynamic>?;
+        final status = responseData?['status'] as bool?;
+        final message = responseData?['message'] as String? ?? 'تم إرسال الطلب بنجاح';
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message),
+            backgroundColor: status == true ? Colors.green : Colors.orange,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        String errorMessage = 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.';
+        
+        if (e is DioException) {
+          if (e.response != null) {
+            final errorData = e.response?.data;
+            if (errorData is Map && errorData.containsKey('message')) {
+              errorMessage = errorData['message'].toString();
+            }
+          }
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PrimaryButton(
+      title: _isLoading ? 'جاري الإرسال...' : 'إعادة بيع المنتج',
+      onPressed: _isLoading ? null : _handleResell,
+      isLoading: _isLoading,
     );
   }
 }

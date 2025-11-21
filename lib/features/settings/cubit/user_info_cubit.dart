@@ -25,6 +25,7 @@ class UserInfoCubit extends Cubit<UserInfoState> {
       emit(UserInfoSuccess(
         user: checkAuthResponse.data,
         orders: checkAuthResponse.data.orders,
+        productsForSale: checkAuthResponse.data.productsForSale,
       ));
     } catch (e) {
       String errorMessage = 'Failed to load user info. Please try again.';

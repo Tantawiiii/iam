@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
+import '../../../shared/widgets/pick_option.dart';
 import '../cubit/signup_cubit.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -27,9 +28,35 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
 
   File? _avatarFile;
   final _formKey = GlobalKey<FormState>();
+  String? _selectedGender;
+  String? _selectedCountry;
+  bool _acceptedTerms = false;
+  bool _confirmedWhatsApp = false;
+
+  // List of Arab countries
+  final List<String> _arabCountries = [
+    'المغرب',
+    'الجزائر',
+    'تونس',
+    'ليبيا',
+    'مصر',
+    'السودان',
+    'السعودية',
+    'الأردن',
+    'البحرين',
+    'سوريا',
+    'العراق',
+    'الكويت',
+    'قطر',
+    'الإمارات',
+    'سلطنة عمان',
+    'اليمن',
+  ];
 
   @override
   void dispose() {
@@ -38,6 +65,8 @@ class _SignupScreenState extends State<SignupScreen> {
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _ageController.dispose();
+    _cityController.dispose();
     super.dispose();
   }
 
@@ -48,8 +77,38 @@ class _SignupScreenState extends State<SignupScreen> {
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match'),
+        SnackBar(
+          content: Text(AppTexts.passwordsDoNotMatch),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (_selectedCountry == null || _selectedCountry!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppTexts.pleaseSelectCountry),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (!_confirmedWhatsApp) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppTexts.confirmWhatsApp),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (!_acceptedTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppTexts.pleaseAcceptTerms),
           backgroundColor: Colors.red,
         ),
       );
@@ -61,6 +120,10 @@ class _SignupScreenState extends State<SignupScreen> {
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
       password: _passwordController.text,
+      age: _ageController.text.trim(),
+      gender: _selectedGender ?? '',
+      country: _selectedCountry ?? '',
+      city: _cityController.text.trim(),
       avatar: _avatarFile,
     );
   }
@@ -84,7 +147,7 @@ class _SignupScreenState extends State<SignupScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _PickOption(
+              PickOption(
                 icon: Icons.photo_camera_outlined,
                 label: AppTexts.camera,
                 onTap: () {
@@ -92,7 +155,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   _pickAvatar(ImageSource.camera);
                 },
               ),
-              _PickOption(
+              PickOption(
                 icon: Icons.photo_library_outlined,
                 label: AppTexts.gallery,
                 onTap: () {
@@ -115,12 +178,11 @@ class _SignupScreenState extends State<SignupScreen> {
         listener: (context, state) {
           if (state is SignupSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account created successfully!'),
+              SnackBar(
+                content: Text(AppTexts.accountCreatedSuccess),
                 backgroundColor: Colors.green,
               ),
             );
-            // Navigate to next screen or pop
             Navigator.pop(context);
           } else if (state is SignupFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -134,8 +196,8 @@ class _SignupScreenState extends State<SignupScreen> {
         child: Scaffold(
           appBar: AppBar(
             title: ShaderMask(
-              shaderCallback: (bounds) => AppColors.horizontalGradient
-                  .createShader(bounds),
+              shaderCallback: (bounds) =>
+                  AppColors.horizontalGradient.createShader(bounds),
               child: Text(
                 AppTexts.createAcc,
                 style: const TextStyle(color: Colors.white),
@@ -148,7 +210,6 @@ class _SignupScreenState extends State<SignupScreen> {
           body: SafeArea(
             child: Stack(
               children: [
-                // Background gradient orbs
                 Positioned(
                   top: -100.h,
                   right: -100.w,
@@ -183,9 +244,11 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
-                // Main content
                 SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 20.h,
+                  ),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -205,12 +268,16 @@ class _SignupScreenState extends State<SignupScreen> {
                                     shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
-                                        color: AppColors.primary.withOpacity(0.4),
+                                        color: AppColors.primary.withOpacity(
+                                          0.4,
+                                        ),
                                         blurRadius: 30,
                                         spreadRadius: 5,
                                       ),
                                       BoxShadow(
-                                        color: AppColors.accent.withOpacity(0.2),
+                                        color: AppColors.accent.withOpacity(
+                                          0.2,
+                                        ),
                                         blurRadius: 50,
                                         spreadRadius: 10,
                                       ),
@@ -244,7 +311,9 @@ class _SignupScreenState extends State<SignupScreen> {
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColors.accent.withOpacity(0.4),
+                                          color: AppColors.accent.withOpacity(
+                                            0.4,
+                                          ),
                                           blurRadius: 12,
                                         ),
                                       ],
@@ -267,7 +336,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           leadingIcon: Icons.person_outline,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your name';
+                              return AppTexts.pleaseEnterName;
                             }
                             return null;
                           },
@@ -280,10 +349,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           leadingIcon: Icons.email_outlined,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
+                              return AppTexts.pleaseEnterEmail;
                             }
                             if (!value.contains('@')) {
-                              return 'Please enter a valid email';
+                              return AppTexts.pleaseEnterValidEmail;
                             }
                             return null;
                           },
@@ -291,15 +360,46 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(height: 20.h),
                         AppTextField(
                           controller: _phoneController,
-                          hint: AppTexts.phoneNum,
+                          hint: AppTexts.phoneWithWhatsApp,
                           keyboardType: TextInputType.phone,
                           leadingIcon: Icons.phone_outlined,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your phone number';
+                              return AppTexts.pleaseEnterPhone;
                             }
                             return null;
                           },
+                        ),
+                        SizedBox(height: 12.h),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _confirmedWhatsApp,
+                              onChanged: (value) {
+                                setState(() {
+                                  _confirmedWhatsApp = value ?? false;
+                                });
+                              },
+                              activeColor: AppColors.primary,
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _confirmedWhatsApp = !_confirmedWhatsApp;
+                                  });
+                                },
+                                child: Text(
+                                  AppTexts.confirmWhatsApp,
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 20.h),
                         AppTextField(
@@ -310,10 +410,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           leadingIcon: Icons.lock_outline,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a password';
+                              return AppTexts.pleaseEnterPass;
                             }
                             if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
+                              return AppTexts.passwordMinLength;
                             }
                             return null;
                           },
@@ -327,21 +427,232 @@ class _SignupScreenState extends State<SignupScreen> {
                           leadingIcon: Icons.lock_outline,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
+                              return AppTexts.pleaseConfirmPassword;
                             }
                             return null;
                           },
+                        ),
+                        SizedBox(height: 20.h),
+                        AppTextField(
+                          controller: _ageController,
+                          hint: '${AppTexts.age} (21-55)',
+                          keyboardType: TextInputType.number,
+                          leadingIcon: Icons.calendar_today_outlined,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppTexts.pleaseEnterAge;
+                            }
+                            final age = int.tryParse(value);
+                            if (age == null || age < 21 || age > 55) {
+                              return AppTexts.ageRange;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        DropdownButtonFormField<String>(
+                          value: _selectedGender,
+                          decoration: InputDecoration(
+                            hintText: AppTexts.gender,
+                            hintStyle: TextStyle(
+                              color: AppColors.textTertiary,
+                              fontSize: 15.sp,
+                            ),
+                            filled: true,
+                            fillColor: AppColors.surfaceVariant,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 16.h,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.person_outline,
+                              color: AppColors.textSecondary,
+                              size: 22.sp,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: AppColors.border,
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: AppColors.primary,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: Colors.red,
+                                width: 1,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: Colors.red,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          items: [
+                            DropdownMenuItem<String>(
+                              value: 'male',
+                              child: Text(AppTexts.male),
+                            ),
+                            DropdownMenuItem<String>(
+                              value: 'female',
+                              child: Text(AppTexts.female),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedGender = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppTexts.pleaseSelectGender;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        DropdownButtonFormField<String>(
+                          value: _selectedCountry,
+                          decoration: InputDecoration(
+                            hintText: AppTexts.country,
+                            hintStyle: TextStyle(
+                              color: AppColors.textTertiary,
+                              fontSize: 15.sp,
+                            ),
+                            filled: true,
+                            fillColor: AppColors.surfaceVariant,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 16.h,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.public_outlined,
+                              color: AppColors.textSecondary,
+                              size: 22.sp,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: AppColors.border,
+                                width: 1,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: AppColors.primary,
+                                width: 2,
+                              ),
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: Colors.red,
+                                width: 1,
+                              ),
+                            ),
+                            focusedErrorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                              borderSide: BorderSide(
+                                color: Colors.red,
+                                width: 2,
+                              ),
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          items: _arabCountries.map((country) {
+                            return DropdownMenuItem<String>(
+                              value: country,
+                              child: Text(country),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCountry = value;
+                            });
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppTexts.pleaseSelectCountry;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        AppTextField(
+                          controller: _cityController,
+                          hint: AppTexts.city,
+                          leadingIcon: Icons.location_city_outlined,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return AppTexts.pleaseEnterCity;
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 20.h),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _acceptedTerms,
+                              onChanged: (value) {
+                                setState(() {
+                                  _acceptedTerms = value ?? false;
+                                });
+                              },
+                              activeColor: AppColors.primary,
+                            ),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _acceptedTerms = !_acceptedTerms;
+                                  });
+                                },
+                                child: Text(
+                                  AppTexts.acceptTermsAndConditions,
+                                  style: TextStyle(
+                                    color: AppColors.textPrimary,
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 40.h),
                         BlocBuilder<SignupCubit, SignupState>(
                           builder: (context, state) {
                             final isLoading = state is SignupLoading;
                             return PrimaryButton(
-                              title: isLoading ? 'Creating...' : AppTexts.createAcc,
+                              title: isLoading
+                                  ? AppTexts.creating
+                                  : AppTexts.createAcc,
                               onPressed: isLoading
                                   ? null
-                                  : () =>
-                                        _handleSignup(context.read<SignupCubit>()),
+                                  : () => _handleSignup(
+                                      context.read<SignupCubit>(),
+                                    ),
                               isLoading: isLoading,
                             );
                           },
@@ -356,64 +667,6 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _PickOption extends StatelessWidget {
-  const _PickOption({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
-          child: Container(
-            width: 72.w,
-            height: 72.w,
-            decoration: BoxDecoration(
-              gradient: AppColors.brandGradient,
-              borderRadius: BorderRadius.circular(20.r),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-                BoxShadow(
-                  color: AppColors.accent.withOpacity(0.2),
-                  blurRadius: 24,
-                  offset: const Offset(0, 8),
-                ),
-              ],
-            ),
-            child: Icon(
-              icon,
-              color: AppColors.textOnPrimary,
-              size: 32.sp,
-            ),
-          ),
-        ),
-        SizedBox(height: 12.h),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ],
     );
   }
 }

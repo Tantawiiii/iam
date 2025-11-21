@@ -23,10 +23,12 @@ class HomeHeader extends StatelessWidget {
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Image.asset(
-                  AppAssets.appLogoHeaderImg,
-                  height: 100.h,
-                  fit: BoxFit.cover,
+                child: ClipOval(
+                  child: Image.asset(
+                    AppAssets.newLogoDark,
+                    height: 70.h,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               GestureDetector(
