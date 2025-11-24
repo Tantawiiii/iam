@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../core/constant/app_colors.dart';
@@ -15,6 +16,7 @@ class AppTextField extends StatefulWidget {
     this.iconColor,
     this.validator,
     this.maxLines,
+    this.inputFormatters,
   });
 
   final TextEditingController controller;
@@ -26,6 +28,7 @@ class AppTextField extends StatefulWidget {
   final Color? iconColor;
   final String? Function(String?)? validator;
   final int? maxLines;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -53,6 +56,7 @@ class _AppTextFieldState extends State<AppTextField> {
         keyboardType: widget.keyboardType,
         validator: widget.validator,
         maxLines: _obscureText ? 1 : widget.maxLines,
+        inputFormatters: widget.inputFormatters,
         style: TextStyle(
           color: AppColors.textPrimary,
           fontSize: 15.sp,
@@ -60,14 +64,9 @@ class _AppTextFieldState extends State<AppTextField> {
         ),
         decoration: InputDecoration(
           hintText: widget.hint,
-          hintStyle: TextStyle(
-            color: AppColors.textTertiary,
-            fontSize: 15.sp,
-          ),
+          hintStyle: TextStyle(color: AppColors.textTertiary, fontSize: 15.sp),
           filled: true,
-          fillColor: _isFocused
-              ? AppColors.surface
-              : AppColors.surfaceVariant,
+          fillColor: _isFocused ? AppColors.surface : AppColors.surfaceVariant,
           contentPadding: EdgeInsets.symmetric(
             horizontal: 16.w,
             vertical: 16.h,
@@ -95,30 +94,23 @@ class _AppTextFieldState extends State<AppTextField> {
               : null,
           enabledBorder: OutlineInputBorder(
             borderSide: BorderSide(
-              color: _isFocused ? AppColors.primary.withOpacity(0.3) : AppColors.border,
+              color: _isFocused
+                  ? AppColors.primary.withOpacity(0.3)
+                  : AppColors.border,
               width: 1.5,
             ),
             borderRadius: BorderRadius.circular(14.r),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: AppColors.primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: AppColors.primary, width: 2),
             borderRadius: BorderRadius.circular(14.r),
           ),
           errorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: AppColors.error,
-              width: 1.5,
-            ),
+            borderSide: BorderSide(color: AppColors.error, width: 1.5),
             borderRadius: BorderRadius.circular(14.r),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: AppColors.error,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: AppColors.error, width: 2),
             borderRadius: BorderRadius.circular(14.r),
           ),
         ),

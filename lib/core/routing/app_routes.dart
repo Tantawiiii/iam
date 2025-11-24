@@ -3,6 +3,7 @@ final class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String signup = '/signup';
+  static const String verifyOtp = '/verify-otp';
   static const String home = '/home';
   static const String categoryProducts = '/category-products';
   static const String brandProducts = '/brand-products';

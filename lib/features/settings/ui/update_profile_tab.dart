@@ -12,6 +12,8 @@ import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/pick_option.dart';
 import '../cubit/update_profile_cubit.dart';
+import '../../notifications/cubit/notifications_cubit.dart';
+import '../../settings/cubit/user_info_cubit.dart';
 
 class UpdateProfileTab extends StatefulWidget {
   const UpdateProfileTab({super.key});
@@ -188,7 +190,6 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
       }
     }
 
-    // Validate required ID image
     if (_idImageFile == null &&
         (_currentIdImageUrl == null || _currentIdImageUrl!.isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -229,9 +230,26 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
               backgroundColor: Colors.green,
             ),
           );
-          // Update stored user data
+
           final storageService = di.sl<StorageService>();
           await storageService.updateStoredUser(state.response.data);
+
+          final notificationsCubit = di.sl<NotificationsCubit>();
+          notificationsCubit.updateNotificationsFromUser(state.response.data);
+
+          if (context.mounted) {
+            final userInfoCubit = di.sl<UserInfoCubit>();
+            if (!userInfoCubit.isClosed) {
+              await userInfoCubit.checkAuth();
+              // Update notifications again after checkAuth
+              if (userInfoCubit.state is UserInfoSuccess) {
+                final userInfoState = userInfoCubit.state as UserInfoSuccess;
+                notificationsCubit.updateNotificationsFromUser(
+                  userInfoState.user,
+                );
+              }
+            }
+          }
           _nameController.text = state.response.data.name;
           _emailController.text = state.response.data.email;
           _phoneController.text = state.response.data.phone;
@@ -258,7 +276,6 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
               _invoiceImageFile = null;
             });
           }
-          // Clear password fields
           _passwordController.clear();
           _confirmPasswordController.clear();
         } else if (state is UpdateProfileFailure) {

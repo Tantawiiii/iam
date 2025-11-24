@@ -2,6 +2,7 @@ import 'package:iam/features/contact_us/servises/contact_servises.dart';
 import 'package:iam/features/orders/services/orders_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../features/auth/cubit/verify_otp_cubit.dart';
 import '../network/dio_client.dart';
 import '../network/api_service.dart';
 import '../services/storage_service.dart';
@@ -26,9 +27,11 @@ import '../../features/favorites/cubit/favorites_cubit.dart';
 import '../../features/reviews/cubit/review_cubit.dart';
 import '../../features/settings/services/settings_service.dart';
 import '../../features/settings/cubit/update_profile_cubit.dart';
+import '../../features/settings/cubit/resell_product_cubit.dart';
 import '../../features/contact_us/cubit/contact_us_cubit.dart';
 import '../../features/settings/cubit/user_info_cubit.dart';
 import '../../features/orders/cubit/order_details_cubit.dart';
+import '../../features/notifications/cubit/notifications_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -77,6 +80,7 @@ Future<void> init() async {
   sl.registerFactory(
     () => LoginCubit(sl<AuthService>(), sl<StorageService>(), sl<DioClient>()),
   );
+  sl.registerFactory(() => VerifyOtpCubit(sl<AuthService>()));
 
   // Categories Cubits
   sl.registerFactory(() => CategoriesCubit(sl<CategoriesService>()));
@@ -109,4 +113,8 @@ Future<void> init() async {
   sl.registerFactory(() => ContactUsCubit(sl<ContactService>()));
   sl.registerFactory(() => UserInfoCubit(sl<SettingsService>()));
   sl.registerFactory(() => OrderDetailsCubit(sl<OrdersService>()));
+  sl.registerFactory(() => ResellProductCubit(sl<SettingsService>()));
+
+  // Notifications Cubit
+  sl.registerLazySingleton(() => NotificationsCubit());
 }

@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 
 import '../../../core/constant/app_colors.dart';
+import '../../../core/routing/app_routes.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../../shared/widgets/pick_option.dart';
@@ -36,7 +38,9 @@ class _SignupScreenState extends State<SignupScreen> {
   String? _selectedGender;
   String? _selectedCountry;
   bool _acceptedTerms = false;
-  bool _confirmedWhatsApp = false;
+  CountryCode _selectedCountryCode = CountryCode.fromCode(
+    'AE',
+  ); // Default to UAE
 
   // List of Arab countries
   final List<String> _arabCountries = [
@@ -95,16 +99,6 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
-    if (!_confirmedWhatsApp) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppTexts.confirmWhatsApp),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
     if (!_acceptedTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -115,10 +109,14 @@ class _SignupScreenState extends State<SignupScreen> {
       return;
     }
 
+    // Combine country code with phone number
+    final fullPhoneNumber =
+        '${_selectedCountryCode.dialCode}${_phoneController.text.trim()}';
+
     cubit.signup(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
-      phone: _phoneController.text.trim(),
+      phone: fullPhoneNumber,
       password: _passwordController.text,
       age: _ageController.text.trim(),
       gender: _selectedGender ?? '',
@@ -183,7 +181,11 @@ class _SignupScreenState extends State<SignupScreen> {
                 backgroundColor: Colors.green,
               ),
             );
-            Navigator.pop(context);
+            // Navigate to OTP screen with email
+            Navigator.of(context).pushReplacementNamed(
+              AppRoutes.verifyOtp,
+              arguments: {'email': _emailController.text.trim()},
+            );
           } else if (state is SignupFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -358,45 +360,59 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                         ),
                         SizedBox(height: 20.h),
-                        AppTextField(
-                          controller: _phoneController,
-                          hint: AppTexts.phoneWithWhatsApp,
-                          keyboardType: TextInputType.phone,
-                          leadingIcon: Icons.phone_outlined,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return AppTexts.pleaseEnterPhone;
-                            }
-                            return null;
-                          },
-                        ),
-                        SizedBox(height: 12.h),
+                        // Phone number with country code picker
                         Row(
                           children: [
-                            Checkbox(
-                              value: _confirmedWhatsApp,
-                              onChanged: (value) {
-                                setState(() {
-                                  _confirmedWhatsApp = value ?? false;
-                                });
-                              },
-                              activeColor: AppColors.primary,
-                            ),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.surfaceVariant,
+                                borderRadius: BorderRadius.circular(14.r),
+                                border: Border.all(
+                                  color: AppColors.border,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: CountryCodePicker(
+                                onChanged: (CountryCode countryCode) {
                                   setState(() {
-                                    _confirmedWhatsApp = !_confirmedWhatsApp;
+                                    _selectedCountryCode = countryCode;
                                   });
                                 },
-                                child: Text(
-                                  AppTexts.confirmWhatsApp,
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                initialSelection: 'AE',
+                                favorite: ['+971', 'AE'],
+                                showCountryOnly: false,
+                                showOnlyCountryWhenClosed: false,
+                                alignLeft: false,
+                                textStyle: TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500,
                                 ),
+                                dialogTextStyle: TextStyle(
+                                  color: AppColors.textPrimary,
+                                  fontSize: 15.sp,
+                                ),
+                                flagWidth: 24.w,
+                                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                                boxDecoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: AppTextField(
+                                controller: _phoneController,
+                                hint: AppTexts.phone,
+                                keyboardType: TextInputType.phone,
+                                leadingIcon: Icons.phone_outlined,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return AppTexts.pleaseEnterPhone;
+                                  }
+                                  return null;
+                                },
                               ),
                             ),
                           ],

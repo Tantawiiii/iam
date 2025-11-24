@@ -13,6 +13,7 @@ class UserModel {
   final String? bankStatementImage;
   final String? invoiceImage;
   final bool active;
+  final bool? isRefused;
   final List<dynamic> favorites;
   final List<dynamic> orders;
   final List<dynamic> productsForSale;
@@ -35,6 +36,7 @@ class UserModel {
     this.bankStatementImage,
     this.invoiceImage,
     required this.active,
+    this.isRefused,
     required this.favorites,
     required this.orders,
     required this.productsForSale,
@@ -96,6 +98,9 @@ class UserModel {
       bankStatementImage: parseNullableString(json['bank_statement_image']),
       invoiceImage: parseNullableString(json['invoice_image']),
       active: parseBool(json['active'], defaultValue: false),
+      isRefused: json['is_refused'] != null
+          ? parseBool(json['is_refused'])
+          : null,
       favorites: parseList(json['favorites']),
       orders: parseList(json['orders']),
       productsForSale: parseList(json['products_for_sale']),
@@ -121,6 +126,7 @@ class UserModel {
       'bank_statement_image': bankStatementImage,
       'invoice_image': invoiceImage,
       'active': active,
+      'is_refused': isRefused,
       'favorites': favorites,
       'orders': orders,
       'products_for_sale': productsForSale,

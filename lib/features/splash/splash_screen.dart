@@ -145,21 +145,21 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ),
                       ),
-                      SizedBox(height: 40.h),
-                      ShaderMask(
-                        shaderCallback: (bounds) =>
-                            AppColors.horizontalGradient.createShader(bounds),
-                        child: Text(
-                          'IAM',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 48.sp,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 3,
-                            height: 1.2,
-                          ),
-                        ),
-                      ),
+                      // SizedBox(height: 40.h),
+                      // ShaderMask(
+                      //   shaderCallback: (bounds) =>
+                      //       AppColors.horizontalGradient.createShader(bounds),
+                      //   child: Text(
+                      //     'IAM',
+                      //     style: TextStyle(
+                      //       color: Colors.white,
+                      //       fontSize: 48.sp,
+                      //       fontWeight: FontWeight.w900,
+                      //       letterSpacing: 3,
+                      //       height: 1.2,
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

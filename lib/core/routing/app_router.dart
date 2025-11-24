@@ -6,6 +6,7 @@ import '../../features/splash/splash_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 
 import '../../features/auth/ui/signup_screen.dart';
+import '../../features/auth/ui/verify_otp_screen.dart';
 import '../../features/home/ui/main_navigation_screen.dart';
 import '../../features/home/ui/category_products_screen.dart';
 import '../../features/home/ui/brand_products_screen.dart';
@@ -29,6 +30,11 @@ Route<dynamic> onGenerateAppRoute(RouteSettings settings) {
       return MaterialPageRoute(builder: (_) => const LoginScreen());
     case AppRoutes.signup:
       return MaterialPageRoute(builder: (_) => const SignupScreen());
+    case AppRoutes.verifyOtp:
+      final args = settings.arguments as Map<String, dynamic>?;
+      return MaterialPageRoute(
+        builder: (_) => VerifyOtpScreen(email: args?['email'] as String? ?? ''),
+      );
     case AppRoutes.home:
       return MaterialPageRoute(builder: (_) => const MainNavigationScreen());
     case AppRoutes.categoryProducts:

@@ -20,13 +20,19 @@ class CustomBottomNavBar extends StatelessWidget {
     return CurvedNavigationBar(
       index: selectedIndex,
       onTap: onTap,
-      backgroundColor: AppColors.surface.withOpacity(0.3),
-      color: AppColors.surface.withOpacity(0.3),
+      backgroundColor: Colors.white.withOpacity(0.9),
+      color: Colors.white,
       buttonBackgroundColor: AppColors.primary,
       height: (75.h).clamp(0.0, 75.0),
       animationDuration: const Duration(milliseconds: 400),
       items: [
-        Icon(Icons.favorite_border, color: AppColors.textOnPrimary, size: 26.r),
+        Icon(
+          Icons.favorite_border,
+          color: selectedIndex == 0
+              ? AppColors.white
+              : AppColors.textSecondary,
+          size: 26.r,
+        ),
         BlocBuilder<CartCubit, CartState>(
           builder: (context, state) {
             int itemCount = 0;
@@ -39,12 +45,31 @@ class CustomBottomNavBar extends StatelessWidget {
             return _NavItemWithBadge(
               icon: Icons.shopping_cart,
               count: itemCount,
+              isSelected: selectedIndex == 1,
             );
           },
         ),
-        Icon(Icons.home, color: AppColors.textOnPrimary, size: 28.r),
-        Icon(Icons.search, color: AppColors.textOnPrimary, size: 26.r),
-        Icon(Icons.settings, color: AppColors.textOnPrimary, size: 26.r),
+        Icon(
+          Icons.home,
+          color: selectedIndex == 2
+              ? AppColors.white
+              : AppColors.textSecondary,
+          size: 28.r,
+        ),
+        Icon(
+          Icons.search,
+          color: selectedIndex == 3
+              ? AppColors.white
+              : AppColors.textSecondary,
+          size: 26.r,
+        ),
+        Icon(
+          Icons.settings,
+          color: selectedIndex == 4
+              ? AppColors.white
+              : AppColors.textSecondary,
+          size: 26.r,
+        ),
       ],
     );
   }
@@ -53,8 +78,13 @@ class CustomBottomNavBar extends StatelessWidget {
 class _NavItemWithBadge extends StatelessWidget {
   final IconData icon;
   final int count;
+  final bool isSelected;
 
-  const _NavItemWithBadge({required this.icon, required this.count});
+  const _NavItemWithBadge({
+    required this.icon,
+    required this.count,
+    this.isSelected = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +92,11 @@ class _NavItemWithBadge extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Icon(icon, color: AppColors.textOnPrimary, size: 24.r),
+        Icon(
+          icon,
+          color: isSelected ? AppColors.white : AppColors.textSecondary,
+          size: 24.r,
+        ),
         if (showBadge)
           Positioned(
             right: -6.w,
@@ -72,7 +106,7 @@ class _NavItemWithBadge extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: AppColors.accentGradient,
                 borderRadius: BorderRadius.circular(14.r),
-                border: Border.all(color: AppColors.textOnPrimary, width: 2.5),
+                border: Border.all(color: Colors.white, width: 2.5),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.accent.withOpacity(0.5),

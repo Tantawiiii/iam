@@ -9,80 +9,90 @@ import '../../../core/routing/app_routes.dart';
 import '../../../core/services/storage_service.dart';
 import '../../auth/models/user_model.dart';
 import '../cubit/user_info_cubit.dart';
+import '../../notifications/cubit/notifications_cubit.dart';
 
 class UserInfoScreen extends StatelessWidget {
   const UserInfoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => di.sl<UserInfoCubit>()..checkAuth(),
-      child: Scaffold(
-        backgroundColor: AppColors.white,
-        appBar: AppBar(
-          title: Text(AppTexts.myAccount),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: BlocBuilder<UserInfoCubit, UserInfoState>(
-          builder: (context, state) {
-            if (state is UserInfoLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => di.sl<UserInfoCubit>()..checkAuth()),
+        BlocProvider.value(value: di.sl<NotificationsCubit>()),
+      ],
+      child: BlocListener<UserInfoCubit, UserInfoState>(
+        listener: (context, state) {
+          if (state is UserInfoSuccess) {
+            context.read<NotificationsCubit>().updateNotificationsFromUser(
+              state.user,
+            );
+          }
+        },
+        child: Scaffold(
+          backgroundColor: AppColors.white,
+          appBar: AppBar(
+            title: Text(AppTexts.myAccount),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+          ),
+          body: BlocBuilder<UserInfoCubit, UserInfoState>(
+            builder: (context, state) {
+              if (state is UserInfoLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-            if (state is UserInfoFailure) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
-                    SizedBox(height: 16.h),
-                    Text(
-                      state.message,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.greyTextColor,
+              if (state is UserInfoFailure) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.error_outline, size: 64.sp, color: Colors.red),
+                      SizedBox(height: 16.h),
+                      Text(
+                        state.message,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.greyTextColor,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 24.h),
-                    ElevatedButton(
-                      onPressed: () {
-                        context.read<UserInfoCubit>().checkAuth();
-                      },
-                      child: const Text('Retry'),
-                    ),
-                  ],
-                ),
-              );
-            }
+                      SizedBox(height: 24.h),
+                      ElevatedButton(
+                        onPressed: () {
+                          context.read<UserInfoCubit>().checkAuth();
+                        },
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                );
+              }
 
-            if (state is UserInfoSuccess) {
-              return SingleChildScrollView(
-                padding: EdgeInsets.all(20.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // User Info Section
-                    _buildUserInfoSection(state.user),
-                    SizedBox(height: 32.h),
-                    // Orders Section
-                    _buildOrdersSection(context, state.orders),
-                    SizedBox(height: 32.h),
-                    // Products for Sale Section
-                    _buildProductsForSaleSection(
-                      context,
-                      state.productsForSale,
-                    ),
-                    SizedBox(height: 32.h),
-                    _buildDeleteAccountSection(context),
-                  ],
-                ),
-              );
-            }
+              if (state is UserInfoSuccess) {
+                return SingleChildScrollView(
+                  padding: EdgeInsets.all(20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildUserInfoSection(state.user),
+                      SizedBox(height: 32.h),
+                      _buildOrdersSection(context, state.orders),
+                      SizedBox(height: 32.h),
+                      // _buildProductsForSaleSection(
+                      //   context,
+                      //   state.productsForSale,
+                      // ),
+                      SizedBox(height: 32.h),
+                      _buildDeleteAccountSection(context),
+                    ],
+                  ),
+                );
+              }
 
-            return const SizedBox.shrink();
-          },
+              return const SizedBox.shrink();
+            },
+          ),
         ),
       ),
     );
@@ -367,195 +377,6 @@ class UserInfoScreen extends StatelessWidget {
       default:
         return AppColors.primaryColor;
     }
-  }
-
-  Widget _buildProductsForSaleSection(
-    BuildContext context,
-    List<dynamic> productsForSale,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'المنتجات القابلة للبيع',
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.blackTextColor,
-          ),
-        ),
-        SizedBox(height: 16.h),
-        if (productsForSale.isEmpty)
-          Container(
-            padding: EdgeInsets.all(40.w),
-            decoration: BoxDecoration(
-              color: AppColors.overlayColor,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.shopping_bag_outlined,
-                  size: 64.sp,
-                  color: AppColors.greyTextColor,
-                ),
-                SizedBox(height: 16.h),
-                Text(
-                  'لا توجد منتجات قابلة للبيع',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: AppColors.greyTextColor,
-                  ),
-                ),
-              ],
-            ),
-          )
-        else
-          ...productsForSale.asMap().entries.map((entry) {
-            final index = entry.key;
-            final product = entry.value;
-            return _buildProductForSaleCard(context, product, index);
-          }).toList(),
-      ],
-    );
-  }
-
-  Widget _buildProductForSaleCard(
-    BuildContext context,
-    dynamic product,
-    int index,
-  ) {
-    String productId = '';
-    String productName = '';
-    String? productImage;
-    String? productPrice;
-    String? productNumber;
-
-    if (product is Map) {
-      productId =
-          product['id']?.toString() ??
-          product['product_id']?.toString() ??
-          product['card_id']?.toString() ??
-          '';
-      productName = product['name']?.toString() ?? 'Product';
-      productImage = product['image']?.toString();
-      productPrice = product['price']?.toString();
-      productNumber = product['product_number']?.toString();
-    } else {
-      productId = product.toString();
-      productName = 'Product $productId';
-    }
-
-    return GestureDetector(
-      onTap: () {
-        if (productId.isNotEmpty) {
-          final productIdInt = int.tryParse(productId);
-          if (productIdInt != null) {
-            Navigator.pushNamed(
-              context,
-              AppRoutes.productDetails,
-              arguments: {
-                'productId': productIdInt,
-                'isForSale': true,
-                'productNumber': productNumber,
-              },
-            );
-          }
-        }
-      },
-      child: Container(
-        margin: EdgeInsets.only(bottom: 12.h),
-        padding: EdgeInsets.all(16.w),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: AppColors.textFieldBorderColor),
-        ),
-        child: Row(
-          children: [
-            if (productImage != null && productImage.isNotEmpty)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: Image.network(
-                  productImage,
-                  width: 80.w,
-                  height: 80.w,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 80.w,
-                      height: 80.w,
-                      color: AppColors.overlayColor,
-                      child: Icon(
-                        Icons.image_not_supported,
-                        color: AppColors.greyTextColor,
-                      ),
-                    );
-                  },
-                ),
-              )
-            else
-              Container(
-                width: 80.w,
-                height: 80.w,
-                decoration: BoxDecoration(
-                  color: AppColors.overlayColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Icon(
-                  Icons.shopping_bag_outlined,
-                  color: AppColors.greyTextColor,
-                  size: 40.sp,
-                ),
-              ),
-            SizedBox(width: 16.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    productName,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.blackTextColor,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (productNumber != null && productNumber.isNotEmpty) ...[
-                    SizedBox(height: 4.h),
-                    Text(
-                      'رقم المنتج: $productNumber',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: AppColors.greyTextColor,
-                      ),
-                    ),
-                  ],
-                  if (productPrice != null && productPrice.isNotEmpty) ...[
-                    SizedBox(height: 4.h),
-                    Text(
-                      productPrice,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16.sp,
-              color: AppColors.greyTextColor,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildDeleteAccountSection(BuildContext context) {

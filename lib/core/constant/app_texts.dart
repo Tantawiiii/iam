@@ -167,6 +167,9 @@ final class AppTexts {
   static String get oneYearWarranty => _text('oneYearWarranty');
   static String get description => _text('description');
   static String get productDetails => _text('productDetails');
+  static String get productNumber => _text('productNumber');
+  static String get copied => _text('copied');
+  static String get price => _text('price');
   static String get type => _text('type');
   static String get color => _text('color');
   static String get quantityAvailable => _text('quantityAvailable');
@@ -188,7 +191,8 @@ final class AppTexts {
   static String get country => _text('country');
   static String get pleaseEnterCountry => _text('pleaseEnterCountry');
   static String get termsAndConditions => _text('termsAndConditions');
-  static String get acceptTermsAndConditions => _text('acceptTermsAndConditions');
+  static String get acceptTermsAndConditions =>
+      _text('acceptTermsAndConditions');
   static String get pleaseAcceptTerms => _text('pleaseAcceptTerms');
   static String get accountCreatedSuccess => _text('accountCreatedSuccess');
   static String get pleaseConfirmPassword => _text('pleaseConfirmPassword');
@@ -209,7 +213,8 @@ final class AppTexts {
   static String get updateYourData => _text('updateYourData');
   static String get pleaseUpdateYourData => _text('pleaseUpdateYourData');
   static String get uploadMissingImages => _text('uploadMissingImages');
-  static String get pleaseUploadMissingImages => _text('pleaseUploadMissingImages');
+  static String get pleaseUploadMissingImages =>
+      _text('pleaseUploadMissingImages');
   static String get dataUnderReview => _text('dataUnderReview');
   static String get dataUnderReviewMessage => _text('dataUnderReviewMessage');
   static String get goToUpdateProfile => _text('goToUpdateProfile');
@@ -218,6 +223,42 @@ final class AppTexts {
   static String get phoneWithWhatsApp => _text('phoneWithWhatsApp');
   static String get pleaseSelectCountry => _text('pleaseSelectCountry');
   static String get ageRange => _text('ageRange');
+  static String get verifyOtp => _text('verifyOtp');
+  static String get notifications => _text('notifications');
+  static String get accountUnderReview => _text('accountUnderReview');
+  static String get accountApproved => _text('accountApproved');
+  static String get accountRejected => _text('accountRejected');
+  static String get noNotifications => _text('noNotifications');
+  static String get markAllAsRead => _text('markAllAsRead');
+  static String get accountUnderReviewTitle => _text('accountUnderReviewTitle');
+  static String get accountApprovedTitle => _text('accountApprovedTitle');
+  static String get accountRejectedTitle => _text('accountRejectedTitle');
+  static String get accountApprovedMessage => _text('accountApprovedMessage');
+  static String get accountRejectedMessage => _text('accountRejectedMessage');
+  static String get now => _text('now');
+  static String get minutesAgo => _text('minutesAgo');
+  static String get hoursAgo => _text('hoursAgo');
+  static String get yesterday => _text('yesterday');
+  static String get daysAgo => _text('daysAgo');
+  static String get resellProduct => _text('resellProduct');
+  static String get resellProductSubtitle => _text('resellProductSubtitle');
+  static String get productSubmittedSuccess => _text('productSubmittedSuccess');
+  static String get submit => _text('submit');
+  static String get pleaseEnterProductName => _text('pleaseEnterProductName');
+  static String get pleaseEnterDescription => _text('pleaseEnterDescription');
+  static String get descriptionMustBeAtLeast10Characters =>
+      _text('descriptionMustBeAtLeast10Characters');
+  static String get pleaseEnterPrice => _text('pleaseEnterPrice');
+  static String get pleaseEnterValidPrice => _text('pleaseEnterValidPrice');
+  static String get pleaseEnterProductNumber =>
+      _text('pleaseEnterProductNumber');
+  static String get enterOtp => _text('enterOtp');
+  static String get pleaseEnterOtp => _text('pleaseEnterOtp');
+  static String get otpMustBe6Digits => _text('otpMustBe6Digits');
+  static String get enter6DigitCodeSentToEmail =>
+      _text('enter6DigitCodeSentToEmail');
+  static String get verifying => _text('verifying');
+  static String get otpVerifiedSuccess => _text('otpVerifiedSuccess');
 
   static const Map<String, Map<AppLanguage, String>> _localizedValues = {
     'welcomeBack': {
@@ -294,10 +335,7 @@ final class AppTexts {
       AppLanguage.en: 'Updating...',
       AppLanguage.ar: 'جارٍ التحديث...',
     },
-    'name': {
-      AppLanguage.en: 'Name',
-      AppLanguage.ar: 'الاسم',
-    },
+    'name': {AppLanguage.en: 'Name', AppLanguage.ar: 'الاسم'},
     'loginSuccess': {
       AppLanguage.en: 'Login successful!',
       AppLanguage.ar: 'تم تسجيل الدخول بنجاح!',
@@ -313,16 +351,20 @@ final class AppTexts {
       AppLanguage.ar: 'إنشاء حساب',
     },
     'onTitle1': {
-      AppLanguage.en: 'All Your Spare Parts\nin One Place',
-      AppLanguage.ar: 'جميع قطع الغيار الإلكترونية\nفي مكان واحد',
+      AppLanguage.en:
+          'Subscribe now and get your products on installments up to 25,000 UAE Dirhams',
+      AppLanguage.ar:
+          'اشترك الان واحصل علي منتجاتك با التقسيط بقيمة 25 الف درهم إماراتي',
     },
     'onDesTitle1': {
-      AppLanguage.en: 'Discover a wide range of original electronic spare parts, all at your fingertips.',
-      AppLanguage.ar: 'اكتشف مجموعة واسعة من قطع الغيار الأصلية للأجهزة الإلكترونية، جميعها بين يديك.',
+      AppLanguage.en:
+          'Discover a wide range of original products, all at your fingertips.',
+      AppLanguage.ar:
+          'اكتشف مجموعة واسعة من المنتجات الأصلية، جميعها بين يديك.',
     },
     'onTitle2': {
-      AppLanguage.en: 'Search & Order Instantly',
-      AppLanguage.ar: 'ابحث واطلب فوراً',
+      AppLanguage.en: 'Comfortable installments up to 3 years',
+      AppLanguage.ar: 'تقسيط مريح يرصل الي 3 سنوات',
     },
     'onDesTitle2': {
       AppLanguage.en:
@@ -331,11 +373,12 @@ final class AppTexts {
           'استخدم البحث الذكي للعثور على القطعة المناسبة لجهازك في ثوانٍ.',
     },
     'onTitle3': {
-      AppLanguage.en: 'Fast & Secure Delivery',
-      AppLanguage.ar: 'توصيل سريع وآمن',
+      AppLanguage.en: 'Discounts up to 25% on cash products',
+      AppLanguage.ar: 'خصومات تصل إلي 25% علي منتجات الكاش',
     },
     'onDesTitle3': {
-      AppLanguage.en: 'Get your orders delivered quickly and safely right to your doorstep.',
+      AppLanguage.en:
+          'Get your orders delivered quickly and safely right to your doorstep.',
       AppLanguage.ar: 'استلم طلباتك بسرعة وأمان حتى باب منزلك.',
     },
     'skip': {AppLanguage.en: 'Skip', AppLanguage.ar: 'تخطي'},
@@ -527,9 +570,18 @@ final class AppTexts {
       AppLanguage.en: 'Product Details',
       AppLanguage.ar: 'تفاصيل المنتج',
     },
+    'productNumber': {
+      AppLanguage.en: 'Product Number',
+      AppLanguage.ar: 'رقم المنتج',
+    },
+    'copied': {AppLanguage.en: 'copied', AppLanguage.ar: 'تم النسخ'},
+    'price': {AppLanguage.en: 'Price', AppLanguage.ar: 'السعر'},
     'type': {AppLanguage.en: 'Type', AppLanguage.ar: 'النوع'},
     'color': {AppLanguage.en: 'Color', AppLanguage.ar: 'اللون'},
-    'quantityAvailable': {AppLanguage.en: 'Quantity Available', AppLanguage.ar: 'الكمية المتاحة',},
+    'quantityAvailable': {
+      AppLanguage.en: 'Quantity Available',
+      AppLanguage.ar: 'الكمية المتاحة',
+    },
     'inCart': {AppLanguage.en: 'In Cart', AppLanguage.ar: 'في السلة'},
     'addToCart': {
       AppLanguage.en: 'Add to Cart',
@@ -705,10 +757,7 @@ final class AppTexts {
       AppLanguage.en: 'Creating...',
       AppLanguage.ar: 'جارٍ الإنشاء...',
     },
-    'idImage': {
-      AppLanguage.en: 'ID Image',
-      AppLanguage.ar: 'صورة الهوية',
-    },
+    'idImage': {AppLanguage.en: 'ID Image', AppLanguage.ar: 'صورة الهوية'},
     'pleaseUploadIdImage': {
       AppLanguage.en: 'Please upload ID image',
       AppLanguage.ar: 'يرجى رفع صورة الهوية',
@@ -721,10 +770,7 @@ final class AppTexts {
       AppLanguage.en: 'Invoice Image',
       AppLanguage.ar: 'صورة الفاتورة',
     },
-    'installment': {
-      AppLanguage.en: 'Installment',
-      AppLanguage.ar: 'تقسيط',
-    },
+    'installment': {AppLanguage.en: 'Installment', AppLanguage.ar: 'تقسيط'},
     'selectInstallmentMonths': {
       AppLanguage.en: 'Select Installment Period',
       AppLanguage.ar: 'اختر فترة التقسيط',
@@ -745,25 +791,26 @@ final class AppTexts {
       AppLanguage.en: 'Total Amount',
       AppLanguage.ar: 'المبلغ الإجمالي',
     },
-    'months': {
-      AppLanguage.en: 'months',
-      AppLanguage.ar: 'شهر',
-    },
+    'months': {AppLanguage.en: 'months', AppLanguage.ar: 'شهر'},
     'updateYourData': {
       AppLanguage.en: 'Update Your Data',
       AppLanguage.ar: 'تحديث بياناتك',
     },
     'pleaseUpdateYourData': {
-      AppLanguage.en: 'Please update your data to complete your order. You need to upload your ID image.',
-      AppLanguage.ar: 'يرجى تحديث بياناتك لإتمام طلبك. تحتاج إلى رفع صورة الهوية.',
+      AppLanguage.en:
+          'Please update your data to complete your order. You need to upload your ID image.',
+      AppLanguage.ar:
+          'يرجى تحديث بياناتك لإتمام طلبك. تحتاج إلى رفع صورة الهوية.',
     },
     'uploadMissingImages': {
       AppLanguage.en: 'Upload Missing Images',
       AppLanguage.ar: 'رفع الصور المفقودة',
     },
     'pleaseUploadMissingImages': {
-      AppLanguage.en: 'Please upload the missing images (Bank Statement and/or Invoice) to complete your order.',
-      AppLanguage.ar: 'يرجى رفع الصور المفقودة (كشف الحساب و/أو الفاتورة) لإتمام طلبك.',
+      AppLanguage.en:
+          'Please upload the missing images (Bank Statement and/or Invoice) to complete your order.',
+      AppLanguage.ar:
+          'يرجى رفع الصور المفقودة (كشف الحساب و/أو الفاتورة) لإتمام طلبك.',
     },
     'dataUnderReview': {
       AppLanguage.en: 'Data Under Review',
@@ -777,10 +824,7 @@ final class AppTexts {
       AppLanguage.en: 'Go to Update Profile',
       AppLanguage.ar: 'الذهاب لتحديث الملف الشخصي',
     },
-    'ok': {
-      AppLanguage.en: 'OK',
-      AppLanguage.ar: 'حسناً',
-    },
+    'ok': {AppLanguage.en: 'OK', AppLanguage.ar: 'حسناً'},
     'confirmWhatsApp': {
       AppLanguage.en: 'Confirm WhatsApp',
       AppLanguage.ar: 'تأكيد وتساب',
@@ -796,6 +840,124 @@ final class AppTexts {
     'ageRange': {
       AppLanguage.en: 'Age must be between 21 and 55',
       AppLanguage.ar: 'يجب أن يكون العمر بين 21 و 55',
+    },
+    'verifyOtp': {
+      AppLanguage.en: 'Verify OTP',
+      AppLanguage.ar: 'التحقق من رمز OTP',
+    },
+    'enterOtp': {AppLanguage.en: 'Enter OTP', AppLanguage.ar: 'أدخل رمز OTP'},
+    'pleaseEnterOtp': {
+      AppLanguage.en: 'Please enter OTP',
+      AppLanguage.ar: 'يرجى إدخال رمز OTP',
+    },
+    'otpMustBe6Digits': {
+      AppLanguage.en: 'OTP must be 6 digits',
+      AppLanguage.ar: 'يجب أن يكون رمز OTP 6 أرقام',
+    },
+    'enter6DigitCodeSentToEmail': {
+      AppLanguage.en: 'Enter the 6-digit code sent to your email',
+      AppLanguage.ar:
+          'أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك الإلكتروني',
+    },
+    'verifying': {
+      AppLanguage.en: 'Verifying...',
+      AppLanguage.ar: 'جارٍ التحقق...',
+    },
+    'otpVerifiedSuccess': {
+      AppLanguage.en: 'OTP verified successfully!',
+      AppLanguage.ar: 'تم التحقق من رمز OTP بنجاح!',
+    },
+    'notifications': {
+      AppLanguage.en: 'Notifications',
+      AppLanguage.ar: 'الإشعارات',
+    },
+    'accountUnderReview': {
+      AppLanguage.en: 'Your request is under review',
+      AppLanguage.ar: 'يتم مراجعة طلبك',
+    },
+    'accountApproved': {
+      AppLanguage.en: 'Account approved',
+      AppLanguage.ar: 'تم الموافقة على الحساب',
+    },
+    'accountRejected': {
+      AppLanguage.en: 'Account rejected',
+      AppLanguage.ar: 'تم رفض الحساب',
+    },
+    'noNotifications': {
+      AppLanguage.en: 'No notifications',
+      AppLanguage.ar: 'لا توجد إشعارات',
+    },
+    'markAllAsRead': {
+      AppLanguage.en: 'Mark all as read',
+      AppLanguage.ar: 'تحديد الكل كمقروء',
+    },
+    'accountUnderReviewTitle': {
+      AppLanguage.en: 'Request Under Review',
+      AppLanguage.ar: 'طلبك قيد المراجعة',
+    },
+    'accountApprovedTitle': {
+      AppLanguage.en: 'Account Approved',
+      AppLanguage.ar: 'تم الموافقة على الحساب',
+    },
+    'accountRejectedTitle': {
+      AppLanguage.en: 'Account Rejected',
+      AppLanguage.ar: 'تم رفض الحساب',
+    },
+    'accountApprovedMessage': {
+      AppLanguage.en: 'Your account has been approved successfully',
+      AppLanguage.ar: 'تم الموافقة على حسابك بنجاح',
+    },
+    'accountRejectedMessage': {
+      AppLanguage.en: 'Your account has been rejected. Please contact support',
+      AppLanguage.ar: 'تم رفض حسابك. يرجى التواصل مع الدعم',
+    },
+    'now': {AppLanguage.en: 'Now', AppLanguage.ar: 'الآن'},
+    'minutesAgo': {
+      AppLanguage.en: 'minutes ago',
+      AppLanguage.ar: 'منذ %minutes% دقيقة',
+    },
+    'hoursAgo': {
+      AppLanguage.en: 'hours ago',
+      AppLanguage.ar: 'منذ %hours% ساعة',
+    },
+    'yesterday': {AppLanguage.en: 'Yesterday', AppLanguage.ar: 'أمس'},
+    'daysAgo': {AppLanguage.en: 'days ago', AppLanguage.ar: 'منذ %days% أيام'},
+    'resellProduct': {
+      AppLanguage.en: 'Resell Product',
+      AppLanguage.ar: 'إعادة بيع المنتج',
+    },
+    'resellProductSubtitle': {
+      AppLanguage.en: 'Sell products you purchased from the app only',
+      AppLanguage.ar: 'أنه يبيع المنتج الذي اشتراه من التطبيق فقط ليس إلا',
+    },
+    'productSubmittedSuccess': {
+      AppLanguage.en: 'Product submitted successfully',
+      AppLanguage.ar: 'تم إرسال المنتج بنجاح',
+    },
+    'submit': {AppLanguage.en: 'Submit', AppLanguage.ar: 'إرسال'},
+    'pleaseEnterProductName': {
+      AppLanguage.en: 'Please enter product name',
+      AppLanguage.ar: 'يرجى إدخال اسم المنتج',
+    },
+    'pleaseEnterDescription': {
+      AppLanguage.en: 'Please enter product description',
+      AppLanguage.ar: 'يرجى إدخال وصف المنتج',
+    },
+    'descriptionMustBeAtLeast10Characters': {
+      AppLanguage.en: 'Description must be at least 10 characters',
+      AppLanguage.ar: 'يجب أن يكون الوصف على الأقل 10 أحرف',
+    },
+    'pleaseEnterPrice': {
+      AppLanguage.en: 'Please enter product price',
+      AppLanguage.ar: 'يرجى إدخال سعر المنتج',
+    },
+    'pleaseEnterValidPrice': {
+      AppLanguage.en: 'Please enter a valid price',
+      AppLanguage.ar: 'يرجى إدخال سعر صحيح',
+    },
+    'pleaseEnterProductNumber': {
+      AppLanguage.en: 'Please enter product number',
+      AppLanguage.ar: 'يرجى إدخال رقم المنتج',
     },
   };
 }

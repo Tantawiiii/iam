@@ -11,8 +11,10 @@ import '../../../core/services/storage_service.dart';
 import '../../../shared/widgets/language_switcher.dart';
 import '../../auth/services/auth_service.dart';
 import '../cubit/update_profile_cubit.dart';
+import '../cubit/resell_product_cubit.dart';
 import '../../contact_us/cubit/contact_us_cubit.dart';
 import 'update_profile_tab.dart';
+import 'resell_product_tab.dart';
 import '../../contact_us/ui/contact_us_tab.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -28,8 +30,8 @@ class SettingsScreen extends StatelessWidget {
             backgroundColor: AppColors.background,
             appBar: AppBar(
               title: ShaderMask(
-                shaderCallback: (bounds) => AppColors.horizontalGradient
-                    .createShader(bounds),
+                shaderCallback: (bounds) =>
+                    AppColors.horizontalGradient.createShader(bounds),
                 child: Text(
                   AppTexts.updateProfile,
                   style: const TextStyle(color: Colors.white),
@@ -55,8 +57,8 @@ class SettingsScreen extends StatelessWidget {
             backgroundColor: AppColors.background,
             appBar: AppBar(
               title: ShaderMask(
-                shaderCallback: (bounds) => AppColors.horizontalGradient
-                    .createShader(bounds),
+                shaderCallback: (bounds) =>
+                    AppColors.horizontalGradient.createShader(bounds),
                 child: Text(
                   AppTexts.contactUs,
                   style: const TextStyle(color: Colors.white),
@@ -66,6 +68,33 @@ class SettingsScreen extends StatelessWidget {
               elevation: 0,
             ),
             body: const ContactUsTab(),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openResellProduct(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => di.sl<ResellProductCubit>(),
+          child: Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              title: ShaderMask(
+                shaderCallback: (bounds) =>
+                    AppColors.horizontalGradient.createShader(bounds),
+                child: Text(
+                  AppTexts.resellProduct,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+            ),
+            body: const ResellProductTab(),
           ),
         ),
       ),
@@ -95,11 +124,8 @@ class SettingsScreen extends StatelessWidget {
 
     try {
       await di.sl<AuthService>().logout();
-    } catch (_) {
-      // ignore server logout failure
-    }
+    } catch (_) {}
 
-    // Clear local auth
     await di.sl<StorageService>().clearAuthData();
     di.sl<DioClient>().clearAuthToken();
 
@@ -119,8 +145,8 @@ class SettingsScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: ShaderMask(
-          shaderCallback: (bounds) => AppColors.horizontalGradient
-              .createShader(bounds),
+          shaderCallback: (bounds) =>
+              AppColors.horizontalGradient.createShader(bounds),
           child: Text(
             AppTexts.settings,
             style: const TextStyle(color: Colors.white),
@@ -152,6 +178,13 @@ class SettingsScreen extends StatelessWidget {
             title: AppTexts.contactUs,
             subtitle: AppTexts.sendUsMessage,
             onTap: () => _openContactUs(context),
+          ),
+          _SettingsTile(
+            icon: Icons.sell_outlined,
+            iconColor: AppColors.warning,
+            title: AppTexts.resellProduct,
+            subtitle: AppTexts.resellProductSubtitle,
+            onTap: () => _openResellProduct(context),
           ),
           SizedBox(height: 16.h),
           _SettingsTile(
@@ -193,18 +226,11 @@ class _SettingsTile extends StatelessWidget {
           padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                iconColor.withOpacity(0.2),
-                iconColor.withOpacity(0.1),
-              ],
+              colors: [iconColor.withOpacity(0.2), iconColor.withOpacity(0.1)],
             ),
             borderRadius: BorderRadius.circular(12.r),
           ),
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: 24.sp,
-          ),
+          child: Icon(icon, color: iconColor, size: 24.sp),
         ),
         title: Text(
           title,
@@ -216,17 +242,13 @@ class _SettingsTile extends StatelessWidget {
         ),
         subtitle: Text(
           subtitle,
-          style: TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 13.sp,
-          ),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13.sp),
         ),
-        trailing: trailing ?? (onTap != null
-            ? Icon(
-                Icons.chevron_right,
-                color: AppColors.textSecondary,
-              )
-            : null),
+        trailing:
+            trailing ??
+            (onTap != null
+                ? Icon(Icons.chevron_right, color: AppColors.textSecondary)
+                : null),
         onTap: onTap,
       ),
     );

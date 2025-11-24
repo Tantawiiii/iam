@@ -138,4 +138,19 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<Response> verifyOtp({
+    required String email,
+    required String otp,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        ApiConstants.verifyOtp,
+        data: {'email': email, 'otp': otp},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

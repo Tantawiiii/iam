@@ -18,23 +18,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int _index = 0;
 
-  List<_OnboardData> get _pages =>  [
-        _OnboardData(
-          image: AppAssets.onboard1Img,
-          title: AppTexts.onTitle1,
-          subtitle:AppTexts.onDesTitle1,
-        ),
-        _OnboardData(
-          image: AppAssets.onboard2Img,
-          title: AppTexts.onTitle2,
-          subtitle:AppTexts.onDesTitle2,
-        ),
-        _OnboardData(
-          image: AppAssets.onboard3Img,
-          title: AppTexts.onTitle3,
-          subtitle:AppTexts.onDesTitle3,
-        ),
-      ];
+  List<_OnboardData> get _pages => [
+    _OnboardData(image: AppAssets.onboard1Img, title: AppTexts.onTitle1),
+    _OnboardData(image: AppAssets.onboard2Img, title: AppTexts.onTitle2),
+    _OnboardData(image: AppAssets.onboard3Img, title: AppTexts.onTitle3),
+  ];
 
   void _goNext() {
     if (_index < _pages.length - 1) {
@@ -63,7 +51,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 6.h,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(20.r),
@@ -84,7 +75,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     onPressed: _skip,
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.textSecondary,
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
                     ),
                     child: Text(
                       AppTexts.skip,
@@ -120,7 +114,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.textSecondary,
-                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 14.h,
+                        ),
                       ),
                       child: Text(
                         AppTexts.prev,
@@ -156,7 +153,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ),
                       child: Text(
-                        _index == _pages.length - 1 ? AppTexts.getStarted : AppTexts.next,
+                        _index == _pages.length - 1
+                            ? AppTexts.getStarted
+                            : AppTexts.next,
                         style: TextStyle(
                           color: AppColors.textOnPrimary,
                           fontSize: 16.sp,
@@ -213,10 +212,9 @@ class _Dots extends StatelessWidget {
 }
 
 class _OnboardData {
-  const _OnboardData({required this.image, required this.title, required this.subtitle});
+  const _OnboardData({required this.image, required this.title});
   final String image;
   final String title;
-  final String subtitle;
 }
 
 class _OnboardPage extends StatelessWidget {
@@ -255,26 +253,15 @@ class _OnboardPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 40.h),
+          SizedBox(height: 22.h),
           Text(
             data.title,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 28.sp,
+              fontSize: 20.sp,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,
               height: 1.2,
-            ),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            data.subtitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: AppColors.textSecondary,
-              height: 1.5,
-              fontWeight: FontWeight.w400,
             ),
           ),
           SizedBox(height: 20.h),
@@ -283,5 +270,3 @@ class _OnboardPage extends StatelessWidget {
     );
   }
 }
-
-

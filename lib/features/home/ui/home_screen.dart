@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           return Scaffold(
             backgroundColor: AppColors.background,
             extendBody: true,
-            resizeToAvoidBottomInset: true,
+            resizeToAvoidBottomInset: false,
             body: SafeArea(
               child: Column(
                 children: [
@@ -130,7 +130,6 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const HomeHeader(),
-                            14.verticalSpace,
                             const OffersSlider(),
                             const CategoriesSection(),
                             SizedBox(height: 20.h),

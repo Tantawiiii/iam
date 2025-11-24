@@ -1,40 +1,19 @@
-import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import '../services/auth_service.dart';
 
-part 'signup_state.dart';
+part 'verify_otp_state.dart';
 
-class SignupCubit extends Cubit<SignupState> {
+class VerifyOtpCubit extends Cubit<VerifyOtpState> {
   final AuthService _authService;
 
-  SignupCubit(this._authService) : super(SignupInitial());
+  VerifyOtpCubit(this._authService) : super(VerifyOtpInitial());
 
-  Future<void> signup({
-    required String name,
-    required String email,
-    required String phone,
-    required String password,
-    required String age,
-    required String gender,
-    required String country,
-    required String city,
-    File? avatar,
-  }) async {
-    emit(SignupLoading());
+  Future<void> verifyOtp({required String email, required String otp}) async {
+    emit(VerifyOtpLoading());
 
     try {
-      final response = await _authService.signup(
-        name: name,
-        email: email,
-        phone: phone,
-        password: password,
-        age: age,
-        gender: gender,
-        country: country,
-        city: city,
-        avatar: avatar,
-      );
+      final response = await _authService.verifyOtp(email: email, otp: otp);
 
       // Check response status code
       if (response.statusCode != null && response.statusCode! >= 400) {
@@ -45,7 +24,7 @@ class SignupCubit extends Cubit<SignupState> {
         } else if (responseData is Map && responseData.containsKey('error')) {
           errorMessage = responseData['error'].toString();
         }
-        emit(SignupFailure(errorMessage));
+        emit(VerifyOtpFailure(errorMessage));
         return;
       }
 
@@ -59,12 +38,12 @@ class SignupCubit extends Cubit<SignupState> {
           if (responseData.containsKey('message')) {
             errorMessage = responseData['message'].toString();
           }
-          emit(SignupFailure(errorMessage));
+          emit(VerifyOtpFailure(errorMessage));
           return;
         }
       }
 
-      emit(SignupSuccess(response.data));
+      emit(VerifyOtpSuccess(response.data));
     } catch (e) {
       String errorMessage = 'An error occurred. Please try again.';
 
@@ -88,11 +67,11 @@ class SignupCubit extends Cubit<SignupState> {
         }
       }
 
-      emit(SignupFailure(errorMessage));
+      emit(VerifyOtpFailure(errorMessage));
     }
   }
 
   void reset() {
-    emit(SignupInitial());
+    emit(VerifyOtpInitial());
   }
 }

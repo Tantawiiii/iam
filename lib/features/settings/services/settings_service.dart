@@ -34,9 +34,7 @@ class SettingsService {
     try {
       final response = await _apiService.post(
         ApiConstants.orderChangeStatus(orderId),
-        data: {
-          'status': status,
-        },
+        data: {'status': status},
       );
       return response;
     } catch (e) {
@@ -57,9 +55,7 @@ class SettingsService {
 
   Future<Response> deleteAccount() async {
     try {
-      final response = await _apiService.delete(
-        ApiConstants.deleteAccount,
-      );
+      final response = await _apiService.delete(ApiConstants.deleteAccount);
       return response;
     } catch (e) {
       rethrow;
@@ -73,14 +69,17 @@ class SettingsService {
     required String productNumber,
   }) async {
     try {
+      final formData = FormData.fromMap({
+        'name': name,
+        'description': description,
+        'price': price,
+        'product_number': productNumber,
+      });
+
       final response = await _apiService.post(
         ApiConstants.userProducts,
-        data: {
-          'name': name,
-          'description': description,
-          'price': price,
-          'product_number': productNumber,
-        },
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
       );
       return response;
     } catch (e) {

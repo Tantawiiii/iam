@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/di/inject.dart' as di;
@@ -24,6 +25,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final ValueNotifier<int> _homeRefreshNotifier = ValueNotifier<int>(0);
 
   @override
+  void initState() {
+    super.initState();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  }
+
+  @override
   void dispose() {
     _homeRefreshNotifier.dispose();
     super.dispose();
@@ -35,14 +42,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     });
 
     if (index == 1) {
-      // Refresh cart when cart tab is selected
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           context.read<CartCubit>().getCart();
         }
       });
     } else if (index == 0) {
-      // Refresh favorites when favorites tab is selected
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           context.read<FavoritesCubit>().getFavorites();
@@ -61,19 +66,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (context) => di.sl<CartCubit>()..getCart(),
-        ),
+        BlocProvider(create: (context) => di.sl<CartCubit>()..getCart()),
         BlocProvider(
           create: (context) => di.sl<FavoritesCubit>()..getFavorites(),
         ),
-        BlocProvider(
-          create: (context) => di.sl<SearchCubit>(),
-        ),
+        BlocProvider(create: (context) => di.sl<SearchCubit>()),
       ],
       child: Builder(
         builder: (builderContext) {
-          // Build screens here after providers are available
           final screens = [
             _buildWishlistScreen(),
             _buildCartScreen(),
@@ -84,12 +84,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
           return Scaffold(
             backgroundColor: AppColors.background,
+            resizeToAvoidBottomInset: false,
             extendBody: true,
-            resizeToAvoidBottomInset: true,
-            body: IndexedStack(
-              index: _selectedIndex,
-              children: screens,
-            ),
+
+            body: IndexedStack(index: _selectedIndex, children: screens),
             bottomNavigationBar: CustomBottomNavBar(
               selectedIndex: _selectedIndex,
               onTap: (index) => _onNavItemTapped(builderContext, index),
@@ -123,4 +121,3 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     return const SettingsScreen(key: ValueKey('settings_screen'));
   }
 }
-

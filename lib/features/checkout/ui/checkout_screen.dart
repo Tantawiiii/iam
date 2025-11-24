@@ -98,7 +98,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-    // Show loading
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -106,12 +106,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
 
     try {
-      // Call check-auth endpoint
+
       final authService = di.sl<AuthService>();
       final response = await authService.checkAuth();
 
       if (!context.mounted) return;
-      Navigator.pop(context); // Close loading dialog
+      Navigator.pop(context);
 
       final checkAuthResponse = CheckAuthResponseModel.fromJson(
         response.data as Map<String, dynamic>,
@@ -119,15 +119,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       final user = checkAuthResponse.data;
 
-      // Check if user is active
+
       if (!user.active) {
-        // Check if id_image is missing
+
         if (user.idImage == null || user.idImage!.isEmpty) {
           await _showMissingIdImageDialog(context);
           return;
         }
 
-        // Check if bank_statement_image or invoice_image are missing
         final missingBankStatement =
             user.bankStatementImage == null || user.bankStatementImage!.isEmpty;
         final missingInvoice =
@@ -142,16 +141,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           return;
         }
 
-        // All images are uploaded, show under review message
         await _showDataUnderReviewDialog(context);
         return;
       }
 
-      // User is active, proceed with order creation
       _createOrder(context);
     } catch (e) {
       if (!context.mounted) return;
-      Navigator.pop(context); // Close loading dialog if still open
+      Navigator.pop(context);
 
       String errorMessage = 'An error occurred. Please try again.';
       if (e is DioException) {

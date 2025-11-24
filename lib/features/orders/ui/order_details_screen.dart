@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
@@ -52,7 +53,7 @@ class OrderDetailsScreen extends StatelessWidget {
                         SizedBox(height: 20.h),
                         _buildPaymentCard(order),
                         SizedBox(height: 20.h),
-                        _buildOrderItemsSection(order.cards),
+                        _buildOrderItemsSection(context, order.cards),
                         SizedBox(height: 24.h),
                         _buildActionsSection(
                           context: context,
@@ -223,7 +224,10 @@ class OrderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOrderItemsSection(List<OrderCardItemModel> cards) {
+  Widget _buildOrderItemsSection(
+    BuildContext context,
+    List<OrderCardItemModel> cards,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -236,17 +240,21 @@ class OrderDetailsScreen extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16.h),
-        ...cards.map(_buildOrderItemCard),
+        ...cards.map((card) => _buildOrderItemCard(context, card)),
       ],
     );
   }
 
-  Widget _buildOrderItemCard(OrderCardItemModel cardItem) {
+  Widget _buildOrderItemCard(
+    BuildContext context,
+    OrderCardItemModel cardItem,
+  ) {
     final itemName = cardItem.card.name;
     final itemPrice = cardItem.card.price;
     final currency = cardItem.card.currency;
     final quantity = cardItem.qty;
     final itemImage = cardItem.card.image;
+    final productNumber = cardItem.card.productNumber;
 
     final totalPrice = (double.tryParse(itemPrice) ?? 0) * quantity;
 
@@ -331,6 +339,59 @@ class OrderDetailsScreen extends StatelessWidget {
                     color: AppColors.primaryColor,
                   ),
                 ),
+                if (productNumber.isNotEmpty) ...[
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Text(
+                        '${AppTexts.productNumber}: ',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: AppColors.greyTextColor,
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          productNumber,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: AppColors.blackTextColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      GestureDetector(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: productNumber));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${AppTexts.productNumber} ${AppTexts.copied}',
+                              ),
+                              duration: const Duration(seconds: 2),
+                              backgroundColor: AppColors.success,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(6.w),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6.r),
+                          ),
+                          child: Icon(
+                            Icons.copy,
+                            size: 16.sp,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),

@@ -41,23 +41,21 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
         }
       }
     }
-
     return images;
   }
 
   String? _extractVideoId(String url) {
-    // Accept raw 11-char YouTube IDs
     final idLike = url.trim();
     final idReg = RegExp(r'^[a-zA-Z0-9_-]{11}$');
     if (idReg.hasMatch(idLike)) {
       return idLike;
     }
-    // Try plugin helper first
+
     final fromPlugin = YoutubePlayer.convertUrlToId(url);
     if (fromPlugin != null && idReg.hasMatch(fromPlugin)) {
       return fromPlugin;
     }
-    // Handle common patterns manually
+
     try {
       final uri = Uri.parse(url.trim());
       final host = uri.host.toLowerCase();
@@ -68,12 +66,10 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
         }
       }
       if (host.contains('youtube.com')) {
-        // watch?v=ID
         final vParam = uri.queryParameters['v'];
         if (vParam != null && idReg.hasMatch(vParam)) {
           return vParam;
         }
-        // /embed/ID or /shorts/ID
         final segs = uri.pathSegments;
         if (segs.length >= 2) {
           final candidate = segs[1];
@@ -83,7 +79,7 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
         }
       }
     } catch (_) {
-      // ignore parse errors
+
     }
     return null;
   }
@@ -119,7 +115,6 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
   Widget build(BuildContext context) {
     final images = _allImages;
     final hasVideo = _youtubeController != null;
-    // Video comes last, so total items = images.length + (hasVideo ? 1 : 0)
     final totalItems = images.length + (hasVideo ? 1 : 0);
 
     if (totalItems == 0) {
@@ -150,11 +145,9 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
             },
             itemCount: totalItems,
             itemBuilder: (context, index) {
-              // Video comes last, so if index equals images.length, show video
               if (hasVideo && index == images.length) {
                 return _buildVideoItem();
               }
-              // Otherwise show image
               if (index < images.length) {
                 return _buildImageItem(images[index]);
               }
