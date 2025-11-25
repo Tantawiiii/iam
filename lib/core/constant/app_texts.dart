@@ -89,6 +89,8 @@ final class AppTexts {
   static String get myAccount => _text('myAccount');
   static String get orders => _text('orders');
   static String get noOrdersYet => _text('noOrdersYet');
+  static String get productsForSale => _text('productsForSale');
+  static String get noProductsForSale => _text('noProductsForSale');
   static String get total => _text('total');
   static String get checkout => _text('checkout');
   static String get eGP => _text('eGP');
@@ -117,6 +119,8 @@ final class AppTexts {
       _text('startTypingToSearchProducts');
   static String get noResultsFound => _text('noResultsFound');
   static String get wishlist => _text('wishlist');
+  static String get favorites => _text('favorites');
+  static String get home => _text('home');
   static String get retry => _text('retry');
   static String get wishlistEmpty => _text('wishlistEmpty');
   static String get addItemsToWishlist => _text('addItemsToWishlist');
@@ -279,6 +283,14 @@ final class AppTexts {
       AppLanguage.ar: 'لا يوجد طالبات',
     },
     'orders': {AppLanguage.en: 'Orders', AppLanguage.ar: 'طلباتي'},
+    'productsForSale': {
+      AppLanguage.en: 'Products for Sale',
+      AppLanguage.ar: 'المنتجات المعروضة للبيع',
+    },
+    'noProductsForSale': {
+      AppLanguage.en: 'No Products for Sale',
+      AppLanguage.ar: 'لا توجد منتجات معروضة للبيع',
+    },
     'allCategories': {
       AppLanguage.en: 'All Categories',
       AppLanguage.ar: 'جميع الفئات',
@@ -523,6 +535,8 @@ final class AppTexts {
       AppLanguage.ar: 'لا توجد نتائج',
     },
     'wishlist': {AppLanguage.en: 'Wishlist', AppLanguage.ar: 'المفضلة'},
+    'favorites': {AppLanguage.en: 'Favorites', AppLanguage.ar: 'المفضلة'},
+    'home': {AppLanguage.en: 'Home', AppLanguage.ar: 'الرئيسية'},
     'retry': {AppLanguage.en: 'Retry', AppLanguage.ar: 'إعادة المحاولة'},
     'wishlistEmpty': {
       AppLanguage.en: 'Your wishlist is empty',

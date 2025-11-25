@@ -273,139 +273,140 @@ class ProductDetailsScreen extends StatelessWidget {
                               SizedBox(height: 24.h),
                             ],
                             if (isForSale) ...[
-                              Builder(
-                                builder: (context) {
-                                  final resellProductNumber = (productNumber != null &&
-                                          productNumber!.isNotEmpty)
-                                      ? productNumber!
-                                      : (currentProduct.productNumber.isNotEmpty
-                                          ? currentProduct.productNumber
-                                          : null);
-                                  
-                                  if (resellProductNumber == null ||
-                                      resellProductNumber.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  
-                                  return _ResellButton(
-                                    product: currentProduct,
-                                    productNumber: resellProductNumber,
-                                  );
-                                },
-                              ),
+                              // Builder(
+                              //   builder: (context) {
+                              //     final resellProductNumber = (productNumber != null &&
+                              //             productNumber!.isNotEmpty)
+                              //         ? productNumber!
+                              //         : (currentProduct.productNumber.isNotEmpty
+                              //             ? currentProduct.productNumber
+                              //             : null);
+                              //
+                              //     if (resellProductNumber == null ||
+                              //         resellProductNumber.isEmpty) {
+                              //       return const SizedBox.shrink();
+                              //     }
+                              //
+                              //     return _ResellButton(
+                              //       product: currentProduct,
+                              //       productNumber: resellProductNumber,
+                              //     );
+                              //   },
+                              // ),
                               SizedBox(height: 24.h),
                             ],
                             _buildConfidenceSection(currentProduct),
                             SizedBox(height: 24.h),
-                            BlocBuilder<CartCubit, CartState>(
-                              builder: (context, cartState) {
-                                int cartQuantity = 0;
-                                if (cartState is CartSuccess) {
-                                  try {
-                                    final cartItem = cartState.response.data
-                                        .firstWhere(
-                                          (item) =>
-                                              item.cardId == currentProduct.id,
-                                        );
-                                    cartQuantity = cartItem.quantity;
-                                  } catch (e) {
-                                    cartQuantity = 0;
+                            if (!isForSale)
+                              BlocBuilder<CartCubit, CartState>(
+                                builder: (context, cartState) {
+                                  int cartQuantity = 0;
+                                  if (cartState is CartSuccess) {
+                                    try {
+                                      final cartItem = cartState.response.data
+                                          .firstWhere(
+                                            (item) =>
+                                                item.cardId == currentProduct.id,
+                                          );
+                                      cartQuantity = cartItem.quantity;
+                                    } catch (e) {
+                                      cartQuantity = 0;
+                                    }
                                   }
-                                }
 
-                                if (cartQuantity > 0) {
-                                  return Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 16.w,
-                                      vertical: 12.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor.withOpacity(
-                                        0.1,
+                                  if (cartQuantity > 0) {
+                                    return Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16.w,
+                                        vertical: 12.h,
                                       ),
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      border: Border.all(
-                                        color: AppColors.primaryColor,
-                                        width: 1.5,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryColor.withOpacity(
+                                          0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12.r),
+                                        border: Border.all(
+                                          color: AppColors.primaryColor,
+                                          width: 1.5,
+                                        ),
                                       ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          AppTexts.inCart,
-                                          style: TextStyle(
-                                            color: AppColors.primaryColor,
-                                            fontSize: 16.sp,
-                                            fontWeight: FontWeight.w600,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            AppTexts.inCart,
+                                            style: TextStyle(
+                                              color: AppColors.primaryColor,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            _buildQuantityButton(
-                                              context: context,
-                                              icon: Icons.remove,
-                                              onTap: () {
-                                                _updateQuantity(
-                                                  context,
-                                                  currentProduct.id,
-                                                  'minus',
-                                                );
-                                              },
-                                            ),
-                                            SizedBox(width: 16.w),
-                                            Text(
-                                              cartQuantity.toString(),
-                                              style: TextStyle(
-                                                color: AppColors.primaryColor,
-                                                fontSize: 18.sp,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            SizedBox(width: 16.w),
-                                            _buildQuantityButton(
-                                              context: context,
-                                              icon: Icons.add,
-                                              onTap: () {
-                                                _updateQuantity(
-                                                  context,
-                                                  currentProduct.id,
-                                                  'plus',
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                                return BlocBuilder<
-                                  ProductDetailsCubit,
-                                  ProductDetailsState
-                                >(
-                                  builder: (context, state) {
-                                    final isLoading = state is AddToCartLoading;
-                                    return PrimaryButton(
-                                      title: isLoading
-                                          ? AppTexts.addingToCart
-                                          : AppTexts.addToCart,
-                                      onPressed: isLoading
-                                          ? () {}
-                                          : () {
-                                              context
-                                                  .read<ProductDetailsCubit>()
-                                                  .addToCart(
-                                                    productId:
-                                                        currentProduct.id,
+                                          Row(
+                                            children: [
+                                              _buildQuantityButton(
+                                                context: context,
+                                                icon: Icons.remove,
+                                                onTap: () {
+                                                  _updateQuantity(
+                                                    context,
+                                                    currentProduct.id,
+                                                    'minus',
                                                   );
-                                            },
+                                                },
+                                              ),
+                                              SizedBox(width: 16.w),
+                                              Text(
+                                                cartQuantity.toString(),
+                                                style: TextStyle(
+                                                  color: AppColors.primaryColor,
+                                                  fontSize: 18.sp,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              SizedBox(width: 16.w),
+                                              _buildQuantityButton(
+                                                context: context,
+                                                icon: Icons.add,
+                                                onTap: () {
+                                                  _updateQuantity(
+                                                    context,
+                                                    currentProduct.id,
+                                                    'plus',
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     );
-                                  },
-                                );
-                              },
-                            ),
+                                  }
+                                  return BlocBuilder<
+                                    ProductDetailsCubit,
+                                    ProductDetailsState
+                                  >(
+                                    builder: (context, state) {
+                                      final isLoading = state is AddToCartLoading;
+                                      return PrimaryButton(
+                                        title: isLoading
+                                            ? AppTexts.addingToCart
+                                            : AppTexts.addToCart,
+                                        onPressed: isLoading
+                                            ? () {}
+                                            : () {
+                                                context
+                                                    .read<ProductDetailsCubit>()
+                                                    .addToCart(
+                                                      productId:
+                                                          currentProduct.id,
+                                                    );
+                                              },
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                             SizedBox(height: 16.h),
                             if (currentProduct.reviews.isNotEmpty) ...[
                               Text(

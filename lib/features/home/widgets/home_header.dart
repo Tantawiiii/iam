@@ -35,86 +35,74 @@ class HomeHeader extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: ClipOval(
-                    child: Image.asset(
-                      AppAssets.newLogoDark,
-                      height: 60.h,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Row(
-                  children: [
-                    BlocBuilder<NotificationsCubit, NotificationsState>(
-                      builder: (context, state) {
-                        final unreadCount = context
-                            .read<NotificationsCubit>()
-                            .unreadCount;
-                        return Bounce(
-                          onTap: () {
-                            final notificationsCubit = context
-                                .read<NotificationsCubit>();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: notificationsCubit,
-                                  child: const NotificationsScreen(),
-                                ),
-                              ),
-                            );
-                          },
-                          child: Stack(
-                            clipBehavior: Clip.none,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(8.w),
-                                decoration: BoxDecoration(
-                                  color: AppColors.surfaceVariant,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  Icons.notifications_outlined,
-                                  color: AppColors.textPrimary,
-                                  size: 24.sp,
-                                ),
-                              ),
-                              if (unreadCount > 0)
-                                Positioned(
-                                  right: 0,
-                                  top: 0,
-                                  child: Container(
-                                    padding: EdgeInsets.all(4.w),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.error,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: AppColors.background,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    constraints: BoxConstraints(
-                                      minWidth: 18.w,
-                                      minHeight: 18.w,
-                                    ),
-                                    child: Text(
-                                      unreadCount > 9 ? '9+' : '$unreadCount',
-                                      style: TextStyle(
-                                        color: AppColors.textOnPrimary,
-                                        fontSize: 10.sp,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                            ],
+                BlocBuilder<NotificationsCubit, NotificationsState>(
+                  builder: (context, state) {
+                    final unreadCount = context
+                        .read<NotificationsCubit>()
+                        .unreadCount;
+                    return Bounce(
+                      onTap: () {
+                        final notificationsCubit = context
+                            .read<NotificationsCubit>();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider.value(
+                              value: notificationsCubit,
+                              child: const NotificationsScreen(),
+                            ),
                           ),
                         );
                       },
-                    ),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: ClipOval(
+                              child: Image.asset(
+                                AppAssets.newLogoLight,
+                                height: 60.h,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          if (unreadCount > 0)
+                            Positioned(
+                              right: -4.w,
+                              top: -4.h,
+                              child: Container(
+                                padding: EdgeInsets.all(4.w),
+                                decoration: BoxDecoration(
+                                  color: AppColors.error,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.background,
+                                    width: 2,
+                                  ),
+                                ),
+                                constraints: BoxConstraints(
+                                  minWidth: 18.w,
+                                  minHeight: 18.w,
+                                ),
+                                child: Text(
+                                  unreadCount > 9 ? '9+' : '$unreadCount',
+                                  style: TextStyle(
+                                    color: AppColors.textOnPrimary,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                Row(
+                  children: [
                     SizedBox(width: 12.w),
                     // User Profile
                     Bounce(

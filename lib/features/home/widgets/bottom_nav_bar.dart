@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
+import '../../../core/constant/app_texts.dart';
 import '../../cart/cubit/cart_cubit.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -17,58 +17,66 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CurvedNavigationBar(
-      index: selectedIndex,
+    return BottomNavigationBar(
+      currentIndex: selectedIndex,
       onTap: onTap,
-      backgroundColor: Colors.white.withOpacity(0.9),
-      color: Colors.white,
-      buttonBackgroundColor: AppColors.primary,
-      height: (75.h).clamp(0.0, 75.0),
-      animationDuration: const Duration(milliseconds: 400),
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: AppColors.background,
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: AppColors.textSecondary,
+      selectedLabelStyle: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.w500,
+      ),
+      elevation: 8,
       items: [
-        Icon(
-          Icons.favorite_border,
-          color: selectedIndex == 0
-              ? AppColors.white
-              : AppColors.textSecondary,
-          size: 26.r,
+        BottomNavigationBarItem(
+          icon: Icon(
+            selectedIndex == 0 ? Icons.favorite : Icons.favorite_border,
+            size: 24.r,
+          ),
+          label: AppTexts.favorites,
         ),
-        BlocBuilder<CartCubit, CartState>(
-          builder: (context, state) {
-            int itemCount = 0;
-            if (state is CartSuccess) {
-              itemCount = state.response.data.fold<int>(
-                0,
-                (total, item) => total + item.quantity,
+        BottomNavigationBarItem(
+          icon: BlocBuilder<CartCubit, CartState>(
+            builder: (context, state) {
+              int itemCount = 0;
+              if (state is CartSuccess) {
+                itemCount = state.response.data.fold<int>(
+                  0,
+                  (total, item) => total + item.quantity,
+                );
+              }
+              return _NavItemWithBadge(
+                icon: Icons.shopping_cart,
+                isSelected: selectedIndex == 1,
+                count: itemCount,
               );
-            }
-            return _NavItemWithBadge(
-              icon: Icons.shopping_cart,
-              count: itemCount,
-              isSelected: selectedIndex == 1,
-            );
-          },
+            },
+          ),
+          label: AppTexts.cart,
         ),
-        Icon(
-          Icons.home,
-          color: selectedIndex == 2
-              ? AppColors.white
-              : AppColors.textSecondary,
-          size: 28.r,
+        BottomNavigationBarItem(
+          icon: Icon(
+            selectedIndex == 2 ? Icons.home : Icons.home_outlined,
+            size: 24.r,
+          ),
+          label: AppTexts.home,
         ),
-        Icon(
-          Icons.search,
-          color: selectedIndex == 3
-              ? AppColors.white
-              : AppColors.textSecondary,
-          size: 26.r,
+        BottomNavigationBarItem(
+          icon: Icon(Icons.search, size: 24.r),
+          label: AppTexts.search,
         ),
-        Icon(
-          Icons.settings,
-          color: selectedIndex == 4
-              ? AppColors.white
-              : AppColors.textSecondary,
-          size: 26.r,
+        BottomNavigationBarItem(
+          icon: Icon(
+            selectedIndex == 4 ? Icons.settings : Icons.settings_outlined,
+            size: 24.r,
+          ),
+          label: AppTexts.settings,
         ),
       ],
     );
@@ -77,13 +85,13 @@ class CustomBottomNavBar extends StatelessWidget {
 
 class _NavItemWithBadge extends StatelessWidget {
   final IconData icon;
-  final int count;
   final bool isSelected;
+  final int count;
 
   const _NavItemWithBadge({
     required this.icon,
+    required this.isSelected,
     required this.count,
-    this.isSelected = false,
   });
 
   @override
@@ -92,11 +100,7 @@ class _NavItemWithBadge extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        Icon(
-          icon,
-          color: isSelected ? AppColors.white : AppColors.textSecondary,
-          size: 24.r,
-        ),
+        Icon(icon, size: 24.r),
         if (showBadge)
           Positioned(
             right: -6.w,
@@ -106,11 +110,11 @@ class _NavItemWithBadge extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: AppColors.accentGradient,
                 borderRadius: BorderRadius.circular(14.r),
-                border: Border.all(color: Colors.white, width: 2.5),
+                border: Border.all(color: AppColors.background, width: 2),
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.accent.withOpacity(0.5),
-                    blurRadius: 12,
+                    blurRadius: 8,
                     spreadRadius: 1,
                   ),
                 ],

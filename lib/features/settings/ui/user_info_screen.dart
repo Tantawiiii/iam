@@ -79,10 +79,10 @@ class UserInfoScreen extends StatelessWidget {
                       SizedBox(height: 32.h),
                       _buildOrdersSection(context, state.orders),
                       SizedBox(height: 32.h),
-                      // _buildProductsForSaleSection(
-                      //   context,
-                      //   state.productsForSale,
-                      // ),
+                      _buildProductsForSaleSection(
+                        context,
+                        state.productsForSale,
+                      ),
                       SizedBox(height: 32.h),
                       _buildDeleteAccountSection(context),
                     ],
@@ -357,6 +357,211 @@ class UserInfoScreen extends StatelessWidget {
                 ],
               ),
             ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductsForSaleSection(
+    BuildContext context,
+    List<dynamic> productsForSale,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppTexts.productsForSale,
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            color: AppColors.blackTextColor,
+          ),
+        ),
+        SizedBox(height: 16.h),
+        if (productsForSale.isEmpty)
+          Container(
+            padding: EdgeInsets.all(40.w),
+            decoration: BoxDecoration(
+              color: AppColors.overlayColor,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.sell_outlined,
+                  size: 64.sp,
+                  color: AppColors.greyTextColor,
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  AppTexts.noProductsForSale,
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    color: AppColors.greyTextColor,
+                  ),
+                ),
+              ],
+            ),
+          )
+        else
+          ...productsForSale.asMap().entries.map((entry) {
+            final index = entry.key;
+            final product = entry.value;
+            return _buildProductForSaleCard(context, product, index);
+          }).toList(),
+      ],
+    );
+  }
+
+  Widget _buildProductForSaleCard(
+    BuildContext context,
+    dynamic product,
+    int index,
+  ) {
+    int? productId;
+    String? productNumber;
+    String productName = '';
+    String? productImage;
+    String? productPrice;
+
+    if (product is Map) {
+      productId =
+          product['id'] as int? ??
+          product['product_id'] as int? ??
+          product['card_id'] as int? ??
+          (product['id'] != null
+              ? int.tryParse(product['id'].toString())
+              : null) ??
+          (product['product_id'] != null
+              ? int.tryParse(product['product_id'].toString())
+              : null) ??
+          (product['card_id'] != null
+              ? int.tryParse(product['card_id'].toString())
+              : null);
+
+      productNumber =
+          product['product_number']?.toString() ??
+          product['productNumber']?.toString();
+
+      productName =
+          product['name']?.toString() ??
+          product['product_name']?.toString() ??
+          product['title']?.toString() ??
+          'Product ${index + 1}';
+
+      productImage =
+          product['image']?.toString() ?? product['product_image']?.toString();
+
+      productPrice =
+          product['price']?.toString() ?? product['product_price']?.toString();
+    }
+
+    if (productId == null) {
+      return const SizedBox.shrink();
+    }
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          AppRoutes.productDetails,
+          arguments: {
+            'productId': productId,
+            'isForSale': true,
+            'productNumber': productNumber,
+          },
+        );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 12.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: AppColors.textFieldBorderColor),
+        ),
+        child: Row(
+          children: [
+            if (productImage != null && productImage.isNotEmpty)
+              Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  color: AppColors.overlayColor,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Image.network(
+                    productImage,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.image_outlined,
+                      color: AppColors.greyTextColor,
+                      size: 32.sp,
+                    ),
+                  ),
+                ),
+              )
+            else
+              Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  color: AppColors.overlayColor,
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Icon(
+                  Icons.image_outlined,
+                  color: AppColors.greyTextColor,
+                  size: 32.sp,
+                ),
+              ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    productName,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.blackTextColor,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (productNumber != null && productNumber.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      '${AppTexts.productNumber}: $productNumber',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.greyTextColor,
+                      ),
+                    ),
+                  ],
+                  if (productPrice != null && productPrice.isNotEmpty) ...[
+                    SizedBox(height: 4.h),
+                    Text(
+                      productPrice,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryColor,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: AppColors.greyTextColor,
+              size: 24.sp,
+            ),
           ],
         ),
       ),

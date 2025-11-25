@@ -22,23 +22,23 @@ final class AppColors {
   static const Color accentPink = Color(0xFFF472B6); // Deep Pink
   
   // Background Colors - Light Theme
-  static const Color background = Color(0xFFF8F9FA); // Light Gray Background
-  static const Color backgroundLight = Color(0xFFFFFFFF); // White
-  static const Color surface = Color(0xFFFFFFFF); // White Card Surface
-  static const Color surfaceVariant = Color(0xFFF1F5F9); // Light Gray Variant Surface
-  static const Color surfaceElevated = Color(0xFFE2E8F0); // Light Gray Elevated Surface
+  static const Color background = Color(0xFFFFFFFF); // White
+  static const Color backgroundLight = Color(0xFFF8F9FA); // Very Light Gray
+  static const Color surface = Color(0xFFFFFFFF); // Card Surface (White)
+  static const Color surfaceVariant = Color(0xFFF1F3F5); // Light Gray
+  static const Color surfaceElevated = Color(0xFFE9ECEF); // Slightly Darker Gray
   
   // Text Colors - Light Theme
-  static const Color textPrimary = Color(0xFF0F172A); // Dark text for light background
-  static const Color textSecondary = Color(0xFF475569); // Medium Gray
-  static const Color textTertiary = Color(0xFF94A3B8); // Light Gray
+  static const Color textPrimary = Color(0xFF1A1A1A); // Dark Gray/Black
+  static const Color textSecondary = Color(0xFF6C757D); // Medium Gray
+  static const Color textTertiary = Color(0xFFADB5BD); // Light Gray
   static const Color textOnPrimary = Color(0xFFFFFFFF); // White on gradients
-  static const Color textOnDark = Color(0xFF0F172A); // Dark text on light
+  static const Color textOnDark = Color(0xFF1A1A1A); // Dark text on light
   
   // Border & Divider Colors - Light Theme
-  static const Color border = Color(0xFFE2E8F0);
-  static const Color borderLight = Color(0xFFCBD5E1);
-  static const Color divider = Color(0xFFE2E8F0);
+  static const Color border = Color(0xFFDEE2E6); // Light Gray Border
+  static const Color borderLight = Color(0xFFE9ECEF); // Lighter Gray Border
+  static const Color divider = Color(0xFFE9ECEF); // Light Divider
   
   // Status Colors
   static const Color success = Color(0xFF10B981);
@@ -50,31 +50,31 @@ final class AppColors {
   static const Color info = Color(0xFF3B82F6);
   static const Color infoLight = Color(0xFF60A5FA);
   
-  // Shadow Colors
-  static const Color shadowLight = Color(0x1A000000);
-  static const Color shadowMedium = Color(0x33000000);
-  static const Color shadowDark = Color(0x4D000000);
-  static const Color shadowGlow = Color(0x4006B6D4); // Cyan glow
+  // Shadow Colors - Light Theme (lighter shadows)
+  static const Color shadowLight = Color(0x0A000000);
+  static const Color shadowMedium = Color(0x1A000000);
+  static const Color shadowDark = Color(0x33000000);
+  static const Color shadowGlow = Color(0x2006B6D4); // Light Cyan glow
   
-  // Overlay Colors
-  static const Color overlay = Color(0x80000000);
-  static const Color overlayDark = Color(0xCC000000);
-  static const Color overlayLight = Color(0x40000000);
+  // Overlay Colors - Light Theme
+  static const Color overlay = Color(0x40000000);
+  static const Color overlayDark = Color(0x80000000);
+  static const Color overlayLight = Color(0x20000000);
   
-  // Splash & Onboarding
-  static const Color splashBackground = Color(0xFFF8F9FA);
+  // Splash & Onboarding - Light Theme
+  static const Color splashBackground = Color(0xFFFFFFFF);
   
   // Legacy Support (for gradual migration)
   static const Color primaryColor = primary;
-  static const Color blackTextColor = textPrimary; // Dark text for light theme
-  static const Color greyTextColor = textSecondary;
+  static const Color blackTextColor = textPrimary; // Dark text in light theme
+  static const Color greyTextColor = textSecondary; // Medium gray text
   static const Color shadowColor = shadowMedium;
   static const Color errorBorderColor = error;
   static const Color textFieldBorderColor = border;
-  static const Color whiteBackground = surface; // White for light theme
+  static const Color whiteBackground = background; // White background
   static Color warningColor = warning.withAlpha(100);
   static Color overlayColor = overlay;
-  static Color white = surface; // White for light theme
+  static Color white = background; // White
   
   // Premium Gradient Helpers - Based on Logo Colors
   static LinearGradient get primaryGradient => const LinearGradient(

@@ -28,19 +28,21 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         user.bankStatementImage != null ||
         user.invoiceImage != null;
 
-    if (hasUploadedDocuments && !user.active && user.isRefused != true) {
+    // Priority: rejected > approved > under review
+    // Only show one notification at a time based on the current state
+    if (user.isRefused == true) {
+      // Account rejected - highest priority
       _notifications.add(
         NotificationModel(
-          id: 'review_${user.id}',
-          title: AppTexts.accountUnderReviewTitle,
-          message: AppTexts.accountUnderReview,
+          id: 'rejected_${user.id}',
+          title: AppTexts.accountRejectedTitle,
+          message: AppTexts.accountRejectedMessage,
           createdAt: DateTime.now(),
-          type: NotificationType.underReview,
+          type: NotificationType.accountRejected,
         ),
       );
-    }
-
-    if (user.active) {
+    } else if (user.active) {
+      // Account approved
       _notifications.add(
         NotificationModel(
           id: 'approved_${user.id}',
@@ -50,16 +52,15 @@ class NotificationsCubit extends Cubit<NotificationsState> {
           type: NotificationType.accountApproved,
         ),
       );
-    }
-
-    if (user.isRefused == true) {
+    } else if (hasUploadedDocuments && !user.active && user.isRefused != true) {
+      // Documents uploaded, waiting for review
       _notifications.add(
         NotificationModel(
-          id: 'rejected_${user.id}',
-          title: AppTexts.accountRejectedTitle,
-          message: AppTexts.accountRejectedMessage,
+          id: 'review_${user.id}',
+          title: AppTexts.accountUnderReviewTitle,
+          message: AppTexts.accountUnderReview,
           createdAt: DateTime.now(),
-          type: NotificationType.accountRejected,
+          type: NotificationType.underReview,
         ),
       );
     }
