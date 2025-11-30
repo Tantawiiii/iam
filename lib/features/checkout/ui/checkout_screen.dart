@@ -36,7 +36,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _zipCodeController = TextEditingController();
   final _promoCodeController = TextEditingController();
   final String _paymentMethod = 'card';
-  String _paymentType = 'cash'; // 'cash' or 'installment'
+  String _paymentType = 'cash';
   int? _selectedInstallmentMonths;
 
   @override
