@@ -1,10 +1,8 @@
 final class ApiConstants {
   ApiConstants._();
 
-  // Base URL
-  static const String baseUrl = 'https://job.professionalacademyedu.com';
+  static const String baseUrl = 'https://backiam.dentin.cloud';
 
-  // API Endpoints
   static const String register = '/api/front/register';
   static const String login = '/api/front/login';
   static const String logout = '/api/front/logout';

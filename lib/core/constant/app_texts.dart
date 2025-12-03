@@ -366,7 +366,7 @@ final class AppTexts {
       AppLanguage.en:
           'Subscribe now and get your products on installments up to 25,000 UAE Dirhams',
       AppLanguage.ar:
-          'اشترك الان واحصل علي منتجاتك با التقسيط بقيمة 25 الف درهم إماراتي',
+          'اشترك الان وأحصل على منتجاتك با التقسيط بقيمة 25 الف درهم إماراتي',
     },
     'onDesTitle1': {
       AppLanguage.en:
@@ -376,7 +376,7 @@ final class AppTexts {
     },
     'onTitle2': {
       AppLanguage.en: 'Comfortable installments up to 3 years',
-      AppLanguage.ar: 'تقسيط مريح يرصل الي 3 سنوات',
+      AppLanguage.ar: 'تقسيط مريح يصل الي 3 سنوات',
     },
     'onDesTitle2': {
       AppLanguage.en:
