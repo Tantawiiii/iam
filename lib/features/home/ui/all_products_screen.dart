@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/di/inject.dart' as di;
+import '../../../shared/widgets/product_grid_shimmer.dart';
+import '../../../shared/widgets/animated_product_grid.dart';
 import '../cubit/products_cubit.dart';
 import '../../favorites/cubit/favorites_cubit.dart';
 import '../widgets/product_grid_card.dart';
@@ -59,11 +61,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
         body: BlocBuilder<ProductsCubit, ProductsState>(
           builder: (context, state) {
             if (state is ProductsLoading) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                ),
-              );
+              return const ProductGridShimmer(itemCount: 6);
             }
 
             if (state is ProductsFailure) {
@@ -124,14 +122,7 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                 );
               }
 
-              return GridView.builder(
-                padding: EdgeInsets.all(20.w),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 6.w,
-                  mainAxisSpacing: 14.h,
-                  childAspectRatio: 0.6,
-                ),
+              return AnimatedProductGrid(
                 itemCount: products.length,
                 itemBuilder: (context, index) {
                   final product = products[index];
@@ -139,8 +130,9 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                     builder: (context, favoritesState) {
                       bool isFavorite = false;
                       if (favoritesState is FavoritesSuccess) {
-                        isFavorite = favoritesState.response.data
-                            .any((fav) => fav.card.id == product.id);
+                        isFavorite = favoritesState.response.data.any(
+                          (fav) => fav.card.id == product.id,
+                        );
                       }
 
                       return ProductGridCard(
@@ -148,9 +140,9 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                         isFavorite: isFavorite,
                         onFavoriteTap: () {
                           context.read<FavoritesCubit>().toggleFavorite(
-                                cardId: product.id,
-                                method: isFavorite ? 'delete' : 'add',
-                              );
+                            cardId: product.id,
+                            method: isFavorite ? 'delete' : 'add',
+                          );
                         },
                       );
                     },
@@ -166,4 +158,3 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
     );
   }
 }
-

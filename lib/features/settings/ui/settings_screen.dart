@@ -15,10 +15,18 @@ import '../cubit/resell_product_cubit.dart';
 import '../../contact_us/cubit/contact_us_cubit.dart';
 import 'update_profile_tab.dart';
 import 'resell_product_tab.dart';
+import 'user_info_screen.dart';
 import '../../contact_us/ui/contact_us_tab.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  void _openMyAccount(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const UserInfoScreen()),
+    );
+  }
 
   void _openUpdateProfile(BuildContext context) {
     Navigator.push(
@@ -159,29 +167,36 @@ class SettingsScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
         children: [
           _SettingsTile(
-            icon: Icons.language_outlined,
+            icon: Icons.account_circle_outlined,
             iconColor: AppColors.primary,
+            title: AppTexts.myAccount,
+            subtitle: AppTexts.myAccount,
+            onTap: () => _openMyAccount(context),
+          ),
+          _SettingsTile(
+            icon: Icons.language_outlined,
+            iconColor: AppColors.secondary,
             title: AppTexts.language,
             subtitle: AppTexts.changeLanguage,
             trailing: const LanguageSwitcher(),
           ),
           _SettingsTile(
             icon: Icons.person_outline,
-            iconColor: AppColors.secondary,
+            iconColor: AppColors.accent,
             title: AppTexts.updateProfile,
             subtitle: AppTexts.editYourInfo,
             onTap: () => _openUpdateProfile(context),
           ),
           _SettingsTile(
             icon: Icons.support_agent_outlined,
-            iconColor: AppColors.accent,
+            iconColor: AppColors.warning,
             title: AppTexts.contactUs,
             subtitle: AppTexts.sendUsMessage,
             onTap: () => _openContactUs(context),
           ),
           _SettingsTile(
             icon: Icons.sell_outlined,
-            iconColor: AppColors.warning,
+            iconColor: Colors.orange,
             title: AppTexts.resellProduct,
             subtitle: AppTexts.resellProductSubtitle,
             onTap: () => _openResellProduct(context),

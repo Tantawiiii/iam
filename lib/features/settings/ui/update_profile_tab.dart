@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'package:bounce/bounce.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_texts.dart';
 import '../../../core/services/pick_avater.dart';
@@ -57,7 +60,6 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
       _emailController.text = user.email;
       _phoneController.text = user.phone;
       _currentAvatarUrl = user.avatar;
-      // Load new fields if available
       if (user.age != null) {
         _ageController.text = user.age.toString();
       }
@@ -90,87 +92,307 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
   }
 
   Future<void> _pickAvatar(ImageSource source) async {
-    final File? file = await PickAvatarService.pickAvatar(source);
-    if (file != null) {
-      setState(() => _avatarFile = file);
+    if (!mounted) {
+      debugPrint('_pickAvatar: Widget not mounted');
+      return;
+    }
+
+    debugPrint(
+      '_pickAvatar: Starting to pick avatar from ${source == ImageSource.camera ? "camera" : "gallery"}',
+    );
+
+    try {
+      final File? file = await PickAvatarService.pickAvatar(
+        source,
+        context: context,
+      );
+
+      debugPrint('_pickAvatar: File picked: ${file != null}');
+
+      if (mounted && file != null) {
+        setState(() => _avatarFile = file);
+      } else if (!mounted) {
+        debugPrint('_pickAvatar: Widget unmounted after picking');
+      } else {
+        debugPrint('_pickAvatar: No file selected');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('_pickAvatar Error: $e');
+      debugPrint('Stack trace: $stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking avatar: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   Future<void> _pickImage(ImageSource source, Function(File) onPicked) async {
-    final File? file = await PickAvatarService.pickAvatar(source);
-    if (file != null) {
-      onPicked(file);
+    if (!mounted) {
+      debugPrint('_pickImage: Widget not mounted');
+      return;
+    }
+
+    debugPrint(
+      '_pickImage: Starting to pick image from ${source == ImageSource.camera ? "camera" : "gallery"}',
+    );
+
+    try {
+      final File? file = await PickAvatarService.pickImageWithoutCrop(
+        source,
+        context: context,
+      );
+
+      debugPrint('_pickImage: File picked: ${file != null}');
+
+      if (mounted && file != null) {
+        onPicked(file);
+      } else if (!mounted) {
+        debugPrint('_pickImage: Widget unmounted after picking');
+      } else {
+        debugPrint('_pickImage: No file selected');
+      }
+    } catch (e, stackTrace) {
+      debugPrint('_pickImage Error: $e');
+      debugPrint('Stack trace: $stackTrace');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error picking image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
   void _showImagePickSheet(Function(File) onPicked) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              PickOption(
-                icon: Icons.photo_camera_outlined,
-                label: AppTexts.camera,
-                onTap: () {
-                  Navigator.pop(context);
+    final isIPad =
+        Platform.isIOS && (MediaQuery.of(context).size.shortestSide >= 600);
+
+    if (isIPad) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (popupContext) => CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () async {
+                Navigator.pop(popupContext);
+                debugPrint('Camera button pressed on iPad');
+
+                await Future.delayed(const Duration(milliseconds: 300));
+                if (mounted) {
+                  debugPrint('Calling _pickImage for camera');
                   _pickImage(ImageSource.camera, onPicked);
-                },
+                } else {
+                  debugPrint('Widget not mounted, cannot pick image');
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.photo_camera_outlined, color: AppColors.primary),
+                  SizedBox(width: 8.w),
+                  Text(AppTexts.camera),
+                ],
               ),
-              PickOption(
-                icon: Icons.photo_library_outlined,
-                label: AppTexts.gallery,
-                onTap: () {
-                  Navigator.pop(context);
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () async {
+                Navigator.pop(popupContext);
+                debugPrint('Gallery button pressed on iPad');
+                await Future.delayed(const Duration(milliseconds: 300));
+                if (mounted) {
+                  debugPrint('Calling _pickImage for gallery');
                   _pickImage(ImageSource.gallery, onPicked);
-                },
+                } else {
+                  debugPrint('Widget not mounted, cannot pick image');
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.photo_library_outlined, color: AppColors.primary),
+                  SizedBox(width: 8.w),
+                  Text(AppTexts.gallery),
+                ],
               ),
-            ],
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(popupContext),
+            child: Text(AppTexts.cancel),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+
+      showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        ),
+        builder: (sheetContext) => SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                PickOption(
+                  icon: Icons.photo_camera_outlined,
+                  label: AppTexts.camera,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    debugPrint('Camera button pressed');
+                    Future.delayed(const Duration(milliseconds: 300)).then((_) {
+                      if (mounted) {
+                        debugPrint('Calling _pickImage for camera');
+                        _pickImage(ImageSource.camera, onPicked);
+                      } else {
+                        debugPrint('Widget not mounted, cannot pick image');
+                      }
+                    });
+                  },
+                ),
+                PickOption(
+                  icon: Icons.photo_library_outlined,
+                  label: AppTexts.gallery,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    debugPrint('Gallery button pressed');
+                    Future.delayed(const Duration(milliseconds: 300)).then((_) {
+                      if (mounted) {
+                        debugPrint('Calling _pickImage for gallery');
+                        _pickImage(ImageSource.gallery, onPicked);
+                      } else {
+                        debugPrint('Widget not mounted, cannot pick image');
+                      }
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   void _showPickSheet() {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-      ),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              PickOption(
-                icon: Icons.photo_camera_outlined,
-                label: AppTexts.camera,
-                onTap: () {
-                  Navigator.pop(context);
+    final isIPad =
+        Platform.isIOS && (MediaQuery.of(context).size.shortestSide >= 600);
+
+    if (isIPad) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (popupContext) => CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              onPressed: () async {
+                Navigator.pop(popupContext);
+                debugPrint('Camera button pressed on iPad for avatar');
+                await Future.delayed(const Duration(milliseconds: 300));
+                if (mounted) {
+                  debugPrint('Calling _pickAvatar for camera');
                   _pickAvatar(ImageSource.camera);
-                },
+                } else {
+                  debugPrint('Widget not mounted, cannot pick avatar');
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.photo_camera_outlined, color: AppColors.primary),
+                  SizedBox(width: 8.w),
+                  Text(AppTexts.camera),
+                ],
               ),
-              PickOption(
-                icon: Icons.photo_library_outlined,
-                label: AppTexts.gallery,
-                onTap: () {
-                  Navigator.pop(context);
+            ),
+            CupertinoActionSheetAction(
+              onPressed: () async {
+                Navigator.pop(popupContext);
+                debugPrint('Gallery button pressed on iPad for avatar');
+                await Future.delayed(const Duration(milliseconds: 300));
+                if (mounted) {
+                  debugPrint('Calling _pickAvatar for gallery');
                   _pickAvatar(ImageSource.gallery);
-                },
+                } else {
+                  debugPrint('Widget not mounted, cannot pick avatar');
+                }
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.photo_library_outlined, color: AppColors.primary),
+                  SizedBox(width: 8.w),
+                  Text(AppTexts.gallery),
+                ],
               ),
-            ],
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            isDestructiveAction: true,
+            onPressed: () => Navigator.pop(popupContext),
+            child: Text(AppTexts.cancel),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+        ),
+        builder: (sheetContext) => SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                PickOption(
+                  icon: Icons.photo_camera_outlined,
+                  label: AppTexts.camera,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    debugPrint('Camera button pressed for avatar');
+                    // Wait for modal to dismiss before opening picker
+                    Future.delayed(const Duration(milliseconds: 300)).then((_) {
+                      if (mounted) {
+                        debugPrint('Calling _pickAvatar for camera');
+                        _pickAvatar(ImageSource.camera);
+                      } else {
+                        debugPrint('Widget not mounted, cannot pick avatar');
+                      }
+                    });
+                  },
+                ),
+                PickOption(
+                  icon: Icons.photo_library_outlined,
+                  label: AppTexts.gallery,
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    debugPrint('Gallery button pressed for avatar');
+                    // Wait for modal to dismiss before opening picker
+                    Future.delayed(const Duration(milliseconds: 300)).then((_) {
+                      if (mounted) {
+                        debugPrint('Calling _pickAvatar for gallery');
+                        _pickAvatar(ImageSource.gallery);
+                      } else {
+                        debugPrint('Widget not mounted, cannot pick avatar');
+                      }
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   void _handleUpdateProfile(UpdateProfileCubit cubit) {
@@ -303,7 +525,7 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
                           ? FileImage(_avatarFile!)
                           : (_currentAvatarUrl != null &&
                                 _currentAvatarUrl!.isNotEmpty)
-                          ? NetworkImage(_currentAvatarUrl!)
+                          ? CachedNetworkImageProvider(_currentAvatarUrl!)
                           : null,
                       child:
                           _avatarFile == null &&
@@ -503,17 +725,17 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
                   setState(() => _bankStatementImageFile = file);
                 }),
               ),
-              SizedBox(height: 16.h),
-
-              _buildImagePicker(
-                title: AppTexts.invoiceImage,
-                required: false,
-                file: _invoiceImageFile,
-                currentUrl: _currentInvoiceImageUrl,
-                onTap: () => _showImagePickSheet((file) {
-                  setState(() => _invoiceImageFile = file);
-                }),
-              ),
+              // SizedBox(height: 16.h),
+              //
+              // _buildImagePicker(
+              //   title: AppTexts.invoiceImage,
+              //   required: false,
+              //   file: _invoiceImageFile,
+              //   currentUrl: _currentInvoiceImageUrl,
+              //   onTap: () => _showImagePickSheet((file) {
+              //     setState(() => _invoiceImageFile = file);
+              //   }),
+              // ),
               SizedBox(height: 32.h),
               BlocBuilder<UpdateProfileCubit, UpdateProfileState>(
                 builder: (context, state) {
@@ -571,10 +793,10 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
           ],
         ),
         SizedBox(height: 8.h),
-        GestureDetector(
+        Bounce(
           onTap: onTap,
           child: Container(
-            height: 120.h,
+            height: 140.h,
             width: double.infinity,
             decoration: BoxDecoration(
               color: AppColors.surfaceVariant,
@@ -596,18 +818,25 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
                                 width: double.infinity,
                                 height: double.infinity,
                               )
-                            : Image.network(
-                                currentUrl!,
+                            : CachedNetworkImage(
+                                imageUrl: currentUrl!,
                                 fit: BoxFit.cover,
                                 width: double.infinity,
                                 height: double.infinity,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Icon(
-                                    Icons.broken_image,
-                                    size: 40.sp,
-                                    color: AppColors.textSecondary,
-                                  );
-                                },
+                                placeholder: (context, url) => Container(
+                                  color: AppColors.textFieldBorderColor,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) => Icon(
+                                  Icons.broken_image,
+                                  size: 40.sp,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
                       ),
                       Positioned(

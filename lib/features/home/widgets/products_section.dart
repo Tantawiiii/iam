@@ -59,7 +59,7 @@ class _ProductsSectionState extends State<ProductsSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              padding: EdgeInsets.symmetric(horizontal: 10.w,),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -112,8 +112,9 @@ class _ProductsSectionState extends State<ProductsSection> {
                     )
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
+                      padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 2),
                       itemCount: displayProducts.length,
+                      shrinkWrap: false,
                       itemBuilder: (context, index) {
                         final product = displayProducts[index];
                         return BlocBuilder<CartCubit, CartState>(

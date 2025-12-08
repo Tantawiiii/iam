@@ -3,6 +3,7 @@ import 'package:iam/core/constant/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/di/inject.dart' as di;
@@ -140,7 +141,7 @@ class HomeHeader extends StatelessWidget {
                             backgroundImage:
                                 (user?.avatar != null &&
                                     user!.avatar!.isNotEmpty)
-                                ? NetworkImage(user.avatar!)
+                                ? CachedNetworkImageProvider(user.avatar!)
                                 : null,
                             child:
                                 (user?.avatar == null || user!.avatar!.isEmpty)

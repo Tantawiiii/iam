@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_texts.dart';
 import '../../../core/localization/language_cubit.dart';
+import '../../../shared/widgets/product_grid_shimmer.dart';
+import '../../../shared/widgets/animated_product_grid.dart';
 import '../cubit/search_cubit.dart';
 import '../widgets/product_grid_card.dart';
 import '../../../shared/widgets/app_text_field.dart';
@@ -82,11 +84,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   }
 
                   if (state is SearchLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: AppColors.primaryColor,
-                      ),
-                    );
+                    return const ProductGridShimmer(itemCount: 6);
                   }
 
                   if (state is SearchFailure) {
@@ -115,13 +113,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     );
                   }
 
-                  return GridView.builder(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 6.w,
-                      mainAxisSpacing: 14.h,
-                      childAspectRatio: 0.6,
-                    ),
+                  return AnimatedProductGrid(
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];

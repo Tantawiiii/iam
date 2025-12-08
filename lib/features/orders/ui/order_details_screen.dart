@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_texts.dart';
 import '../../../core/di/inject.dart' as di;
@@ -279,10 +280,19 @@ class OrderDetailsScreen extends StatelessWidget {
             child: itemImage != null && itemImage.isNotEmpty
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(8.r),
-                    child: Image.network(
-                      itemImage,
+                    child: CachedNetworkImage(
+                      imageUrl: itemImage,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Icon(
+                      placeholder: (context, url) => Container(
+                        color: AppColors.textFieldBorderColor,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(
                         Icons.image_not_supported,
                         color: AppColors.greyTextColor,
                       ),

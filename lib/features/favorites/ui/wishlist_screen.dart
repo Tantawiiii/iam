@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_texts.dart';
 import '../../../core/localization/language_cubit.dart';
+import '../../../shared/widgets/product_grid_shimmer.dart';
+import '../../../shared/widgets/animated_product_grid.dart';
 import '../cubit/favorites_cubit.dart';
 import '../../home/widgets/product_grid_card.dart';
 
@@ -89,9 +91,7 @@ class _WishlistScreenState extends State<WishlistScreen>
         body: BlocBuilder<FavoritesCubit, FavoritesState>(
           builder: (context, state) {
             if (state is FavoritesLoading) {
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.primaryColor),
-              );
+              return const ProductGridShimmer(itemCount: 6);
             }
 
             if (state is FavoritesFailure) {
@@ -156,14 +156,8 @@ class _WishlistScreenState extends State<WishlistScreen>
                 );
               }
 
-              return GridView.builder(
+              return AnimatedProductGrid(
                 padding: EdgeInsets.all(12.w),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 6.w,
-                  mainAxisSpacing: 14.h,
-                  childAspectRatio: 0.6,
-                ),
                 itemCount: favorites.length,
                 itemBuilder: (context, index) {
                   final favoriteItem = favorites[index];

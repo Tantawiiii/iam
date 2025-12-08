@@ -1,3 +1,4 @@
+import 'package:bounce/bounce.dart';
 import 'package:iam/core/constant/app_texts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -85,7 +86,7 @@ class _OffersSliderState extends State<OffersSlider> {
   }
 
   Widget _buildOfferBanner(OfferModel offer) {
-    return GestureDetector(
+    return Bounce(
       onTap: () {
         Navigator.pushNamed(
           context,
@@ -112,7 +113,7 @@ class _OffersSliderState extends State<OffersSlider> {
             children: [
               CachedNetworkImage(
                 imageUrl: offer.avatar,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 placeholder: (context, url) => Container(
                   color: AppColors.overlayColor,
                   child: const Center(

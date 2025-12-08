@@ -2,6 +2,7 @@ import 'package:iam/core/constant/app_texts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/di/inject.dart' as di;
 import '../../../core/network/dio_client.dart';
@@ -85,6 +86,7 @@ class UserInfoScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 32.h),
                       _buildDeleteAccountSection(context),
+                      SizedBox(height: 28.h),
                     ],
                   ),
                 );
@@ -113,7 +115,7 @@ class UserInfoScreen extends StatelessWidget {
             radius: 50.r,
             backgroundColor: AppColors.textFieldBorderColor,
             backgroundImage: user.avatar != null && user.avatar!.isNotEmpty
-                ? NetworkImage(user.avatar!)
+                ? CachedNetworkImageProvider(user.avatar!)
                 : null,
             child: user.avatar == null || user.avatar!.isEmpty
                 ? Icon(
@@ -493,10 +495,19 @@ class UserInfoScreen extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8.r),
-                  child: Image.network(
-                    productImage,
+                  child: CachedNetworkImage(
+                    imageUrl: productImage,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
+                    placeholder: (context, url) => Container(
+                      color: AppColors.textFieldBorderColor,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(
                       Icons.image_outlined,
                       color: AppColors.greyTextColor,
                       size: 32.sp,

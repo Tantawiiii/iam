@@ -76,6 +76,18 @@ class ProductDetailsScreen extends StatelessWidget {
         },
         child: Scaffold(
           backgroundColor: AppColors.white,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: AppColors.blackTextColor,
+                size: 24.sp,
+              ),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
           body: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
             builder: (context, state) {
               if (state is ProductDetailsLoading) {

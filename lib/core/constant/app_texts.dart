@@ -776,14 +776,14 @@ final class AppTexts {
       AppLanguage.en: 'Creating...',
       AppLanguage.ar: 'جارٍ الإنشاء...',
     },
-    'idImage': {AppLanguage.en: 'ID Image', AppLanguage.ar: 'صورة الهوية'},
+    'idImage': {AppLanguage.en: 'ID Image', AppLanguage.ar: 'الهوية او جواز السفر'},
     'pleaseUploadIdImage': {
       AppLanguage.en: 'Please upload ID image',
       AppLanguage.ar: 'يرجى رفع صورة الهوية',
     },
     'bankStatementImage': {
       AppLanguage.en: 'Bank Statement Image',
-      AppLanguage.ar: 'صورة كشف الحساب',
+      AppLanguage.ar: 'اوراق اخرى',
     },
     'invoiceImage': {
       AppLanguage.en: 'Invoice Image',

@@ -1,3 +1,4 @@
+import 'package:bounce/bounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -19,7 +20,7 @@ class ProductGridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Bounce(
       onTap: () {
         Navigator.of(context).pushNamed(
           AppRoutes.productDetails,
@@ -113,16 +114,6 @@ class ProductGridCard extends StatelessWidget {
                             color: AppColors.blackTextColor,
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          product.shortDescription,
-                          style: TextStyle(
-                            color: AppColors.greyTextColor,
-                            fontSize: 11.sp,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/localization/language_cubit.dart';
 import '../../../core/di/inject.dart' as di;
@@ -59,120 +60,72 @@ class _CartScreenState extends State<CartScreen>
         }
       },
       child: Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: ShaderMask(
-          shaderCallback: (bounds) => AppColors.horizontalGradient
-              .createShader(bounds),
-          child: Text(
-            AppTexts.cart,
-            style: const TextStyle(color: Colors.white),
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: ShaderMask(
+            shaderCallback: (bounds) =>
+                AppColors.horizontalGradient.createShader(bounds),
+            child: Text(
+              AppTexts.cart,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
         ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-      ),
-      body: BlocBuilder<CartCubit, CartState>(
-        builder: (context, state) {
-          if (state is CartInitial || state is CartLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            );
-          }
+        body: BlocBuilder<CartCubit, CartState>(
+          builder: (context, state) {
+            if (state is CartInitial || state is CartLoading) {
+              return _buildCartShimmer();
+            }
 
-          if (state is CartFailure) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(20.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.errorLight,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.error_outline,
-                      color: AppColors.error,
-                      size: 48.sp,
-                    ),
-                  ),
-                  SizedBox(height: 24.h),
-                  Text(
-                    state.message,
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 24.h),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<CartCubit>().getCart();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 14.h),
-                    ),
-                    child: Text(
-                      AppTexts.retry,
-                      style: TextStyle(
-                        color: AppColors.textOnPrimary,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          if (state is CartSuccess) {
-            final cartItems = state.response.data;
-
-            if (cartItems.isEmpty) {
+            if (state is CartFailure) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: EdgeInsets.all(32.w),
+                      padding: EdgeInsets.all(20.w),
                       decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
+                        color: AppColors.errorLight,
                         shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.primary.withOpacity(0.2),
-                            blurRadius: 30,
-                          ),
-                        ],
                       ),
                       child: Icon(
-                        Icons.shopping_cart_outlined,
-                        color: AppColors.textOnPrimary,
-                        size: 64.sp,
+                        Icons.error_outline,
+                        color: AppColors.error,
+                        size: 48.sp,
                       ),
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 24.h),
                     Text(
-                      AppTexts.cartEmpty,
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      AppTexts.addItemsToCart,
+                      state.message,
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 16.sp,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 24.h),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<CartCubit>().getCart();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 32.w,
+                          vertical: 14.h,
+                        ),
+                      ),
+                      child: Text(
+                        AppTexts.retry,
+                        style: TextStyle(
+                          color: AppColors.textOnPrimary,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -180,116 +133,170 @@ class _CartScreenState extends State<CartScreen>
               );
             }
 
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.all(20.w),
-                    itemCount: cartItems.length,
-                    itemBuilder: (context, index) {
-                      final cartItem = cartItems[index];
-                      return _buildCartItem(cartItem);
-                    },
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(24.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.shadowMedium,
-                        blurRadius: 20,
-                        offset: const Offset(0, -4),
-                      ),
-                    ],
-                  ),
+            if (state is CartSuccess) {
+              final cartItems = state.response.data;
+
+              if (cartItems.isEmpty) {
+                return Center(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                             AppTexts.total,
-                            style: TextStyle(
-                              color: AppColors.textPrimary,
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w700,
+                      Container(
+                        padding: EdgeInsets.all(32.w),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.2),
+                              blurRadius: 30,
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                            decoration: BoxDecoration(
-                              gradient: AppColors.primaryGradient,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Text(
-                              _calculateTotal(cartItems),
-                              style: TextStyle(
-                                color: AppColors.textOnPrimary,
-                                fontSize: 22.sp,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Icon(
+                          Icons.shopping_cart_outlined,
+                          color: AppColors.textOnPrimary,
+                          size: 64.sp,
+                        ),
                       ),
-                      SizedBox(height: 20.h),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradient,
-                            borderRadius: BorderRadius.circular(14.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pushNamed(
-                                context,
-                                AppRoutes.checkout,
-                                arguments: cartItems,
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              padding: EdgeInsets.symmetric(vertical: 18.h),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14.r),
-                              ),
-                            ),
-                            child: Text(
-                              AppTexts.checkout,
-                              style: TextStyle(
-                                color: AppColors.textOnPrimary,
-                                fontSize: 17.sp,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
+                      SizedBox(height: 32.h),
+                      Text(
+                        AppTexts.cartEmpty,
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        AppTexts.addItemsToCart,
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w400,
                         ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(height: 100.h),
-              ],
-            );
-          }
+                );
+              }
 
-          return const SizedBox.shrink();
-        },
-      ),
+              return Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.all(20.w),
+                      itemCount: cartItems.length,
+                      itemBuilder: (context, index) {
+                        final cartItem = cartItems[index];
+                        return _buildCartItem(cartItem);
+                      },
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(24.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(24.r),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.shadowMedium,
+                          blurRadius: 20,
+                          offset: const Offset(0, -4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              AppTexts.total,
+                              style: TextStyle(
+                                color: AppColors.textPrimary,
+                                fontSize: 20.sp,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: AppColors.primaryGradient,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Text(
+                                _calculateTotal(cartItems),
+                                style: TextStyle(
+                                  color: AppColors.textOnPrimary,
+                                  fontSize: 22.sp,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20.h),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: AppColors.primaryGradient,
+                              borderRadius: BorderRadius.circular(14.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.3),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppRoutes.checkout,
+                                  arguments: cartItems,
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                padding: EdgeInsets.symmetric(vertical: 18.h),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14.r),
+                                ),
+                              ),
+                              child: Text(
+                                AppTexts.checkout,
+                                style: TextStyle(
+                                  color: AppColors.textOnPrimary,
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 100.h),
+                ],
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -363,7 +370,10 @@ class _CartScreenState extends State<CartScreen>
                 ),
                 SizedBox(height: 8.h),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
+                  ),
                   decoration: BoxDecoration(
                     gradient: AppColors.primaryGradient,
                     borderRadius: BorderRadius.circular(8.r),
@@ -388,7 +398,10 @@ class _CartScreenState extends State<CartScreen>
                     ),
                     SizedBox(width: 16.w),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8.r),
@@ -493,5 +506,77 @@ class _CartScreenState extends State<CartScreen>
     }
 
     return '${total.toStringAsFixed(2)} $currency';
+  }
+
+  Widget _buildCartShimmer() {
+    return ListView.builder(
+      padding: EdgeInsets.all(20.w),
+      itemCount: 3,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: 16.h),
+          child: Shimmer.fromColors(
+            baseColor: AppColors.textFieldBorderColor,
+            highlightColor: AppColors.white,
+            period: const Duration(milliseconds: 1200),
+            child: Container(
+              height: 120.h,
+              decoration: BoxDecoration(
+                color: AppColors.overlayColor,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              padding: EdgeInsets.all(12.w),
+              child: Row(
+                children: [
+                  Container(
+                    width: 100.w,
+                    height: 100.h,
+                    decoration: BoxDecoration(
+                      color: AppColors.textFieldBorderColor,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 16.h,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppColors.textFieldBorderColor,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Container(
+                          height: 14.h,
+                          width: 120.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.textFieldBorderColor,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Container(
+                          height: 12.h,
+                          width: 80.w,
+                          decoration: BoxDecoration(
+                            color: AppColors.textFieldBorderColor,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
