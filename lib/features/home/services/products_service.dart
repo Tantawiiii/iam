@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import '../../../core/network/api_constants.dart';
 import '../../../core/network/api_service.dart';
 import '../models/product_details_response_model.dart';
@@ -59,6 +60,27 @@ class ProductsService {
   Future<CartResponseModel> getCart() async {
     try {
       final response = await _apiService.get(ApiConstants.cart);
+
+      // Check if response status indicates an error (401 is handled globally)
+      if (response.statusCode != null && response.statusCode! >= 400) {
+        final errorData = response.data;
+        String errorMessage = 'An error occurred. Please try again.';
+        
+        if (errorData is Map<String, dynamic>) {
+          if (errorData.containsKey('message')) {
+            errorMessage = errorData['message'].toString();
+          } else if (errorData.containsKey('error')) {
+            errorMessage = errorData['error'].toString();
+          }
+        }
+        
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          type: DioExceptionType.badResponse,
+          error: errorMessage,
+        );
+      }
 
       return CartResponseModel.fromJson(
         response.data as Map<String, dynamic>,

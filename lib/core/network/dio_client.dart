@@ -1,5 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import '../../main.dart';
+import '../constant/app_texts.dart';
+import '../routing/app_routes.dart';
 import 'api_constants.dart';
 import '../services/storage_service.dart';
 
@@ -30,6 +34,7 @@ class DioClient {
 
   late final Dio _dio;
   final StorageService _storageService;
+  bool _isShowingUnauthorizedDialog = false;
 
   void _setupInterceptors() {
     _dio.interceptors.add(
@@ -39,6 +44,27 @@ class DioClient {
           options.headers['lang'] = languageCode;
           _dio.options.headers['lang'] = languageCode;
           return handler.next(options);
+        },
+        onError: (error, handler) {
+          if (error.response?.statusCode == 401 &&
+              !_isShowingUnauthorizedDialog) {
+            _handleUnauthorizedError();
+          }
+          return handler.next(error);
+        },
+        onResponse: (response, handler) {
+          if (response.statusCode == 401 && !_isShowingUnauthorizedDialog) {
+            _handleUnauthorizedError();
+            return handler.reject(
+              DioException(
+                requestOptions: response.requestOptions,
+                response: response,
+                type: DioExceptionType.badResponse,
+                error: 'Unauthenticated',
+              ),
+            );
+          }
+          return handler.next(response);
         },
       ),
     );
@@ -54,6 +80,56 @@ class DioClient {
         maxWidth: 90,
       ),
     );
+  }
+
+  void _handleUnauthorizedError() {
+    if (_isShowingUnauthorizedDialog) return;
+    _isShowingUnauthorizedDialog = true;
+    clearAuthToken();
+    _storageService.clearAuthData();
+
+    final context = navigatorKey.currentContext;
+    if (context != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final currentContext = navigatorKey.currentContext;
+        if (currentContext != null) {
+          _showUnauthorizedDialog(currentContext);
+        }
+      });
+    }
+  }
+
+  void _showUnauthorizedDialog(BuildContext context) {
+    if (!context.mounted) {
+      _isShowingUnauthorizedDialog = false;
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(AppTexts.login),
+        content: Text(AppTexts.unauthenticatedMessage),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              _isShowingUnauthorizedDialog = false;
+              // Navigate to login screen
+              if (context.mounted) {
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil(AppRoutes.login, (route) => false);
+              }
+            },
+            child: Text(AppTexts.ok),
+          ),
+        ],
+      ),
+    ).then((_) {
+      _isShowingUnauthorizedDialog = false;
+    });
   }
 
   /// Get Dio instance

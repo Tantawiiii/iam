@@ -14,6 +14,9 @@ import 'core/routing/app_routes.dart';
 import 'core/services/storage_service.dart';
 import 'core/theme/app_theme.dart';
 
+// Global navigator key for navigation from interceptors
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -53,6 +56,7 @@ class MyApp extends StatelessWidget {
                   .toList(growable: false);
 
               return MaterialApp(
+                navigatorKey: navigatorKey,
                 title: 'IAM',
                 debugShowCheckedModeBanner: false,
                 locale: locale,

@@ -15,14 +15,14 @@ class CartResponseModel {
 
   factory CartResponseModel.fromJson(Map<String, dynamic> json) {
     return CartResponseModel(
-      result: json['result'] as String,
+      result: json['result'] as String? ?? '',
       data: (json['data'] as List<dynamic>?)
               ?.map((item) =>
                   CartItemModel.fromJson(item as Map<String, dynamic>))
               .toList() ??
           [],
-      message: json['message'] as String,
-      status: json['status'] as int,
+      message: json['message'] as String? ?? '',
+      status: json['status'] as int? ?? 0,
     );
   }
 

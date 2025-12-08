@@ -38,6 +38,7 @@ final class AppTexts {
   static String get updating => _text('updating');
   static String get name => _text('name');
   static String get loginSuccess => _text('loginSuccess');
+  static String get unauthenticatedMessage => _text('unauthenticatedMessage');
   static String get signUp => _text('signUp');
   static String get fullName => _text('fullName');
   static String get dontHaveAcc => _text('dontHaveAcc');
@@ -351,6 +352,10 @@ final class AppTexts {
     'loginSuccess': {
       AppLanguage.en: 'Login successful!',
       AppLanguage.ar: 'تم تسجيل الدخول بنجاح!',
+    },
+    'unauthenticatedMessage': {
+      AppLanguage.en: 'Your session has expired. Please login again to continue.',
+      AppLanguage.ar: 'انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى للمتابعة.',
     },
     'signUp': {AppLanguage.en: 'Sign Up', AppLanguage.ar: 'إنشاء حساب'},
     'fullName': {AppLanguage.en: 'Full name', AppLanguage.ar: 'الاسم الكامل'},
