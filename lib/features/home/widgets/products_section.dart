@@ -11,6 +11,7 @@ import '../../favorites/cubit/favorites_cubit.dart';
 import '../../cart/cubit/cart_cubit.dart';
 import '../../home/services/products_service.dart';
 import '../../../core/di/inject.dart' as di;
+import '../../../core/services/storage_service.dart';
 import 'product_card.dart';
 
 class ProductsSection extends StatefulWidget {
@@ -59,7 +60,7 @@ class _ProductsSectionState extends State<ProductsSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w,),
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -112,7 +113,10 @@ class _ProductsSectionState extends State<ProductsSection> {
                     )
                   : ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.symmetric(horizontal: 8.w,vertical: 2),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 2,
+                      ),
                       itemCount: displayProducts.length,
                       shrinkWrap: false,
                       itemBuilder: (context, index) {
@@ -306,6 +310,12 @@ class _ProductsSectionState extends State<ProductsSection> {
   }
 
   void _addToCart(BuildContext context, int productId) async {
+    final storageService = di.sl<StorageService>();
+    final token = storageService.getToken();
+    final hasToken = token != null && token.isNotEmpty;
+
+    if (!hasToken) return;
+
     final productsService = di.sl<ProductsService>();
     try {
       await productsService.addToCart(productId: productId, method: 'add');
@@ -325,6 +335,12 @@ class _ProductsSectionState extends State<ProductsSection> {
   }
 
   void _updateCart(BuildContext context, int productId, String method) async {
+    final storageService = di.sl<StorageService>();
+    final token = storageService.getToken();
+    final hasToken = token != null && token.isNotEmpty;
+
+    if (!hasToken) return;
+
     final productsService = di.sl<ProductsService>();
     try {
       await productsService.addToCart(productId: productId, method: method);

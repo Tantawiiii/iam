@@ -12,6 +12,7 @@ import '../widgets/product_image_slider.dart';
 import '../../cart/cubit/cart_cubit.dart';
 import '../../home/services/products_service.dart';
 import '../../settings/services/settings_service.dart';
+import '../../../core/services/storage_service.dart';
 import 'package:dio/dio.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
@@ -36,17 +37,25 @@ class ProductDetailsScreen extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) {
+            final storageService = di.sl<StorageService>();
+            final token = storageService.getToken();
+            final hasToken = token != null && token.isNotEmpty;
+
             try {
               final existingCubit = context.read<CartCubit>();
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                existingCubit.getCart();
-              });
+              if (hasToken) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  existingCubit.getCart();
+                });
+              }
               return existingCubit;
             } catch (e) {
               final newCubit = di.sl<CartCubit>();
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                newCubit.getCart();
-              });
+              if (hasToken) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  newCubit.getCart();
+                });
+              }
               return newCubit;
             }
           },
@@ -71,7 +80,12 @@ class ProductDetailsScreen extends StatelessWidget {
           }
           // Refresh cart after adding to cart
           if (state is AddToCartSuccess) {
-            context.read<CartCubit>().getCart();
+            final storageService = di.sl<StorageService>();
+            final token = storageService.getToken();
+            final hasToken = token != null && token.isNotEmpty;
+            if (hasToken) {
+              context.read<CartCubit>().getCart();
+            }
           }
         },
         child: Scaffold(
@@ -274,11 +288,13 @@ class ProductDetailsScreen extends StatelessWidget {
                                   AppTexts.quantityAvailable,
                                   currentProduct.quantity.toString(),
                                 ),
-                              if ((productNumber != null && productNumber!.isNotEmpty) ||
+                              if ((productNumber != null &&
+                                      productNumber!.isNotEmpty) ||
                                   currentProduct.productNumber.isNotEmpty)
                                 _buildDetailRow(
                                   'رقم المنتج',
-                                  (productNumber != null && productNumber!.isNotEmpty)
+                                  (productNumber != null &&
+                                          productNumber!.isNotEmpty)
                                       ? productNumber!
                                       : currentProduct.productNumber,
                                 ),
@@ -318,7 +334,8 @@ class ProductDetailsScreen extends StatelessWidget {
                                       final cartItem = cartState.response.data
                                           .firstWhere(
                                             (item) =>
-                                                item.cardId == currentProduct.id,
+                                                item.cardId ==
+                                                currentProduct.id,
                                           );
                                       cartQuantity = cartItem.quantity;
                                     } catch (e) {
@@ -333,10 +350,11 @@ class ProductDetailsScreen extends StatelessWidget {
                                         vertical: 12.h,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppColors.primaryColor.withOpacity(
-                                          0.1,
+                                        color: AppColors.primaryColor
+                                            .withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(
+                                          12.r,
                                         ),
-                                        borderRadius: BorderRadius.circular(12.r),
                                         border: Border.all(
                                           color: AppColors.primaryColor,
                                           width: 1.5,
@@ -399,7 +417,8 @@ class ProductDetailsScreen extends StatelessWidget {
                                     ProductDetailsState
                                   >(
                                     builder: (context, state) {
-                                      final isLoading = state is AddToCartLoading;
+                                      final isLoading =
+                                          state is AddToCartLoading;
                                       return PrimaryButton(
                                         title: isLoading
                                             ? AppTexts.addingToCart
@@ -711,10 +730,7 @@ class _ResellButton extends StatefulWidget {
   final ProductModel product;
   final String productNumber;
 
-  const _ResellButton({
-    required this.product,
-    required this.productNumber,
-  });
+  const _ResellButton({required this.product, required this.productNumber});
 
   @override
   State<_ResellButton> createState() => _ResellButtonState();
@@ -742,7 +758,8 @@ class _ResellButtonState extends State<_ResellButton> {
       if (mounted) {
         final responseData = response.data as Map<String, dynamic>?;
         final status = responseData?['status'] as bool?;
-        final message = responseData?['message'] as String? ?? 'تم إرسال الطلب بنجاح';
+        final message =
+            responseData?['message'] as String? ?? 'تم إرسال الطلب بنجاح';
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -754,7 +771,7 @@ class _ResellButtonState extends State<_ResellButton> {
     } catch (e) {
       if (mounted) {
         String errorMessage = 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.';
-        
+
         if (e is DioException) {
           if (e.response != null) {
             final errorData = e.response?.data;
@@ -765,10 +782,7 @@ class _ResellButtonState extends State<_ResellButton> {
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
         );
       }
     } finally {

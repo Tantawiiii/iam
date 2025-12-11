@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/di/inject.dart' as di;
+import '../../../core/services/storage_service.dart';
 import '../cubit/categories_cubit.dart';
 import '../cubit/brands_cubit.dart';
 import '../cubit/products_cubit.dart';
@@ -84,12 +85,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       return;
     }
 
-    await Future.wait([
+    final storageService = di.sl<StorageService>();
+    final token = storageService.getToken();
+    final hasToken = token != null && token.isNotEmpty;
+
+    final futures = <Future>[
       providersContext.read<CategoriesCubit>().getCategories(),
       providersContext.read<BrandsCubit>().getBrands(),
       providersContext.read<OffersCubit>().getOffers(),
-      providersContext.read<FavoritesCubit>().getFavorites(),
-    ]);
+    ];
+
+    // Only call getFavorites if user is authenticated
+    if (hasToken) {
+      futures.add(providersContext.read<FavoritesCubit>().getFavorites());
+    }
+
+    await Future.wait(futures);
 
     if (!mounted) return;
 
@@ -102,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [

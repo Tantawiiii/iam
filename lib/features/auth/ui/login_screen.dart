@@ -11,8 +11,6 @@ import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../cubit/login_cubit.dart';
 
-
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -51,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
         listener: (context, state) {
           if (state is LoginSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-               SnackBar(
+              SnackBar(
                 content: Text(AppTexts.loginSuccess),
                 backgroundColor: Colors.green,
               ),
@@ -106,7 +104,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 20.h,
+                  ),
                   child: Form(
                     key: _formKey,
                     child: Column(
@@ -142,8 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         SizedBox(height: 50.h),
                         ShaderMask(
-                          shaderCallback: (bounds) => AppColors.horizontalGradient
-                              .createShader(bounds),
+                          shaderCallback: (bounds) =>
+                              AppColors.horizontalGradient.createShader(bounds),
                           child: Text(
                             AppTexts.welcomeBack,
                             style: TextStyle(
@@ -200,13 +201,40 @@ class _LoginScreenState extends State<LoginScreen> {
                           builder: (context, state) {
                             final isLoading = state is LoginLoading;
                             return PrimaryButton(
-                              title: isLoading ? AppTexts.loginLoading : AppTexts.login,
+                              title: isLoading
+                                  ? AppTexts.loginLoading
+                                  : AppTexts.login,
                               onPressed: isLoading
                                   ? null
-                                  : () => _handleLogin(context.read<LoginCubit>()),
+                                  : () => _handleLogin(
+                                      context.read<LoginCubit>(),
+                                    ),
                               isLoading: isLoading,
                             );
                           },
+                        ),
+                        SizedBox(height: 24.h),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.home,
+                            );
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 12.h,
+                            ),
+                          ),
+                          child: Text(
+                            AppTexts.continueAsGuest,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                         SizedBox(height: 32.h),
                         Row(
@@ -222,12 +250,18 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             SizedBox(width: 6.w),
                             TextButton(
-                              onPressed: () => Navigator.of(context).pushNamed(AppRoutes.signup),
+                              onPressed: () => Navigator.of(
+                                context,
+                              ).pushNamed(AppRoutes.signup),
                               style: TextButton.styleFrom(
-                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 4.h,
+                                ),
                               ),
                               child: ShaderMask(
-                                shaderCallback: (bounds) => AppColors.horizontalGradient
+                                shaderCallback: (bounds) => AppColors
+                                    .horizontalGradient
                                     .createShader(bounds),
                                 child: Text(
                                   AppTexts.signUp,

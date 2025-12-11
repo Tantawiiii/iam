@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/di/inject.dart' as di;
+import '../../../core/services/storage_service.dart';
 import '../widgets/bottom_nav_bar.dart';
 import '../ui/home_screen.dart';
 import '../../cart/ui/cart_screen.dart';
@@ -41,15 +42,19 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       _selectedIndex = index;
     });
 
+    final storageService = di.sl<StorageService>();
+    final token = storageService.getToken();
+    final hasToken = token != null && token.isNotEmpty;
+
     if (index == 1) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
+        if (mounted && hasToken) {
           context.read<CartCubit>().getCart();
         }
       });
     } else if (index == 0) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
+        if (mounted && hasToken) {
           context.read<FavoritesCubit>().getFavorites();
         }
       });
@@ -66,10 +71,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => di.sl<CartCubit>()..getCart()),
-        BlocProvider(
-          create: (context) => di.sl<FavoritesCubit>()..getFavorites(),
-        ),
+        BlocProvider(create: (context) => di.sl<CartCubit>()),
+        BlocProvider(create: (context) => di.sl<FavoritesCubit>()),
         BlocProvider(create: (context) => di.sl<SearchCubit>()),
       ],
       child: Builder(

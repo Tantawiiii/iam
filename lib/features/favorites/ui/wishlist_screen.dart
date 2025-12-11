@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_texts.dart';
 import '../../../core/localization/language_cubit.dart';
+import '../../../core/services/storage_service.dart';
+import '../../../core/di/inject.dart' as di;
 import '../../../shared/widgets/product_grid_shimmer.dart';
 import '../../../shared/widgets/animated_product_grid.dart';
 import '../cubit/favorites_cubit.dart';
@@ -27,7 +29,12 @@ class _WishlistScreenState extends State<WishlistScreen>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<FavoritesCubit>().getFavorites();
+        final storageService = di.sl<StorageService>();
+        final token = storageService.getToken();
+        final hasToken = token != null && token.isNotEmpty;
+        if (hasToken) {
+          context.read<FavoritesCubit>().getFavorites();
+        }
       }
     });
   }
@@ -42,7 +49,12 @@ class _WishlistScreenState extends State<WishlistScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed && mounted) {
-      context.read<FavoritesCubit>().getFavorites();
+      final storageService = di.sl<StorageService>();
+      final token = storageService.getToken();
+      final hasToken = token != null && token.isNotEmpty;
+      if (hasToken) {
+        context.read<FavoritesCubit>().getFavorites();
+      }
     }
   }
 
@@ -52,7 +64,12 @@ class _WishlistScreenState extends State<WishlistScreen>
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<FavoritesCubit>().getFavorites();
+        final storageService = di.sl<StorageService>();
+        final token = storageService.getToken();
+        final hasToken = token != null && token.isNotEmpty;
+        if (hasToken) {
+          context.read<FavoritesCubit>().getFavorites();
+        }
       }
     });
   }
@@ -63,6 +80,10 @@ class _WishlistScreenState extends State<WishlistScreen>
     context.watch<LanguageCubit>();
     return BlocListener<FavoritesCubit, FavoritesState>(
       listener: (context, state) {
+        final storageService = di.sl<StorageService>();
+        final token = storageService.getToken();
+        final hasToken = token != null && token.isNotEmpty;
+
         if (state is ToggleFavoriteSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -70,13 +91,15 @@ class _WishlistScreenState extends State<WishlistScreen>
               backgroundColor: Colors.green,
             ),
           );
-          context.read<FavoritesCubit>().getFavorites();
+          if (hasToken) {
+            context.read<FavoritesCubit>().getFavorites();
+          }
         } else if (state is ToggleFavoriteFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         }
-        if (state is FavoritesInitial) {
+        if (state is FavoritesInitial && hasToken) {
           context.read<FavoritesCubit>().getFavorites();
         }
       },
@@ -112,7 +135,12 @@ class _WishlistScreenState extends State<WishlistScreen>
                     SizedBox(height: 16.h),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<FavoritesCubit>().getFavorites();
+                        final storageService = di.sl<StorageService>();
+                        final token = storageService.getToken();
+                        final hasToken = token != null && token.isNotEmpty;
+                        if (hasToken) {
+                          context.read<FavoritesCubit>().getFavorites();
+                        }
                       },
                       child: Text(AppTexts.retry),
                     ),

@@ -110,7 +110,7 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
       debugPrint('_pickAvatar: File picked: ${file != null}');
 
       if (mounted && file != null) {
-        setState(() => _avatarFile = file);
+      setState(() => _avatarFile = file);
       } else if (!mounted) {
         debugPrint('_pickAvatar: Widget unmounted after picking');
       } else {
@@ -149,7 +149,7 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
       debugPrint('_pickImage: File picked: ${file != null}');
 
       if (mounted && file != null) {
-        onPicked(file);
+      onPicked(file);
       } else if (!mounted) {
         debugPrint('_pickImage: Widget unmounted after picking');
       } else {
@@ -179,17 +179,17 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
         builder: (popupContext) => CupertinoActionSheet(
           actions: [
             CupertinoActionSheetAction(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pop(popupContext);
                 debugPrint('Camera button pressed on iPad');
-
-                await Future.delayed(const Duration(milliseconds: 300));
-                if (mounted) {
-                  debugPrint('Calling _pickImage for camera');
-                  _pickImage(ImageSource.camera, onPicked);
-                } else {
-                  debugPrint('Widget not mounted, cannot pick image');
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    debugPrint('Calling _pickImage for camera');
+                    _pickImage(ImageSource.camera, onPicked);
+                  } else {
+                    debugPrint('Widget not mounted, cannot pick image');
+                  }
+                });
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -201,16 +201,17 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
               ),
             ),
             CupertinoActionSheetAction(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pop(popupContext);
                 debugPrint('Gallery button pressed on iPad');
-                await Future.delayed(const Duration(milliseconds: 300));
-                if (mounted) {
-                  debugPrint('Calling _pickImage for gallery');
-                  _pickImage(ImageSource.gallery, onPicked);
-                } else {
-                  debugPrint('Widget not mounted, cannot pick image');
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    debugPrint('Calling _pickImage for gallery');
+                    _pickImage(ImageSource.gallery, onPicked);
+                  } else {
+                    debugPrint('Widget not mounted, cannot pick image');
+                  }
+                });
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -231,54 +232,54 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
       );
     } else {
 
-      showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-        ),
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
         builder: (sheetContext) => SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PickOption(
-                  icon: Icons.photo_camera_outlined,
-                  label: AppTexts.camera,
-                  onTap: () {
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              PickOption(
+                icon: Icons.photo_camera_outlined,
+                label: AppTexts.camera,
+                onTap: () {
                     Navigator.pop(sheetContext);
                     debugPrint('Camera button pressed');
                     Future.delayed(const Duration(milliseconds: 300)).then((_) {
                       if (mounted) {
                         debugPrint('Calling _pickImage for camera');
-                        _pickImage(ImageSource.camera, onPicked);
+                  _pickImage(ImageSource.camera, onPicked);
                       } else {
                         debugPrint('Widget not mounted, cannot pick image');
                       }
                     });
-                  },
-                ),
-                PickOption(
-                  icon: Icons.photo_library_outlined,
-                  label: AppTexts.gallery,
-                  onTap: () {
+                },
+              ),
+              PickOption(
+                icon: Icons.photo_library_outlined,
+                label: AppTexts.gallery,
+                onTap: () {
                     Navigator.pop(sheetContext);
                     debugPrint('Gallery button pressed');
                     Future.delayed(const Duration(milliseconds: 300)).then((_) {
                       if (mounted) {
                         debugPrint('Calling _pickImage for gallery');
-                        _pickImage(ImageSource.gallery, onPicked);
+                  _pickImage(ImageSource.gallery, onPicked);
                       } else {
                         debugPrint('Widget not mounted, cannot pick image');
                       }
                     });
-                  },
-                ),
-              ],
-            ),
+                },
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
     }
   }
 
@@ -292,16 +293,17 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
         builder: (popupContext) => CupertinoActionSheet(
           actions: [
             CupertinoActionSheetAction(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pop(popupContext);
                 debugPrint('Camera button pressed on iPad for avatar');
-                await Future.delayed(const Duration(milliseconds: 300));
-                if (mounted) {
-                  debugPrint('Calling _pickAvatar for camera');
-                  _pickAvatar(ImageSource.camera);
-                } else {
-                  debugPrint('Widget not mounted, cannot pick avatar');
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    debugPrint('Calling _pickAvatar for camera');
+                    _pickAvatar(ImageSource.camera);
+                  } else {
+                    debugPrint('Widget not mounted, cannot pick avatar');
+                  }
+                });
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -313,16 +315,17 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
               ),
             ),
             CupertinoActionSheetAction(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pop(popupContext);
                 debugPrint('Gallery button pressed on iPad for avatar');
-                await Future.delayed(const Duration(milliseconds: 300));
-                if (mounted) {
-                  debugPrint('Calling _pickAvatar for gallery');
-                  _pickAvatar(ImageSource.gallery);
-                } else {
-                  debugPrint('Widget not mounted, cannot pick avatar');
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    debugPrint('Calling _pickAvatar for gallery');
+                    _pickAvatar(ImageSource.gallery);
+                  } else {
+                    debugPrint('Widget not mounted, cannot pick avatar');
+                  }
+                });
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -342,56 +345,56 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
         ),
       );
     } else {
-      showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-        ),
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
         builder: (sheetContext) => SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PickOption(
-                  icon: Icons.photo_camera_outlined,
-                  label: AppTexts.camera,
-                  onTap: () {
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              PickOption(
+                icon: Icons.photo_camera_outlined,
+                label: AppTexts.camera,
+                onTap: () {
                     Navigator.pop(sheetContext);
                     debugPrint('Camera button pressed for avatar');
                     // Wait for modal to dismiss before opening picker
                     Future.delayed(const Duration(milliseconds: 300)).then((_) {
                       if (mounted) {
                         debugPrint('Calling _pickAvatar for camera');
-                        _pickAvatar(ImageSource.camera);
+                  _pickAvatar(ImageSource.camera);
                       } else {
                         debugPrint('Widget not mounted, cannot pick avatar');
                       }
                     });
-                  },
-                ),
-                PickOption(
-                  icon: Icons.photo_library_outlined,
-                  label: AppTexts.gallery,
-                  onTap: () {
+                },
+              ),
+              PickOption(
+                icon: Icons.photo_library_outlined,
+                label: AppTexts.gallery,
+                onTap: () {
                     Navigator.pop(sheetContext);
                     debugPrint('Gallery button pressed for avatar');
                     // Wait for modal to dismiss before opening picker
                     Future.delayed(const Duration(milliseconds: 300)).then((_) {
                       if (mounted) {
                         debugPrint('Calling _pickAvatar for gallery');
-                        _pickAvatar(ImageSource.gallery);
+                  _pickAvatar(ImageSource.gallery);
                       } else {
                         debugPrint('Widget not mounted, cannot pick avatar');
                       }
                     });
-                  },
-                ),
-              ],
-            ),
+                },
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
     }
   }
 
@@ -833,9 +836,9 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
                                   ),
                                 ),
                                 errorWidget: (context, url, error) => Icon(
-                                  Icons.broken_image,
-                                  size: 40.sp,
-                                  color: AppColors.textSecondary,
+                                    Icons.broken_image,
+                                    size: 40.sp,
+                                    color: AppColors.textSecondary,
                                 ),
                               ),
                       ),

@@ -43,6 +43,7 @@ final class AppTexts {
   static String get fullName => _text('fullName');
   static String get dontHaveAcc => _text('dontHaveAcc');
   static String get createAcc => _text('createAcc');
+  static String get continueAsGuest => _text('continueAsGuest');
 
   static String get onTitle1 => _text('onTitle1');
   static String get onDesTitle1 => _text('onDesTitle1');
@@ -362,6 +363,10 @@ final class AppTexts {
     'dontHaveAcc': {
       AppLanguage.en: 'Don\'t have an account?',
       AppLanguage.ar: 'ليس لديك حساب؟',
+    },
+    'continueAsGuest': {
+      AppLanguage.en: 'Continue as Guest',
+      AppLanguage.ar: 'المتابعة كضيف',
     },
     'createAcc': {
       AppLanguage.en: 'Create Account',

@@ -220,7 +220,7 @@ class UserInfoScreen extends StatelessWidget {
             final index = entry.key;
             final order = entry.value;
             return _buildOrderCard(context, order, index);
-          }).toList(),
+          }),
       ],
     );
   }
@@ -411,7 +411,7 @@ class UserInfoScreen extends StatelessWidget {
             final index = entry.key;
             final product = entry.value;
             return _buildProductForSaleCard(context, product, index);
-          }).toList(),
+          }),
       ],
     );
   }

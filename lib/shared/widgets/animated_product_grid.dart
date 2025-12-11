@@ -19,7 +19,7 @@ class AnimatedProductGrid extends StatelessWidget {
     this.crossAxisSpacing = 6.0,
     this.mainAxisSpacing = 14.0,
     this.childAspectRatio = 0.6,
-    this.padding = const EdgeInsets.all(20),
+    this.padding = const EdgeInsets.all(6),
   });
 
   @override

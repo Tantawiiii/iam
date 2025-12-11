@@ -7,6 +7,7 @@ import 'package:shimmer/shimmer.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/localization/language_cubit.dart';
 import '../../../core/di/inject.dart' as di;
+import '../../../core/services/storage_service.dart';
 import '../../../core/routing/app_routes.dart';
 import '../cubit/cart_cubit.dart';
 import '../../home/services/products_service.dart';
@@ -30,7 +31,12 @@ class _CartScreenState extends State<CartScreen>
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        context.read<CartCubit>().getCart();
+        final storageService = di.sl<StorageService>();
+        final token = storageService.getToken();
+        final hasToken = token != null && token.isNotEmpty;
+        if (hasToken) {
+          context.read<CartCubit>().getCart();
+        }
       }
     });
   }
@@ -45,7 +51,12 @@ class _CartScreenState extends State<CartScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.resumed && mounted) {
-      context.read<CartCubit>().getCart();
+      final storageService = di.sl<StorageService>();
+      final token = storageService.getToken();
+      final hasToken = token != null && token.isNotEmpty;
+      if (hasToken) {
+        context.read<CartCubit>().getCart();
+      }
     }
   }
 
@@ -56,7 +67,12 @@ class _CartScreenState extends State<CartScreen>
     return BlocListener<CartCubit, CartState>(
       listener: (context, state) {
         if (state is CartInitial) {
-          context.read<CartCubit>().getCart();
+          final storageService = di.sl<StorageService>();
+          final token = storageService.getToken();
+          final hasToken = token != null && token.isNotEmpty;
+          if (hasToken) {
+            context.read<CartCubit>().getCart();
+          }
         }
       },
       child: Scaffold(
@@ -110,7 +126,12 @@ class _CartScreenState extends State<CartScreen>
                     SizedBox(height: 24.h),
                     ElevatedButton(
                       onPressed: () {
-                        context.read<CartCubit>().getCart();
+                        final storageService = di.sl<StorageService>();
+                        final token = storageService.getToken();
+                        final hasToken = token != null && token.isNotEmpty;
+                        if (hasToken) {
+                          context.read<CartCubit>().getCart();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
@@ -475,6 +496,12 @@ class _CartScreenState extends State<CartScreen>
   }
 
   void _updateQuantity(int cardId, String method) async {
+    final storageService = di.sl<StorageService>();
+    final token = storageService.getToken();
+    final hasToken = token != null && token.isNotEmpty;
+
+    if (!hasToken) return;
+
     final productsService = di.sl<ProductsService>();
     try {
       await productsService.addToCart(productId: cardId, method: method);

@@ -19,15 +19,20 @@ class PickAvatarService {
       );
 
       if (source == ImageSource.camera) {
-        // Request camera permission (needed for both iOS and Android)
-        debugPrint('pickAvatar: Requesting camera permission');
-        final cameraStatus = await Permission.camera.request();
-        debugPrint(
-          'pickAvatar: Camera permission status: ${cameraStatus.isGranted}',
-        );
-        if (!cameraStatus.isGranted) {
-          debugPrint('pickAvatar: Camera permission denied');
-          return null;
+        if (Platform.isAndroid) {
+          debugPrint('pickAvatar: Requesting camera permission (Android)');
+          final cameraStatus = await Permission.camera.request();
+          debugPrint(
+            'pickAvatar: Camera permission status: ${cameraStatus.isGranted}',
+          );
+          if (!cameraStatus.isGranted) {
+            debugPrint('pickAvatar: Camera permission denied (Android)');
+            return null;
+          }
+        } else {
+          debugPrint(
+            'pickAvatar: Skipping camera permission request on iOS (image_picker handles it)',
+          );
         }
       } else {
         // For gallery, only request permission on Android
@@ -108,15 +113,27 @@ class PickAvatarService {
       );
 
       if (source == ImageSource.camera) {
-        // Request camera permission (needed for both iOS and Android)
-        debugPrint('pickImageWithoutCrop: Requesting camera permission');
-        final cameraStatus = await Permission.camera.request();
-        debugPrint(
-          'pickImageWithoutCrop: Camera permission status: ${cameraStatus.isGranted}',
-        );
-        if (!cameraStatus.isGranted) {
-          debugPrint('pickImageWithoutCrop: Camera permission denied');
-          return null;
+        // Request camera permission on Android only
+        // On iOS, image_picker handles permission requests automatically
+        if (Platform.isAndroid) {
+          debugPrint(
+            'pickImageWithoutCrop: Requesting camera permission (Android)',
+          );
+          final cameraStatus = await Permission.camera.request();
+          debugPrint(
+            'pickImageWithoutCrop: Camera permission status: ${cameraStatus.isGranted}',
+          );
+          if (!cameraStatus.isGranted) {
+            debugPrint(
+              'pickImageWithoutCrop: Camera permission denied (Android)',
+            );
+            return null;
+          }
+        } else {
+          // iOS: image_picker will handle permission request automatically
+          debugPrint(
+            'pickImageWithoutCrop: Skipping camera permission request on iOS (image_picker handles it)',
+          );
         }
       } else {
         // For gallery, only request permission on Android

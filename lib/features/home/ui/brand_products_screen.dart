@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/di/inject.dart' as di;
+import '../../../core/services/storage_service.dart';
 import '../../../shared/widgets/product_grid_shimmer.dart';
 import '../../../shared/widgets/animated_product_grid.dart';
 import '../cubit/brand_products_cubit.dart';
@@ -29,10 +30,16 @@ class BrandProductsScreen extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) {
+            final storageService = di.sl<StorageService>();
+            final token = storageService.getToken();
+            final hasToken = token != null && token.isNotEmpty;
+
             final cubit = di.sl<FavoritesCubit>();
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              cubit.getFavorites();
-            });
+            if (hasToken) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                cubit.getFavorites();
+              });
+            }
             return cubit;
           },
         ),

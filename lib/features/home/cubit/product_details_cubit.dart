@@ -13,18 +13,24 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   ProductDetailsCubit(this._productsService) : super(ProductDetailsInitial());
 
   /// Get cached product details
-  ProductDetailsResponseModel? get cachedProductDetails => _cachedProductDetails;
+  ProductDetailsResponseModel? get cachedProductDetails =>
+      _cachedProductDetails;
 
   /// Fetch product details by ID
   Future<void> getProductDetails(int productId) async {
+    if (isClosed) return;
     emit(ProductDetailsLoading());
 
     try {
       final response = await _productsService.getProductDetails(productId);
+
+      if (isClosed) return;
       _cachedProductDetails = response;
 
       emit(ProductDetailsSuccess(response));
     } catch (e) {
+      if (isClosed) return;
+
       String errorMessage = 'An error occurred. Please try again.';
 
       if (e is DioException) {
@@ -57,6 +63,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
     required int productId,
     String method = 'add',
   }) async {
+    if (isClosed) return;
     emit(AddToCartLoading());
 
     try {
@@ -65,15 +72,20 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
         method: method,
       );
 
+      if (isClosed) return;
       emit(AddToCartSuccess(response));
-      
+
       // Restore product details state after showing success
       if (_cachedProductDetails != null) {
         Future.delayed(const Duration(milliseconds: 100), () {
-          emit(ProductDetailsSuccess(_cachedProductDetails!));
+          if (!isClosed) {
+            emit(ProductDetailsSuccess(_cachedProductDetails!));
+          }
         });
       }
     } catch (e) {
+      if (isClosed) return;
+
       String errorMessage = 'Failed to add to cart. Please try again.';
 
       if (e is DioException) {
@@ -102,7 +114,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
 
   /// Reset to initial state
   void reset() {
+    if (isClosed) return;
     emit(ProductDetailsInitial());
   }
 }
-

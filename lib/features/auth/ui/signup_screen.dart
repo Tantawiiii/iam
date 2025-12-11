@@ -144,7 +144,7 @@ class _SignupScreenState extends State<SignupScreen> {
       debugPrint('_pickAvatar: File picked: ${file != null}');
       
       if (mounted && file != null) {
-        setState(() => _avatarFile = file);
+      setState(() => _avatarFile = file);
       } else if (!mounted) {
         debugPrint('_pickAvatar: Widget unmounted after picking');
       } else {
@@ -174,14 +174,17 @@ class _SignupScreenState extends State<SignupScreen> {
         builder: (popupContext) => CupertinoActionSheet(
           actions: [
             CupertinoActionSheetAction(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pop(popupContext);
                 debugPrint('Camera button pressed on iPad');
-                await Future.delayed(const Duration(milliseconds: 300));
-                if (mounted) {
-                  debugPrint('Calling _pickAvatar for camera');
-                  _pickAvatar(ImageSource.camera);
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    debugPrint('Calling _pickAvatar for camera');
+                    _pickAvatar(ImageSource.camera);
+                  } else {
+                    debugPrint('Widget not mounted, cannot pick avatar');
+                  }
+                });
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -193,14 +196,17 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             ),
             CupertinoActionSheetAction(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.pop(popupContext);
                 debugPrint('Gallery button pressed on iPad');
-                await Future.delayed(const Duration(milliseconds: 300));
-                if (mounted) {
-                  debugPrint('Calling _pickAvatar for gallery');
-                  _pickAvatar(ImageSource.gallery);
-                }
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) {
+                    debugPrint('Calling _pickAvatar for gallery');
+                    _pickAvatar(ImageSource.gallery);
+                  } else {
+                    debugPrint('Widget not mounted, cannot pick avatar');
+                  }
+                });
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -220,50 +226,50 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       );
     } else {
-      showModalBottomSheet(
-        context: context,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-        ),
-        builder: (_) => SafeArea(
-          child: Padding(
-            padding: EdgeInsets.all(16.w),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                PickOption(
-                  icon: Icons.photo_camera_outlined,
-                  label: AppTexts.camera,
-                  onTap: () {
-                    Navigator.pop(context);
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+      ),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              PickOption(
+                icon: Icons.photo_camera_outlined,
+                label: AppTexts.camera,
+                onTap: () {
+                  Navigator.pop(context);
                     debugPrint('Camera button pressed');
                     Future.delayed(const Duration(milliseconds: 300)).then((_) {
                       if (mounted) {
                         debugPrint('Calling _pickAvatar for camera');
-                        _pickAvatar(ImageSource.camera);
+                  _pickAvatar(ImageSource.camera);
                       }
                     });
-                  },
-                ),
-                PickOption(
-                  icon: Icons.photo_library_outlined,
-                  label: AppTexts.gallery,
-                  onTap: () {
-                    Navigator.pop(context);
+                },
+              ),
+              PickOption(
+                icon: Icons.photo_library_outlined,
+                label: AppTexts.gallery,
+                onTap: () {
+                  Navigator.pop(context);
                     debugPrint('Gallery button pressed');
                     Future.delayed(const Duration(milliseconds: 300)).then((_) {
                       if (mounted) {
                         debugPrint('Calling _pickAvatar for gallery');
-                        _pickAvatar(ImageSource.gallery);
+                  _pickAvatar(ImageSource.gallery);
                       }
                     });
-                  },
-                ),
-              ],
-            ),
+                },
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    );
     }
   }
 

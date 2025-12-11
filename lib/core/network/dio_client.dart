@@ -35,6 +35,122 @@ class DioClient {
   late final Dio _dio;
   final StorageService _storageService;
   bool _isShowingUnauthorizedDialog = false;
+  String? _cachedToken;
+
+  /// Check if user is currently on home screen
+  bool _isOnHomeScreen() {
+    final context = navigatorKey.currentContext;
+    if (context == null) return false;
+
+    // Check if current route is home
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+    if (currentRoute == AppRoutes.home) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /// Check if endpoint should show login dialog even for guests
+  /// Returns false if user is on home screen (to avoid showing dialog in home)
+  bool _shouldShowDialogForGuest(String path) {
+    // Don't show dialog if user is on home screen
+    if (_isOnHomeScreen()) {
+      return false;
+    }
+
+    final guestDialogEndpoints = [
+      ApiConstants.cart,
+      ApiConstants.favorite,
+      ApiConstants.createOrder,
+    ];
+
+    String normalizedPath = path.trim();
+    if (normalizedPath.contains('?')) {
+      normalizedPath = normalizedPath.split('?').first;
+    }
+    if (normalizedPath.endsWith('/') && normalizedPath.length > 1) {
+      normalizedPath = normalizedPath.substring(0, normalizedPath.length - 1);
+    }
+
+    for (final endpoint in guestDialogEndpoints) {
+      String normalizedEndpoint = endpoint;
+      if (normalizedEndpoint.endsWith('/') && normalizedEndpoint.length > 1) {
+        normalizedEndpoint = normalizedEndpoint.substring(
+          0,
+          normalizedEndpoint.length - 1,
+        );
+      }
+
+      if (normalizedPath == normalizedEndpoint ||
+          normalizedPath.startsWith('$normalizedEndpoint/') ||
+          normalizedPath.startsWith('$normalizedEndpoint?')) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  bool _requiresAuth(String path) {
+    final publicEndpoints = [
+      ApiConstants.categories,
+      ApiConstants.brands,
+      ApiConstants.cards,
+      ApiConstants.offers,
+      ApiConstants.register,
+      ApiConstants.login,
+      ApiConstants.verifyOtp,
+      ApiConstants.contactUs,
+    ];
+
+    String normalizedPath = path.trim();
+
+    if (normalizedPath.contains('?')) {
+      normalizedPath = normalizedPath.split('?').first;
+    }
+
+    if (normalizedPath.endsWith('/') && normalizedPath.length > 1) {
+      normalizedPath = normalizedPath.substring(0, normalizedPath.length - 1);
+    }
+
+    if (normalizedPath.startsWith('http')) {
+      try {
+        final uri = Uri.parse(normalizedPath);
+        normalizedPath = uri.path;
+
+        if (normalizedPath.endsWith('/') && normalizedPath.length > 1) {
+          normalizedPath = normalizedPath.substring(
+            0,
+            normalizedPath.length - 1,
+          );
+        }
+      } catch (_) {}
+    }
+
+    // Check if path matches any public endpoint
+    for (final endpoint in publicEndpoints) {
+      String normalizedEndpoint = endpoint;
+      if (normalizedEndpoint.endsWith('/') && normalizedEndpoint.length > 1) {
+        normalizedEndpoint = normalizedEndpoint.substring(
+          0,
+          normalizedEndpoint.length - 1,
+        );
+      }
+
+      if (normalizedPath == normalizedEndpoint ||
+          normalizedPath.startsWith('$normalizedEndpoint/') ||
+          normalizedPath.startsWith('$normalizedEndpoint?')) {
+        debugPrint(
+          'Public endpoint detected: $endpoint in path: $path (normalized: $normalizedPath)',
+        );
+        return false;
+      }
+    }
+
+    debugPrint('Protected endpoint: $path (normalized: $normalizedPath)');
+    return true;
+  }
 
   void _setupInterceptors() {
     _dio.interceptors.add(
@@ -43,26 +159,81 @@ class DioClient {
           final languageCode = _storageService.getLanguageCode() ?? 'ar';
           options.headers['lang'] = languageCode;
           _dio.options.headers['lang'] = languageCode;
+
+          final path = options.path;
+          if (_requiresAuth(path)) {
+            final token = _cachedToken ?? _storageService.getToken();
+            if (token != null && token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            } else {
+              options.headers.remove('Authorization');
+            }
+          } else {
+            options.headers.remove('Authorization');
+          }
+
           return handler.next(options);
         },
         onError: (error, handler) {
           if (error.response?.statusCode == 401 &&
               !_isShowingUnauthorizedDialog) {
-            _handleUnauthorizedError();
+            final path = error.requestOptions.path;
+            final requiresAuth = _requiresAuth(path);
+
+            debugPrint('401 Error on path: $path, requiresAuth: $requiresAuth');
+
+            // Check if user has a token (not a guest)
+            final token = _cachedToken ?? _storageService.getToken();
+            final isGuest = token == null || token.isEmpty;
+
+            // Check if this endpoint should show dialog even for guests (cart, favorite, etc.)
+            final shouldShowForGuest = _shouldShowDialogForGuest(path);
+
+            // Show dialog if:
+            // 1. Endpoint requires auth AND user is not a guest, OR
+            // 2. Endpoint should show dialog for guests (cart, favorite, etc.)
+            if (requiresAuth &&
+                !path.contains(ApiConstants.login) &&
+                !path.contains(ApiConstants.register) &&
+                (!isGuest || shouldShowForGuest)) {
+              _handleUnauthorizedError();
+            }
           }
           return handler.next(error);
         },
         onResponse: (response, handler) {
           if (response.statusCode == 401 && !_isShowingUnauthorizedDialog) {
-            _handleUnauthorizedError();
-            return handler.reject(
-              DioException(
-                requestOptions: response.requestOptions,
-                response: response,
-                type: DioExceptionType.badResponse,
-                error: 'Unauthenticated',
-              ),
+            final path = response.requestOptions.path;
+            final requiresAuth = _requiresAuth(path);
+
+            debugPrint(
+              '401 Response on path: $path, requiresAuth: $requiresAuth',
             );
+
+            // Check if user has a token (not a guest)
+            final token = _cachedToken ?? _storageService.getToken();
+            final isGuest = token == null || token.isEmpty;
+
+            // Check if this endpoint should show dialog even for guests (cart, favorite, etc.)
+            final shouldShowForGuest = _shouldShowDialogForGuest(path);
+
+            // Show dialog if:
+            // 1. Endpoint requires auth AND user is not a guest, OR
+            // 2. Endpoint should show dialog for guests (cart, favorite, etc.)
+            if (requiresAuth &&
+                !path.contains(ApiConstants.login) &&
+                !path.contains(ApiConstants.register) &&
+                (!isGuest || shouldShowForGuest)) {
+              _handleUnauthorizedError();
+              return handler.reject(
+                DioException(
+                  requestOptions: response.requestOptions,
+                  response: response,
+                  type: DioExceptionType.badResponse,
+                  error: 'Unauthenticated',
+                ),
+              );
+            }
           }
           return handler.next(response);
         },
@@ -259,11 +430,13 @@ class DioClient {
 
   /// Set authentication token
   void setAuthToken(String token) {
+    _cachedToken = token;
     _dio.options.headers['Authorization'] = 'Bearer $token';
   }
 
   /// Clear authentication token
   void clearAuthToken() {
+    _cachedToken = null;
     _dio.options.headers.remove('Authorization');
   }
 
