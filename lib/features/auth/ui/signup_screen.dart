@@ -465,7 +465,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           },
                         ),
                         SizedBox(height: 20.h),
-                        // Phone number with country code picker
                         Row(
                           children: [
                             Container(
@@ -512,12 +511,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                 hint: AppTexts.phone,
                                 keyboardType: TextInputType.phone,
                                 leadingIcon: Icons.phone_outlined,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return AppTexts.pleaseEnterPhone;
-                                  }
-                                  return null;
-                                },
+                                // validator: (value) {
+                                //   if (value == null || value.isEmpty) {
+                                //     return AppTexts.pleaseEnterPhone;
+                                //   }
+                                //   return null;
+                                // },
                               ),
                             ),
                           ],
@@ -559,16 +558,16 @@ class _SignupScreenState extends State<SignupScreen> {
                           hint: '${AppTexts.age} (21-55)',
                           keyboardType: TextInputType.number,
                           leadingIcon: Icons.calendar_today_outlined,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return AppTexts.pleaseEnterAge;
-                            }
-                            final age = int.tryParse(value);
-                            if (age == null || age < 21 || age > 55) {
-                              return AppTexts.ageRange;
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return AppTexts.pleaseEnterAge;
+                          //   }
+                          //   final age = int.tryParse(value);
+                          //   if (age == null || age < 21 || age > 55) {
+                          //     return AppTexts.ageRange;
+                          //   }
+                          //   return null;
+                          // },
                         ),
                         SizedBox(height: 20.h),
                         DropdownButtonFormField<String>(
@@ -639,12 +638,12 @@ class _SignupScreenState extends State<SignupScreen> {
                               _selectedGender = value;
                             });
                           },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return AppTexts.pleaseSelectGender;
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return AppTexts.pleaseSelectGender;
+                          //   }
+                          //   return null;
+                          // },
                         ),
                         SizedBox(height: 20.h),
                         DropdownButtonFormField<String>(
@@ -711,12 +710,12 @@ class _SignupScreenState extends State<SignupScreen> {
                               _selectedCountry = value;
                             });
                           },
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return AppTexts.pleaseSelectCountry;
-                            }
-                            return null;
-                          },
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return AppTexts.pleaseSelectCountry;
+                          //   }
+                          //   return null;
+                          // },
                         ),
                         SizedBox(height: 20.h),
                         AppTextField(

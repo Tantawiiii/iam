@@ -98,7 +98,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
-
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -106,7 +105,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
 
     try {
-
       final authService = di.sl<AuthService>();
       final response = await authService.checkAuth();
 
@@ -119,9 +117,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       final user = checkAuthResponse.data;
 
-
       if (!user.active) {
-
         if (user.idImage == null || user.idImage!.isEmpty) {
           await _showMissingIdImageDialog(context);
           return;
@@ -178,6 +174,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     if (_paymentType == 'installment' && _selectedInstallmentMonths != null) {
       increaseRate = _getIncreaseRate(_selectedInstallmentMonths!);
       totalAmount = originalTotal + (originalTotal * increaseRate);
+    } else if (_paymentType == 'cash') {
+      totalAmount = originalTotal;
     }
 
     final orderData = CreateOrderRequestModel(
