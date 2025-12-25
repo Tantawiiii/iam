@@ -2,18 +2,18 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import '../services/auth_service.dart';
 
-part 'verify_otp_state.dart';
+part 'forgot_password_state.dart';
 
-class VerifyOtpCubit extends Cubit<VerifyOtpState> {
+class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   final AuthService _authService;
 
-  VerifyOtpCubit(this._authService) : super(VerifyOtpInitial());
+  ForgotPasswordCubit(this._authService) : super(ForgotPasswordInitial());
 
-  Future<void> verifyOtp({required String email, required String otp}) async {
-    emit(VerifyOtpLoading());
+  Future<void> sendOtp({required String email}) async {
+    emit(ForgotPasswordLoading());
 
     try {
-      final response = await _authService.verifyOtp(email: email, otp: otp);
+      final response = await _authService.sendOtp(email: email);
 
       if (response.statusCode != null && response.statusCode! >= 400) {
         String errorMessage = 'An error occurred. Please try again.';
@@ -23,7 +23,7 @@ class VerifyOtpCubit extends Cubit<VerifyOtpState> {
         } else if (responseData is Map && responseData.containsKey('error')) {
           errorMessage = responseData['error'].toString();
         }
-        emit(VerifyOtpFailure(errorMessage));
+        emit(ForgotPasswordFailure(errorMessage));
         return;
       }
 
@@ -32,17 +32,16 @@ class VerifyOtpCubit extends Cubit<VerifyOtpState> {
       if (responseData is Map<String, dynamic>) {
         final result = responseData['result'];
         if (result != null && result.toString().toLowerCase() == 'error') {
-          // Extract error message
           String errorMessage = 'An error occurred. Please try again.';
           if (responseData.containsKey('message')) {
             errorMessage = responseData['message'].toString();
           }
-          emit(VerifyOtpFailure(errorMessage));
+          emit(ForgotPasswordFailure(errorMessage));
           return;
         }
       }
 
-      emit(VerifyOtpSuccess(response.data));
+      emit(ForgotPasswordSuccess(response.data, email));
     } catch (e) {
       String errorMessage = 'An error occurred. Please try again.';
 
@@ -66,11 +65,11 @@ class VerifyOtpCubit extends Cubit<VerifyOtpState> {
         }
       }
 
-      emit(VerifyOtpFailure(errorMessage));
+      emit(ForgotPasswordFailure(errorMessage));
     }
   }
 
   void reset() {
-    emit(VerifyOtpInitial());
+    emit(ForgotPasswordInitial());
   }
 }

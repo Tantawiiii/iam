@@ -153,4 +153,36 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<Response> sendOtp({required String email}) async {
+    try {
+      final response = await _apiService.post(
+        ApiConstants.sendOtp,
+        data: {'email': email},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> resetPassword({
+    required String email,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final response = await _apiService.post(
+        ApiConstants.resetPassword,
+        data: {
+          'email': email,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        },
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -708,19 +708,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           for (int i = 6; i <= 12; i++)
                             DropdownMenuItem<int>(
                               value: i,
-                              child: Text('$i ${AppTexts.months} (15%)'),
+                              child: Text('$i ${AppTexts.months}'),
                             ),
                           // 18-24 months (20% increase)
                           for (int i = 18; i <= 24; i += 6)
                             DropdownMenuItem<int>(
                               value: i,
-                              child: Text('$i ${AppTexts.months} (20%)'),
+                              child: Text('$i ${AppTexts.months}'),
                             ),
                           // 30-36 months (25% increase)
                           for (int i = 30; i <= 36; i += 6)
                             DropdownMenuItem<int>(
                               value: i,
-                              child: Text('$i ${AppTexts.months} (25%)'),
+                              child: Text('$i ${AppTexts.months}'),
                             ),
                         ],
                         onChanged: (value) {

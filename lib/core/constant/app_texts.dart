@@ -241,6 +241,27 @@ final class AppTexts {
   static String get accountRejectedTitle => _text('accountRejectedTitle');
   static String get accountApprovedMessage => _text('accountApprovedMessage');
   static String get accountRejectedMessage => _text('accountRejectedMessage');
+  static String get additionalDocumentsRequiredTitle =>
+      _text('additionalDocumentsRequiredTitle');
+  static String get additionalDocumentsRequiredMessage =>
+      _text('additionalDocumentsRequiredMessage');
+  static String get uploadDocuments => _text('uploadDocuments');
+  static String get documentsNotClearTitle => _text('documentsNotClearTitle');
+  static String get documentsNotClearMessage =>
+      _text('documentsNotClearMessage');
+  static String get installmentRequestExpiredTitle =>
+      _text('installmentRequestExpiredTitle');
+  static String get installmentRequestExpiredMessage =>
+      _text('installmentRequestExpiredMessage');
+  static String get creditLimitUpdatedTitle => _text('creditLimitUpdatedTitle');
+  static String get creditLimitUpdatedMessage =>
+      _text('creditLimitUpdatedMessage');
+  static String get installmentServiceSuspendedTitle =>
+      _text('installmentServiceSuspendedTitle');
+  static String get installmentServiceSuspendedMessage =>
+      _text('installmentServiceSuspendedMessage');
+  static String get shareApp => _text('shareApp');
+  static String get shareAppMessage => _text('shareAppMessage');
   static String get now => _text('now');
   static String get minutesAgo => _text('minutesAgo');
   static String get hoursAgo => _text('hoursAgo');
@@ -265,6 +286,22 @@ final class AppTexts {
       _text('enter6DigitCodeSentToEmail');
   static String get verifying => _text('verifying');
   static String get otpVerifiedSuccess => _text('otpVerifiedSuccess');
+  static String get forgetPassword => _text('forgetPassword');
+  static String get resetPassword => _text('resetPassword');
+  static String get resetPasswordTitle => _text('resetPasswordTitle');
+  static String get resetPasswordDescription =>
+      _text('resetPasswordDescription');
+  static String get newPassword => _text('newPassword');
+  static String get pleaseEnterNewPassword => _text('pleaseEnterNewPassword');
+  static String get passwordResetSuccess => _text('passwordResetSuccess');
+  static String get sendingOtp => _text('sendingOtp');
+  static String get resettingPassword => _text('resettingPassword');
+  static String get send => _text('send');
+  static String get termsAndConditionsContent =>
+      _text('termsAndConditionsContent');
+  static String get termsAndConditionsLastUpdate =>
+      _text('termsAndConditionsLastUpdate');
+  static String get readTermsAndConditions => _text('readTermsAndConditions');
 
   static const Map<String, Map<AppLanguage, String>> _localizedValues = {
     'welcomeBack': {
@@ -355,8 +392,10 @@ final class AppTexts {
       AppLanguage.ar: 'تم تسجيل الدخول بنجاح!',
     },
     'unauthenticatedMessage': {
-      AppLanguage.en: 'Your session has expired. Please login again to continue.',
-      AppLanguage.ar: 'انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى للمتابعة.',
+      AppLanguage.en:
+          'Your session has expired. Please login again to continue.',
+      AppLanguage.ar:
+          'انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى للمتابعة.',
     },
     'signUp': {AppLanguage.en: 'Sign Up', AppLanguage.ar: 'إنشاء حساب'},
     'fullName': {AppLanguage.en: 'Full name', AppLanguage.ar: 'الاسم الكامل'},
@@ -452,6 +491,7 @@ final class AppTexts {
       AppLanguage.ar: 'عدّل معلوماتك',
     },
     'contactUs': {AppLanguage.en: 'Contact Us', AppLanguage.ar: 'تواصل معنا'},
+    'send': {AppLanguage.en: 'Send', AppLanguage.ar: 'إرسال'},
     'sendUsMessage': {
       AppLanguage.en: 'Send us a message',
       AppLanguage.ar: 'أرسل لنا رسالة',
@@ -781,7 +821,10 @@ final class AppTexts {
       AppLanguage.en: 'Creating...',
       AppLanguage.ar: 'جارٍ الإنشاء...',
     },
-    'idImage': {AppLanguage.en: 'ID Image', AppLanguage.ar: 'الهوية او جواز السفر'},
+    'idImage': {
+      AppLanguage.en: 'ID Image',
+      AppLanguage.ar: 'الهوية او جواز السفر',
+    },
     'pleaseUploadIdImage': {
       AppLanguage.en: 'Please upload ID image',
       AppLanguage.ar: 'يرجى رفع صورة الهوية',
@@ -808,8 +851,8 @@ final class AppTexts {
       AppLanguage.ar: 'المبلغ الأصلي',
     },
     'increaseAmount': {
-      AppLanguage.en: 'Increase Amount',
-      AppLanguage.ar: 'مبلغ الزيادة',
+      AppLanguage.en: 'Installment Sale Price',
+      AppLanguage.ar: 'سعر البيع بالتقسيط',
     },
     'totalAmount': {
       AppLanguage.en: 'Total Amount',
@@ -891,13 +934,51 @@ final class AppTexts {
       AppLanguage.en: 'OTP verified successfully!',
       AppLanguage.ar: 'تم التحقق من رمز OTP بنجاح!',
     },
+    'forgetPassword': {
+      AppLanguage.en: 'Forgot Password?',
+      AppLanguage.ar: 'نسيت كلمة المرور؟',
+    },
+    'resetPassword': {
+      AppLanguage.en: 'Reset Password',
+      AppLanguage.ar: 'إعادة تعيين كلمة المرور',
+    },
+    'resetPasswordTitle': {
+      AppLanguage.en: 'Reset Your Password',
+      AppLanguage.ar: 'إعادة تعيين كلمة المرور',
+    },
+    'resetPasswordDescription': {
+      AppLanguage.en: 'Please enter your new password',
+      AppLanguage.ar: 'يرجى إدخال كلمة المرور الجديدة',
+    },
+    'newPassword': {
+      AppLanguage.en: 'New Password',
+      AppLanguage.ar: 'كلمة المرور الجديدة',
+    },
+    'pleaseEnterNewPassword': {
+      AppLanguage.en: 'Please enter new password',
+      AppLanguage.ar: 'يرجى إدخال كلمة المرور الجديدة',
+    },
+    'passwordResetSuccess': {
+      AppLanguage.en: 'Password reset successfully!',
+      AppLanguage.ar: 'تم إعادة تعيين كلمة المرور بنجاح!',
+    },
+    'sendingOtp': {
+      AppLanguage.en: 'Sending OTP...',
+      AppLanguage.ar: 'جارٍ إرسال رمز التحقق...',
+    },
+    'resettingPassword': {
+      AppLanguage.en: 'Resetting Password...',
+      AppLanguage.ar: 'جارٍ إعادة تعيين كلمة المرور...',
+    },
     'notifications': {
       AppLanguage.en: 'Notifications',
       AppLanguage.ar: 'الإشعارات',
     },
     'accountUnderReview': {
-      AppLanguage.en: 'Your request is under review',
-      AppLanguage.ar: 'يتم مراجعة طلبك',
+      AppLanguage.en:
+          'Your installment request is currently under review. You will be notified once the evaluation is complete.',
+      AppLanguage.ar:
+          'طلب التقسيط الخاص بك قيد المراجعة حاليًا.\nسيتم إشعارك فور الانتهاء من التقييم.',
     },
     'accountApproved': {
       AppLanguage.en: 'Account approved',
@@ -916,24 +997,87 @@ final class AppTexts {
       AppLanguage.ar: 'تحديد الكل كمقروء',
     },
     'accountUnderReviewTitle': {
-      AppLanguage.en: 'Request Under Review',
-      AppLanguage.ar: 'طلبك قيد المراجعة',
+      AppLanguage.en: '⏳ Request Under Review',
+      AppLanguage.ar: '⏳ طلبك قيد المراجعة',
     },
     'accountApprovedTitle': {
-      AppLanguage.en: 'Account Approved',
-      AppLanguage.ar: 'تم الموافقة على الحساب',
+      AppLanguage.en: '✅ Installment Request Approved',
+      AppLanguage.ar: 'تم قبول طلب التقسيط',
     },
     'accountRejectedTitle': {
-      AppLanguage.en: 'Account Rejected',
-      AppLanguage.ar: 'تم رفض الحساب',
+      AppLanguage.en: '❌ Installment Request Not Approved',
+      AppLanguage.ar: '❌ تعذر قبول طلب التقسيط',
     },
     'accountApprovedMessage': {
-      AppLanguage.en: 'Your account has been approved successfully',
-      AppLanguage.ar: 'تم الموافقة على حسابك بنجاح',
+      AppLanguage.en:
+          'We would like to inform you that your installment request has been successfully approved. You can now use the available credit limit to complete purchases within the application.',
+      AppLanguage.ar:
+          'نود إعلامك بأنه تم قبول طلبك في نظام التقسيط بنجاح.\nيمكنك الآن استخدام الحد المتاح لإتمام عمليات الشراء من داخل التطبيق.',
     },
     'accountRejectedMessage': {
-      AppLanguage.en: 'Your account has been rejected. Please contact support',
-      AppLanguage.ar: 'تم رفض حسابك. يرجى التواصل مع الدعم',
+      AppLanguage.en:
+          'We regret to inform you that your installment request has not been approved at this time based on the evaluation results. You can reapply later or contact support for more details.',
+      AppLanguage.ar:
+          'نأسف لإبلاغك بأنه لم يتم قبول طلب التقسيط حاليًا بناءً على نتائج التقييم.\nيمكنك إعادة التقديم لاحقًا أو التواصل مع الدعم لمزيد من التفاصيل',
+    },
+    'additionalDocumentsRequiredTitle': {
+      AppLanguage.en: '📄 Additional Documents Required',
+      AppLanguage.ar: '📄 مطلوب مستندات إضافية',
+    },
+    'additionalDocumentsRequiredMessage': {
+      AppLanguage.en:
+          'Please upload additional documents such as a bank statement or phone bill with a detailed address to complete the review of your installment request. You can upload the required documents through the "Documents" page.',
+      AppLanguage.ar:
+          'يرجى رفع مستندات إضافية مثل كشف حساب بنكي او فتورة هاتف مذكور فيها العنوان با التفصيل لاستكمال دراسة طلب التقسيط الخاص بك.\nيمكنك رفع الأوراق المطلوبة من خلال صفحة "المستندات".',
+    },
+    'uploadDocuments': {
+      AppLanguage.en: '📤 Upload Documents',
+      AppLanguage.ar: '📤 رفع المستندات',
+    },
+    'documentsNotClearTitle': {
+      AppLanguage.en: '⚠️ Documents Not Clear',
+      AppLanguage.ar: '⚠️ المستندات غير واضحة',
+    },
+    'documentsNotClearMessage': {
+      AppLanguage.en:
+          'The documents you uploaded are not clear or incomplete. Please re-upload clear images of the required documents to ensure prompt review.',
+      AppLanguage.ar:
+          'المستندات التي قمت برفعها غير واضحة أو غير مكتملة.\nيرجى إعادة رفع صور واضحة للمستندات المطلوبة لضمان سرعة المراجعة.',
+    },
+    'installmentRequestExpiredTitle': {
+      AppLanguage.en: '⌛ Request Expired',
+      AppLanguage.ar: '⌛ انتهت صلاحية الطلب',
+    },
+    'installmentRequestExpiredMessage': {
+      AppLanguage.en:
+          'Your installment request has expired due to failure to complete the required documents within the specified period. You can reapply at any time.',
+      AppLanguage.ar:
+          'انتهت صلاحية طلب التقسيط بسبب عدم استكمال المستندات خلال الفترة المحددة.\nيمكنك إعادة التقديم في أي وقت.',
+    },
+    'creditLimitUpdatedTitle': {
+      AppLanguage.en: '💳 Credit Limit Updated',
+      AppLanguage.ar: '💳 تحديث الحد الائتماني',
+    },
+    'creditLimitUpdatedMessage': {
+      AppLanguage.en:
+          'Your credit limit has been updated.\nCurrent available limit: {{amount}}',
+      AppLanguage.ar:
+          'تم تحديث الحد الائتماني الخاص بك.\nالحد المتاح حاليًا: {{المبلغ}}',
+    },
+    'installmentServiceSuspendedTitle': {
+      AppLanguage.en: '🚫 Installment Service Temporarily Suspended',
+      AppLanguage.ar: '🚫 تم إيقاف خدمة التقسيط مؤقتًا',
+    },
+    'installmentServiceSuspendedMessage': {
+      AppLanguage.en:
+          'The installment service has been temporarily suspended for your account. Please contact support for more details.',
+      AppLanguage.ar:
+          'تم إيقاف خدمة التقسيط مؤقتًا لحسابك.\nيرجى التواصل مع الدعم لمزيد من التفاصيل.',
+    },
+    'shareApp': {AppLanguage.en: 'Share App', AppLanguage.ar: 'مشاركة التطبيق'},
+    'shareAppMessage': {
+      AppLanguage.en: 'Check out IAM Store app!',
+      AppLanguage.ar: 'جرب تطبيق IAM Store!',
     },
     'now': {AppLanguage.en: 'Now', AppLanguage.ar: 'الآن'},
     'minutesAgo': {
@@ -982,6 +1126,176 @@ final class AppTexts {
     'pleaseEnterProductNumber': {
       AppLanguage.en: 'Please enter product number',
       AppLanguage.ar: 'يرجى إدخال رقم المنتج',
+    },
+    'termsAndConditionsLastUpdate': {
+      AppLanguage.en: 'Last updated: December 20, 2025',
+      AppLanguage.ar: 'آخر تحديث: 20 / 12/ 2025',
+    },
+    'readTermsAndConditions': {
+      AppLanguage.en: 'I have read and agree to the Terms and Conditions',
+      AppLanguage.ar: 'أوافق على الشروط والأحكام',
+    },
+    'termsAndConditionsContent': {
+      AppLanguage.en: '''Terms and Conditions for IAM Application
+
+Last updated: December 20, 2025
+
+Welcome to the IAM application, a specialized e-commerce application for electronics within the United Arab Emirates. By using or registering with the application, you acknowledge and agree to be bound by the following terms and conditions in full. If you do not agree, please do not use the application.
+
+
+---
+
+1. Definitions
+
+Application: The IAM application and all its versions and services.
+
+Company: The entity that owns and operates the IAM application.
+
+User / Customer: Any person who creates an account or uses the application.
+
+Products: All electronic goods offered for sale through the application.
+
+Cash Payment: Full payment of the product price in one installment.
+
+Installment Payment: Purchase of the product at a specified total price to be paid in installments, without this being considered financing or a loan.
+
+Subscription: An amount paid in advance in exchange for enabling application for the installment system.
+
+
+
+---
+
+2. Application Scope
+
+The application is an e-commerce platform for selling electronic products.
+
+Sales are conducted either in cash or by installments according to the approved terms.
+
+The application is not a financing entity, bank, or credit company.
+
+
+
+---
+
+3. Account and Registration
+
+All provided data must be accurate and up to date.
+
+The application has the right to suspend or cancel any account in case of providing incorrect data or violating the terms.
+
+
+
+---
+
+4. Subscription System
+
+Payment of subscription fees in advance is required to apply for purchase using the installment system.
+
+Subscription fees are non-refundable in all cases.
+
+Payment of subscription does not necessarily mean approval of the installment request.
+
+
+
+---
+
+5. Installment System
+
+Installments are only available after the request is reviewed and approved by the application management.
+
+The application has the right to accept or reject an installment request without providing reasons.
+
+In case of request rejection, the customer does not have the right to claim a refund of subscription fees.
+
+The installment price is a fixed and predetermined total price and is not considered interest or financing.
+
+
+
+---
+
+6. Payment and Installments
+
+The customer is obligated to pay installments on their specified due dates.''',
+      AppLanguage.ar: '''الشروط والأحكام لتطبيق IAM
+
+آخر تحديث: 20 / 12/ 2025
+
+مرحبًا بك في تطبيق IAM، وهو تطبيق متخصص في تجارة الإلكترونيات داخل دولة الإمارات العربية المتحدة. باستخدامك للتطبيق أو تسجيلك فيه، فإنك تقرّ وتوافق على الالتزام بالشروط والأحكام التالية كاملةً. في حال عدم موافقتك، يُرجى عدم استخدام التطبيق.
+
+
+---
+
+1. التعريفات
+
+التطبيق: تطبيق IAM بجميع نسخه وخدماته.
+
+الشركة: الجهة المالكة والمشغلة لتطبيق IAM.
+
+المستخدم / العميل: أي شخص يقوم بإنشاء حساب أو استخدام التطبيق.
+
+المنتجات: جميع السلع الإلكترونية المعروضة للبيع عبر التطبيق.
+
+الدفع النقدي: الدفع الكامل لقيمة المنتج دفعة واحدة.
+
+الدفع بالتقسيط: شراء المنتج بسعر إجمالي محدد يُسدَّد على أقساط دون اعتبار ذلك تمويلًا أو قرضًا.
+
+الاشتراك: مبلغ يُدفع مقدمًا مقابل إتاحة التقديم على نظام التقسيط.
+
+
+
+---
+
+2. نطاق عمل التطبيق
+
+التطبيق منصة تجارة إلكترونية لبيع المنتجات الإلكترونية.
+
+يتم البيع إما نقدًا أو بالتقسيط حسب الشروط المعتمدة.
+
+التطبيق ليس جهة تمويل ولا بنكًا ولا شركة ائتمان.
+
+
+
+---
+
+3. الحساب والتسجيل
+
+يجب أن تكون جميع البيانات المقدمة صحيحة وحديثة.
+
+يحق للتطبيق تعليق أو إلغاء أي حساب في حال تقديم بيانات غير صحيحة أو مخالفة الشروط.
+
+
+
+---
+
+4. نظام الاشتراك
+
+يشترط دفع رسوم اشتراك مقدّمة للتقدم بطلب الشراء بنظام التقسيط.
+
+رسوم الاشتراك غير قابلة للاسترداد نهائيًا في جميع الحالات.
+
+دفع الاشتراك لا يعني بالضرورة الموافقة على طلب التقسيط.
+
+
+
+---
+
+5. نظام التقسيط
+
+التقسيط متاح فقط بعد دراسة الطلب والموافقة عليه من قبل إدارة التطبيق.
+
+يحق للتطبيق قبول أو رفض طلب التقسيط دون إبداء أسباب.
+
+في حال رفض الطلب، لا يحق للعميل المطالبة باسترداد رسوم الاشتراك.
+
+سعر التقسيط هو سعر إجمالي ثابت ومحدد مسبقًا ولا يُعد فائدة أو تمويلًا.
+
+
+
+---
+
+6. الدفع والأقساط
+
+يلتزم العميل بسداد الأقساط في مواعيدها المحددة.''',
     },
   };
 }

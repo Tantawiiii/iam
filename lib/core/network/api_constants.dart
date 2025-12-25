@@ -7,6 +7,8 @@ final class ApiConstants {
   static const String login = '/api/front/login';
   static const String logout = '/api/front/logout';
   static const String verifyOtp = '/api/verify-otp';
+  static const String sendOtp = '/api/send-otp';
+  static const String resetPassword = '/api/reset-password';
   static const String refreshToken = '/api/front/refresh';
   static const String categories = '/api/front/categories';
   static const String brands = '/api/front/brands';

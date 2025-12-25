@@ -10,7 +10,6 @@ class OffersCubit extends Cubit<OffersState> {
 
   OffersCubit(this._productsService) : super(OffersInitial());
 
-  /// Get all offers
   Future<void> getOffers() async {
     emit(OffersLoading());
 
@@ -50,4 +49,3 @@ class OffersCubit extends Cubit<OffersState> {
     emit(OffersInitial());
   }
 }
-

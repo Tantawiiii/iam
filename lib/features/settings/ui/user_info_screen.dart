@@ -1,8 +1,10 @@
+import 'dart:io';
 import 'package:iam/core/constant/app_texts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/di/inject.dart' as di;
 import '../../../core/network/dio_client.dart';
@@ -84,6 +86,8 @@ class UserInfoScreen extends StatelessWidget {
                         context,
                         state.productsForSale,
                       ),
+                      SizedBox(height: 32.h),
+                      _buildShareAppSection(context),
                       SizedBox(height: 32.h),
                       _buildDeleteAccountSection(context),
                       SizedBox(height: 28.h),
@@ -592,6 +596,61 @@ class UserInfoScreen extends StatelessWidget {
         return Colors.red;
       default:
         return AppColors.primaryColor;
+    }
+  }
+
+  Widget _buildShareAppSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Divider(),
+        SizedBox(height: 16.h),
+        ElevatedButton.icon(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.textOnPrimary,
+            padding: EdgeInsets.symmetric(vertical: 14.h),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ),
+          icon: Icon(Icons.share, size: 20.sp),
+          label: Text(
+            AppTexts.shareApp,
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          ),
+          onPressed: () => _shareApp(context),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _shareApp(BuildContext context) async {
+    try {
+      String appUrl;
+      if (Platform.isAndroid) {
+        appUrl =
+            'https://play.google.com/store/apps/details?id=com.tantawii.iam';
+      } else if (Platform.isIOS) {
+        appUrl = 'https://apps.apple.com/eg/app/iam-store/id6755937895';
+      } else {
+        appUrl =
+            'https://play.google.com/store/apps/details?id=com.tantawii.iam';
+      }
+
+      final shareText = '${AppTexts.shareAppMessage}\n$appUrl';
+
+      await Share.share(shareText, subject: AppTexts.shareApp);
+    } catch (e) {
+      if (context.mounted) {
+        print(e);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
