@@ -19,6 +19,9 @@ import '../../features/reviews/ui/add_review_screen.dart';
 import '../../features/settings/ui/settings_screen.dart';
 import '../../features/settings/ui/user_info_screen.dart';
 import '../../features/orders/ui/order_details_screen.dart';
+import '../../features/auth/ui/terms_and_conditions_screen.dart';
+import '../../features/auth/ui/forgot_password_screen.dart';
+import '../../features/auth/ui/reset_password_screen.dart';
 
 Route<dynamic> onGenerateAppRoute(RouteSettings settings) {
   switch (settings.name) {
@@ -33,7 +36,19 @@ Route<dynamic> onGenerateAppRoute(RouteSettings settings) {
     case AppRoutes.verifyOtp:
       final args = settings.arguments as Map<String, dynamic>?;
       return MaterialPageRoute(
-        builder: (_) => VerifyOtpScreen(email: args?['email'] as String? ?? ''),
+        builder: (_) => VerifyOtpScreen(
+          email: args?['email'] as String? ?? '',
+          isPasswordReset: args?['isPasswordReset'] as bool? ?? false,
+        ),
+      );
+    case AppRoutes.forgotPassword:
+      return MaterialPageRoute(builder: (_) => const ForgotPasswordScreen());
+    case AppRoutes.resetPassword:
+      final args = settings.arguments as Map<String, dynamic>?;
+      return MaterialPageRoute(
+        builder: (_) => ResetPasswordScreen(
+          email: args?['email'] as String? ?? '',
+        ),
       );
     case AppRoutes.home:
       return MaterialPageRoute(builder: (_) => const MainNavigationScreen());
@@ -93,6 +108,8 @@ Route<dynamic> onGenerateAppRoute(RouteSettings settings) {
           orderNumber: args?['orderNumber'] as String? ?? '',
         ),
       );
+    case AppRoutes.termsAndConditions:
+      return MaterialPageRoute(builder: (_) => const TermsAndConditionsScreen());
     default:
       return MaterialPageRoute(
         builder: (_) =>

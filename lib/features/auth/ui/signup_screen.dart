@@ -43,7 +43,7 @@ class _SignupScreenState extends State<SignupScreen> {
     'AE',
   ); // Default to UAE
 
-  // List of Arab countries
+
   final List<String> _arabCountries = [
     'المغرب',
     'الجزائر',

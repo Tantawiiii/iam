@@ -11,8 +11,13 @@ import '../cubit/verify_otp_cubit.dart';
 
 class VerifyOtpScreen extends StatefulWidget {
   final String email;
+  final bool isPasswordReset;
 
-  const VerifyOtpScreen({super.key, required this.email});
+  const VerifyOtpScreen({
+    super.key,
+    required this.email,
+    this.isPasswordReset = false,
+  });
 
   @override
   State<VerifyOtpScreen> createState() => _VerifyOtpScreenState();
@@ -49,8 +54,14 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                 backgroundColor: Colors.green,
               ),
             );
-            // Navigate to login screen after successful verification
-            Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+            if (widget.isPasswordReset) {
+              Navigator.of(context).pushReplacementNamed(
+                AppRoutes.resetPassword,
+                arguments: {'email': widget.email},
+              );
+            } else {
+              Navigator.of(context).pushReplacementNamed(AppRoutes.login);
+            }
           } else if (state is VerifyOtpFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

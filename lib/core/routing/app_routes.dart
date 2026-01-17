@@ -15,4 +15,7 @@ final class AppRoutes {
   static const String settings = '/settings';
   static const String userInfo = '/user-info';
   static const String orderDetails = '/order-details';
+  static const String termsAndConditions = '/terms-and-conditions';
+  static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
 }

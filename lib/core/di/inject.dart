@@ -10,6 +10,8 @@ import '../localization/language_cubit.dart';
 import '../../features/auth/services/auth_service.dart';
 import '../../features/auth/cubit/signup_cubit.dart';
 import '../../features/auth/cubit/login_cubit.dart';
+import '../../features/auth/cubit/forgot_password_cubit.dart';
+import '../../features/auth/cubit/reset_password_cubit.dart';
 import '../../features/home/services/categories_service.dart';
 import '../../features/home/services/brands_service.dart';
 import '../../features/home/services/products_service.dart';
@@ -81,6 +83,8 @@ Future<void> init() async {
     () => LoginCubit(sl<AuthService>(), sl<StorageService>(), sl<DioClient>()),
   );
   sl.registerFactory(() => VerifyOtpCubit(sl<AuthService>()));
+  sl.registerFactory(() => ForgotPasswordCubit(sl<AuthService>()));
+  sl.registerFactory(() => ResetPasswordCubit(sl<AuthService>()));
 
   // Categories Cubits
   sl.registerFactory(() => CategoriesCubit(sl<CategoriesService>()));
