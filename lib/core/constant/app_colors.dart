@@ -1,46 +1,37 @@
-
 import 'package:flutter/material.dart';
 
 final class AppColors {
-  // IAM Logo-Inspired Color Palette
-  // Based on the vibrant gradient logo design
+
+  static const Color primary = Color(0xFF024F7B);
+  static const Color primaryDark = Color(0xFF024467);
+  static const Color primaryLight = Color(0xFF0D79B6);
+  static const Color primaryTeal = Color(0xFF14B8A6);
+
+  static const Color secondary = Color(0xFFE6A106);
+  static const Color secondaryOrange = Color(0xFFF97316 );
+  static const Color secondaryRed = Color(0xFFEF4444);
   
-  // Primary Colors - Cyan to Teal (I letter gradient)
-  static const Color primary = Color(0xFF06B6D4); // Bright Cyan
-  static const Color primaryDark = Color(0xFF0891B2); // Darker Cyan
-  static const Color primaryLight = Color(0xFF22D3EE); // Light Cyan
-  static const Color primaryTeal = Color(0xFF14B8A6); // Teal
+  static const Color accent = Color(0xFFEC4899);
+  static const Color accentPurple = Color(0xFFA855F7);
+  static const Color accentPink = Color(0xFFF472B6);
   
-  // Secondary Colors - Yellow to Orange-Red (A letter gradient)
-  static const Color secondary = Color(0xFFFCD34D); // Sunny Yellow
-  static const Color secondaryOrange = Color(0xFFF97316); // Warm Orange
-  static const Color secondaryRed = Color(0xFFEF4444); // Orange-Red
+  static const Color background = Color(0xFFFFFFFF);
+  static const Color backgroundLight = Color(0xFFF8F9FA);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color surfaceVariant = Color(0xFFF1F3F5);
+  static const Color surfaceElevated = Color(0xFFE9ECEF);
   
-  // Accent Colors - Magenta to Deep Pink (M letter gradient)
-  static const Color accent = Color(0xFFEC4899); // Vibrant Magenta
-  static const Color accentPurple = Color(0xFFA855F7); // Purple
-  static const Color accentPink = Color(0xFFF472B6); // Deep Pink
+  static const Color textPrimary = Color(0xFF1A1A1A);
+  static const Color textSecondary = Color(0xFF6C757D);
+  static const Color textTertiary = Color(0xFFADB5BD);
+  static const Color textOnPrimary = Color(0xFFFFFFFF);
+  static const Color textOnDark = Color(0xFF1A1A1A);
   
-  // Background Colors - Light Theme
-  static const Color background = Color(0xFFFFFFFF); // White
-  static const Color backgroundLight = Color(0xFFF8F9FA); // Very Light Gray
-  static const Color surface = Color(0xFFFFFFFF); // Card Surface (White)
-  static const Color surfaceVariant = Color(0xFFF1F3F5); // Light Gray
-  static const Color surfaceElevated = Color(0xFFE9ECEF); // Slightly Darker Gray
+  static const Color border = Color(0xFFDEE2E6);
+  static const Color borderLight = Color(0xFFE9ECEF);
+  static const Color divider = Color(0xFFE9ECEF);
   
-  // Text Colors - Light Theme
-  static const Color textPrimary = Color(0xFF1A1A1A); // Dark Gray/Black
-  static const Color textSecondary = Color(0xFF6C757D); // Medium Gray
-  static const Color textTertiary = Color(0xFFADB5BD); // Light Gray
-  static const Color textOnPrimary = Color(0xFFFFFFFF); // White on gradients
-  static const Color textOnDark = Color(0xFF1A1A1A); // Dark text on light
-  
-  // Border & Divider Colors - Light Theme
-  static const Color border = Color(0xFFDEE2E6); // Light Gray Border
-  static const Color borderLight = Color(0xFFE9ECEF); // Lighter Gray Border
-  static const Color divider = Color(0xFFE9ECEF); // Light Divider
-  
-  // Status Colors
+
   static const Color success = Color(0xFF10B981);
   static const Color successLight = Color(0xFF34D399);
   static const Color error = Color(0xFFEF4444);
@@ -50,96 +41,92 @@ final class AppColors {
   static const Color info = Color(0xFF3B82F6);
   static const Color infoLight = Color(0xFF60A5FA);
   
-  // Shadow Colors - Light Theme (lighter shadows)
   static const Color shadowLight = Color(0x0A000000);
   static const Color shadowMedium = Color(0x1A000000);
   static const Color shadowDark = Color(0x33000000);
-  static const Color shadowGlow = Color(0x2006B6D4); // Light Cyan glow
+  static const Color shadowGlow = Color(0x2006B6D4);
   
-  // Overlay Colors - Light Theme
   static const Color overlay = Color(0x40000000);
   static const Color overlayDark = Color(0x80000000);
   static const Color overlayLight = Color(0x20000000);
   
-  // Splash & Onboarding - Light Theme
   static const Color splashBackground = Color(0xFFFFFFFF);
   
-  // Legacy Support (for gradual migration)
   static const Color primaryColor = primary;
-  static const Color blackTextColor = textPrimary; // Dark text in light theme
-  static const Color greyTextColor = textSecondary; // Medium gray text
+  static const Color blackTextColor = textPrimary;
+  static const Color greyTextColor = textSecondary;
   static const Color shadowColor = shadowMedium;
   static const Color errorBorderColor = error;
   static const Color textFieldBorderColor = border;
-  static const Color whiteBackground = background; // White background
+  static const Color whiteBackground = background;
   static Color warningColor = warning.withAlpha(100);
   static Color overlayColor = overlay;
-  static Color white = background; // White
+  static Color white = background;
   
-  // Premium Gradient Helpers - Based on Logo Colors
+
   static LinearGradient get primaryGradient => const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [primary, primaryTeal],
+    colors: [primary, primary],
     stops: [0.0, 1.0],
   );
   
   static LinearGradient get secondaryGradient => const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [secondary, secondaryOrange],
+    colors: [primary, primary],
     stops: [0.0, 1.0],
   );
   
   static LinearGradient get accentGradient => const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [accent, accentPink],
+    colors: [primary, primary],
     stops: [0.0, 1.0],
   );
   
   static LinearGradient get purpleGradient => const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [accentPurple, accent],
+    colors: [primary, primary],
     stops: [0.0, 1.0],
   );
   
-  // Multi-color gradient (I-A-M inspired)
+
   static LinearGradient get brandGradient => const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [primary, secondaryOrange, accent],
+    colors: [primary, primary, primary],
     stops: [0.0, 0.5, 1.0],
   );
   
-  // Horizontal gradient (Software Publishing text style)
+
   static LinearGradient get horizontalGradient => const LinearGradient(
     begin: Alignment.centerLeft,
     end: Alignment.centerRight,
-    colors: [primary, accentPink],
+    colors: [primary, primary],
     stops: [0.0, 1.0],
   );
   
-  // Shimmer gradient for loading states
+
   static LinearGradient get shimmerGradient => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      surfaceVariant,
-      surfaceElevated,
-      surfaceVariant,
+      primary,
+      primary,
+      primary,
     ],
     stops: const [0.0, 0.5, 1.0],
   );
   
-  // Glass morphism gradient
+
   static LinearGradient get glassGradient => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      surface.withOpacity(0.8),
-      surfaceVariant.withOpacity(0.6),
+      primary.withOpacity(0.8),
+      primary.withOpacity(0.6),
     ],
   );
 }

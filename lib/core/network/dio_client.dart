@@ -178,24 +178,14 @@ class DioClient {
           if (error.response?.statusCode == 401 &&
               !_isShowingUnauthorizedDialog) {
             final path = error.requestOptions.path;
-            final requiresAuth = _requiresAuth(path);
 
-            debugPrint('401 Error on path: $path, requiresAuth: $requiresAuth');
+            debugPrint('401 Error on path: $path');
 
-            // Check if user has a token (not a guest)
-            final token = _cachedToken ?? _storageService.getToken();
-            final isGuest = token == null || token.isEmpty;
-
-            // Check if this endpoint should show dialog even for guests (cart, favorite, etc.)
-            final shouldShowForGuest = _shouldShowDialogForGuest(path);
-
-            // Show dialog if:
-            // 1. Endpoint requires auth AND user is not a guest, OR
-            // 2. Endpoint should show dialog for guests (cart, favorite, etc.)
-            if (requiresAuth &&
-                !path.contains(ApiConstants.login) &&
+            // Exclude login/register/verifyOtp from global 401 handling to avoid loops/wrong UX
+            // if a bad credential starts triggering "session expired".
+            if (!path.contains(ApiConstants.login) &&
                 !path.contains(ApiConstants.register) &&
-                (!isGuest || shouldShowForGuest)) {
+                !path.contains(ApiConstants.verifyOtp)) {
               _handleUnauthorizedError();
             }
           }
@@ -204,26 +194,12 @@ class DioClient {
         onResponse: (response, handler) {
           if (response.statusCode == 401 && !_isShowingUnauthorizedDialog) {
             final path = response.requestOptions.path;
-            final requiresAuth = _requiresAuth(path);
 
-            debugPrint(
-              '401 Response on path: $path, requiresAuth: $requiresAuth',
-            );
+            debugPrint('401 Response on path: $path');
 
-            // Check if user has a token (not a guest)
-            final token = _cachedToken ?? _storageService.getToken();
-            final isGuest = token == null || token.isEmpty;
-
-            // Check if this endpoint should show dialog even for guests (cart, favorite, etc.)
-            final shouldShowForGuest = _shouldShowDialogForGuest(path);
-
-            // Show dialog if:
-            // 1. Endpoint requires auth AND user is not a guest, OR
-            // 2. Endpoint should show dialog for guests (cart, favorite, etc.)
-            if (requiresAuth &&
-                !path.contains(ApiConstants.login) &&
+            if (!path.contains(ApiConstants.login) &&
                 !path.contains(ApiConstants.register) &&
-                (!isGuest || shouldShowForGuest)) {
+                !path.contains(ApiConstants.verifyOtp)) {
               _handleUnauthorizedError();
               return handler.reject(
                 DioException(
@@ -283,6 +259,13 @@ class DioClient {
         title: Text(AppTexts.login),
         content: Text(AppTexts.unauthenticatedMessage),
         actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              _isShowingUnauthorizedDialog = false;
+            },
+            child: Text(AppTexts.cancel),
+          ),
           TextButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();

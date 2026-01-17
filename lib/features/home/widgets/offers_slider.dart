@@ -53,7 +53,6 @@ class _OffersSliderState extends State<OffersSlider> {
   Widget build(BuildContext context) {
     return BlocBuilder<OffersCubit, OffersState>(
       builder: (context, state) {
-        // Load offers if in initial state
         if (state is OffersInitial) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
@@ -63,7 +62,6 @@ class _OffersSliderState extends State<OffersSlider> {
           return _buildLoadingShimmer();
         }
 
-        // Show loading shimmer for loading state
         if (state is OffersLoading) {
           return _buildLoadingShimmer();
         }
@@ -79,7 +77,6 @@ class _OffersSliderState extends State<OffersSlider> {
             return const SizedBox.shrink();
           }
 
-          // Start auto-scroll when offers are loaded or count changes
           if (_offerCount != offers.length) {
             _offerCount = offers.length;
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -90,10 +87,10 @@ class _OffersSliderState extends State<OffersSlider> {
           return Column(
             children: [
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 12.h),
-                height: 200.h,
+                margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 12.h),
+                height: 220.h,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.r),
+                  borderRadius: BorderRadius.circular(26.r),
                 ),
                 child: PageView.builder(
                   controller: _pageController,
@@ -137,106 +134,26 @@ class _OffersSliderState extends State<OffersSlider> {
               );
             }
           : null,
-      child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 4.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16.r),
+        child: CachedNetworkImage(
+          imageUrl: offer.avatar,
+          fit: BoxFit.contain,
+          placeholder: (context, url) => Container(
+            color: AppColors.overlayColor,
+            child: const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.primaryColor,
+              ),
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.r),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CachedNetworkImage(
-                imageUrl: offer.avatar,
-                fit: BoxFit.contain,
-                placeholder: (context, url) => Container(
-                  color: AppColors.overlayColor,
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: AppColors.overlayColor,
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: AppColors.greyTextColor,
-                    size: 40.sp,
-                  ),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.6)],
-                  ),
-                ),
-              ),
-              // Positioned(
-              //   bottom: 0,
-              //   left: 0,
-              //   right: 0,
-              //   child: Padding(
-              //     padding: EdgeInsets.all(16.w),
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       mainAxisSize: MainAxisSize.min,
-              //       children: [
-              //         Text(
-              //           offer.title,
-              //           style: TextStyle(
-              //             color: Colors.white,
-              //             fontSize: 20.sp,
-              //             fontWeight: FontWeight.bold,
-              //           ),
-              //           maxLines: 1,
-              //           overflow: TextOverflow.ellipsis,
-              //         ),
-              //         SizedBox(height: 4.h),
-              //         Text(
-              //           offer.description,
-              //           style: TextStyle(
-              //             color: Colors.white.withOpacity(0.9),
-              //             fontSize: 12.sp,
-              //           ),
-              //           maxLines: 2,
-              //           overflow: TextOverflow.ellipsis,
-              //         ),
-              //         SizedBox(height: 8.h),
-              //         Row(
-              //           children: [
-              //             Text(
-              //               AppTexts.viewProducts,
-              //               style: TextStyle(
-              //                 color: Colors.white,
-              //                 fontSize: 14.sp,
-              //                 fontWeight: FontWeight.w600,
-              //               ),
-              //             ),
-              //             SizedBox(width: 8.w),
-              //             Icon(
-              //               Icons.arrow_forward,
-              //               color: Colors.white,
-              //               size: 16.sp,
-              //             ),
-              //           ],
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-            ],
+          ),
+          errorWidget: (context, url, error) => Container(
+            color: AppColors.overlayColor,
+            child: Icon(
+              Icons.image_outlined,
+              color: AppColors.greyTextColor,
+              size: 40.sp,
+            ),
           ),
         ),
       ),

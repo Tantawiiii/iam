@@ -79,297 +79,240 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         child: Scaffold(
           backgroundColor: AppColors.background,
-          body: Stack(
-            children: [
-              Positioned(
-                top: -100.h,
-                right: -100.w,
-                child: Container(
-                  width: 300.w,
-                  height: 300.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        AppColors.primary.withOpacity(0.15),
-                        AppColors.primary.withOpacity(0.0),
-                      ],
+          body: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 26.h),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 32.h),
+                  ClipOval(
+                    child: Image.asset(
+                      AppAssets.newLogoDark,
+                      width: 140.w,
+                      height: 140.w,
+                      fit: BoxFit.cover,
                     ),
                   ),
-                ),
-              ),
-              Positioned(
-                bottom: -150.h,
-                left: -150.w,
-                child: Container(
-                  width: 400.w,
-                  height: 400.h,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        AppColors.accent.withOpacity(0.1),
-                        AppColors.accent.withOpacity(0.0),
-                      ],
+                  SizedBox(height: 30.h),
+                  ShaderMask(
+                    shaderCallback: (bounds) =>
+                        AppColors.horizontalGradient.createShader(bounds),
+                    child: Text(
+                      AppTexts.welcomeBack,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 36.sp,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1,
+                        height: 1.2,
+                      ),
                     ),
                   ),
-                ),
-              ),
-              SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 26.h),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(height: 16.h),
-                      Container(
-                        padding: EdgeInsets.all(24.w),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.brandGradient,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.4),
-                              blurRadius: 40,
-                              spreadRadius: 10,
-                            ),
-                            BoxShadow(
-                              color: AppColors.accent.withOpacity(0.2),
-                              blurRadius: 60,
-                              spreadRadius: 15,
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            AppAssets.newLogoDark,
-                            width: 110.w,
-                            height: 120.w,
-                            fit: BoxFit.cover,
-                          ),
+                  SizedBox(height: 12.h),
+                  Text(
+                    AppTexts.loginToCont,
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 26.h),
+                  AppTextField(
+                    controller: _emailController,
+                    hint: AppTexts.email,
+                    keyboardType: TextInputType.emailAddress,
+                    leadingIcon: Icons.email_outlined,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppTexts.pleaseEnterEmail;
+                      }
+                      if (!value.contains('@')) {
+                        return AppTexts.pleaseEnterValidEmail;
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 14.h),
+                  AppTextField(
+                    controller: _passwordController,
+                    hint: AppTexts.password,
+                    obscure: true,
+                    obscurable: true,
+                    leadingIcon: Icons.lock_outline,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return AppTexts.pleaseEnterPass;
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 8.h),
+                  Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(
+                          context,
+                        ).pushNamed(AppRoutes.forgotPassword);
+                      },
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 4.h,
                         ),
                       ),
-                      SizedBox(height: 30.h),
-                      ShaderMask(
-                        shaderCallback: (bounds) =>
-                            AppColors.horizontalGradient.createShader(bounds),
-                        child: Text(
-                          AppTexts.welcomeBack,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 36.sp,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -1,
-                            height: 1.2,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 12.h),
-                      Text(
-                        AppTexts.loginToCont,
+                      child: Text(
+                        AppTexts.forgetPassword,
                         style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 14.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
                         ),
-                        textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: 26.h),
-                      AppTextField(
-                        controller: _emailController,
-                        hint: AppTexts.email,
-                        keyboardType: TextInputType.emailAddress,
-                        leadingIcon: Icons.email_outlined,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return AppTexts.pleaseEnterEmail;
-                          }
-                          if (!value.contains('@')) {
-                            return AppTexts.pleaseEnterValidEmail;
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 14.h),
-                      AppTextField(
-                        controller: _passwordController,
-                        hint: AppTexts.password,
-                        obscure: true,
-                        obscurable: true,
-                        leadingIcon: Icons.lock_outline,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return AppTexts.pleaseEnterPass;
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 8.h),
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: TextButton(
-                          onPressed: () {
-                            Navigator.of(
-                              context,
-                            ).pushNamed(AppRoutes.forgotPassword);
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 2.h),
+                        child: Checkbox(
+                          value: _acceptedTerms,
+                          onChanged: (value) {
+                            setState(() {
+                              _acceptedTerms = value ?? false;
+                            });
                           },
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8.w,
-                              vertical: 4.h,
-                            ),
-                          ),
-                          child: Text(
-                            AppTexts.forgetPassword,
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          activeColor: AppColors.primary,
                         ),
                       ),
-                      SizedBox(height: 16.h),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 2.h),
-                            child: Checkbox(
-                              value: _acceptedTerms,
-                              onChanged: (value) {
-                                setState(() {
-                                  _acceptedTerms = value ?? false;
-                                });
-                              },
-                              activeColor: AppColors.primary,
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: EdgeInsets.only(top: 12.h),
-                              child: RichText(
-                                text: TextSpan(
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(top: 12.h),
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                                height: 1.4,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      AppTexts.currentLanguage ==
+                                          AppLanguage.ar
+                                      ? 'أوافق على '
+                                      : 'I accept the ',
+                                ),
+                                TextSpan(
+                                  text: AppTexts.termsAndConditions,
                                   style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: AppColors.textSecondary,
-                                    fontWeight: FontWeight.w500,
-                                    height: 1.4,
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w700,
+                                    decoration: TextDecoration.underline,
                                   ),
-                                  children: [
-                                    TextSpan(
-                                      text:
-                                          AppTexts.currentLanguage ==
-                                              AppLanguage.ar
-                                          ? 'أوافق على '
-                                          : 'I accept the ',
-                                    ),
-                                    TextSpan(
-                                      text: AppTexts.termsAndConditions,
-                                      style: TextStyle(
-                                        color: AppColors.primary,
-                                        fontWeight: FontWeight.w700,
-                                        decoration: TextDecoration.underline,
-                                      ),
-                                      recognizer: TapGestureRecognizer()
-                                        ..onTap = () {
-                                          Navigator.of(context).pushNamed(
-                                            AppRoutes.termsAndConditions,
-                                          );
-                                        },
-                                    ),
-                                  ],
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.of(context).pushNamed(
+                                        AppRoutes.termsAndConditions,
+                                      );
+                                    },
                                 ),
-                              ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 20.h),
-                      BlocBuilder<LoginCubit, LoginState>(
-                        builder: (context, state) {
-                          final isLoading = state is LoginLoading;
-                          return PrimaryButton(
-                            title: isLoading
-                                ? AppTexts.loginLoading
-                                : AppTexts.login,
-                            onPressed: isLoading
-                                ? null
-                                : () =>
-                                      _handleLogin(context.read<LoginCubit>()),
-                            isLoading: isLoading,
-                          );
-                        },
-                      ),
-                      SizedBox(height: 14.h),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.home,
-                          );
-                        },
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 12.h,
-                          ),
-                        ),
-                        child: Text(
-                          AppTexts.continueAsGuest,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                      SizedBox(height: 12.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            AppTexts.dontHaveAcc,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(width: 6.w),
-                          TextButton(
-                            onPressed: () => Navigator.of(
-                              context,
-                            ).pushNamed(AppRoutes.signup),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 4.h,
-                              ),
-                            ),
-                            child: ShaderMask(
-                              shaderCallback: (bounds) => AppColors
-                                  .horizontalGradient
-                                  .createShader(bounds),
-                              child: Text(
-                                AppTexts.signUp,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 40.h),
                     ],
                   ),
-                ),
+                  SizedBox(height: 20.h),
+                  BlocBuilder<LoginCubit, LoginState>(
+                    builder: (context, state) {
+                      final isLoading = state is LoginLoading;
+                      return PrimaryButton(
+                        title: isLoading
+                            ? AppTexts.loginLoading
+                            : AppTexts.login,
+                        onPressed: isLoading
+                            ? null
+                            : () =>
+                                  _handleLogin(context.read<LoginCubit>()),
+                        isLoading: isLoading,
+                      );
+                    },
+                  ),
+                  SizedBox(height: 8.h),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        AppRoutes.home,
+                      );
+                    },
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 12.h,
+                      ),
+                    ),
+                    child: Text(
+                      AppTexts.continueAsGuest,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        AppTexts.dontHaveAcc,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      TextButton(
+                        onPressed: () => Navigator.of(
+                          context,
+                        ).pushNamed(AppRoutes.signup),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
+                        ),
+                        child: ShaderMask(
+                          shaderCallback: (bounds) => AppColors
+                              .horizontalGradient
+                              .createShader(bounds),
+                          child: Text(
+                            AppTexts.signUp,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 40.h),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

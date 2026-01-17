@@ -206,25 +206,21 @@ class _HomeScreenState extends State<HomeScreen>
                 child: CustomScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   slivers: [
-                    // Header
                     SliverToBoxAdapter(
                       child: RepaintBoundary(child: const HomeHeader()),
                     ),
-                    // Offers - loads immediately, shows as soon as ready
                     SliverToBoxAdapter(
                       child: RepaintBoundary(child: const OffersSlider()),
                     ),
-                    // Categories - loads immediately, shows as soon as ready
+
                     SliverToBoxAdapter(
                       child: RepaintBoundary(child: const CategoriesSection()),
                     ),
-                    SliverToBoxAdapter(child: SizedBox(height: 20.h)),
-                    // Brands - loads immediately, shows as soon as ready
+                    SliverToBoxAdapter(child: SizedBox(height: 12.h)),
                     SliverToBoxAdapter(
                       child: RepaintBoundary(child: const BrandsSection()),
                     ),
                     SliverToBoxAdapter(child: SizedBox(height: 28.h)),
-                    // All Products - lazy loaded
                     SliverToBoxAdapter(
                       child: _LazyProductsSection(
                         key: ValueKey('all_products_section_$_refreshSeed'),

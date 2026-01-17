@@ -10,10 +10,12 @@ import '../cubit/review_cubit.dart';
 
 class AddReviewScreen extends StatefulWidget {
   final int productId;
+  final bool canWriteTextReview;
 
   const AddReviewScreen({
     super.key,
     required this.productId,
+    this.canWriteTextReview = true,
   });
 
   @override
@@ -124,31 +126,60 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                         );
                       }),
                     ),
-                    SizedBox(height: 32.h),
-                    Text(
-                      AppTexts.writeYourReview,
-                      style: TextStyle(
-                        color: AppColors.blackTextColor,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
+                    if (widget.canWriteTextReview) ...[
+                      SizedBox(height: 32.h),
+                      Text(
+                        AppTexts.writeYourReview,
+                        style: TextStyle(
+                          color: AppColors.blackTextColor,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 16.h),
-                    AppTextField(
-                      controller: _commentController,
-                      hint: AppTexts.shareYourExperience,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 6,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return AppTexts.pleaseWriteReview;
-                        }
-                        if (value.trim().length < 10) {
-                          return AppTexts.reviewMinCharacters;
-                        }
-                        return null;
-                      },
-                    ),
+                      SizedBox(height: 16.h),
+                      AppTextField(
+                        controller: _commentController,
+                        hint: AppTexts.shareYourExperience,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 6,
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return AppTexts.pleaseWriteReview;
+                          }
+                          if (value.trim().length < 10) {
+                            return AppTexts.reviewMinCharacters;
+                          }
+                          return null;
+                        },
+                      ),
+                    ] else ...[
+                      SizedBox(height: 32.h),
+                      Container(
+                        padding: EdgeInsets.all(16.w),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: Colors.amber),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline,
+                                color: Colors.amber, size: 24.sp),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Text(
+                                'عذراً، وصل عدد التعليقات النصية للحد الأقصى (5). يمكنك فقط إضافة تقييم بالنجوم.',
+                                style: TextStyle(
+                                  color: AppColors.blackTextColor,
+                                  fontSize: 14.sp,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     SizedBox(height: 32.h),
                     BlocBuilder<ReviewCubit, ReviewState>(
                       builder: (context, state) {

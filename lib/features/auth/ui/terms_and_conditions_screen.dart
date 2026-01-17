@@ -32,34 +32,18 @@ class TermsAndConditionsScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppTexts.termsAndConditionsLastUpdate,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              SizedBox(height: 24.h),
-              Text(
-                AppTexts.termsAndConditionsContent,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  color: AppColors.textPrimary,
-                  height: 1.6,
-                ),
-                textAlign: TextAlign.start,
-              ),
-              SizedBox(height: 40.h),
-            ],
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 20.h),
+          child: Text(
+            AppTexts.termsAndConditionsContent,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: AppColors.textPrimary,
+              height: 1,
+            ),
+            textAlign: TextAlign.start,
           ),
         ),
       ),
     );
-  }
-}
+  }}
 

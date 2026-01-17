@@ -16,6 +16,7 @@ import '../models/create_order_request_model.dart';
 import '../models/order_card_model.dart';
 import '../models/check_auth_response_model.dart';
 import '../../cart/models/cart_item_model.dart';
+import '../../../core/services/storage_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartItemModel> cartItems;
@@ -38,6 +39,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final String _paymentMethod = 'card';
   String _paymentType = 'cash';
   int? _selectedInstallmentMonths;
+
+  @override
+  void initState() {
+    super.initState();
+    _prefillUserData();
+  }
+
+  void _prefillUserData() {
+    try {
+      final storageService = di.sl<StorageService>();
+      final user = storageService.getUser();
+      if (user != null) {
+        _emailController.text = user.email;
+        _phoneController.text = user.phone;
+      }
+    } catch (e) {
+      debugPrint('Error prefilling user data: $e');
+    }
+  }
 
   @override
   void dispose() {
@@ -67,19 +87,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return 0.15; // 15%
     } else if (months >= 18 && months <= 24) {
       return 0.20; // 20%
-    } else if (months >= 30 && months <= 36) {
-      return 0.25; // 25%
     }
     return 0.0;
   }
 
   double _calculateTotalAmount() {
     final originalTotal = _calculateOriginalTotal();
-    if (_paymentType == 'installment' && _selectedInstallmentMonths != null) {
-      final increaseRate = _getIncreaseRate(_selectedInstallmentMonths!);
-      final increaseAmount = originalTotal * increaseRate;
-      return originalTotal + increaseAmount;
-    }
+    // if (_paymentType == 'installment' && _selectedInstallmentMonths != null) {
+    //  // final increaseRate = _getIncreaseRate(_selectedInstallmentMonths!);
+    //   final increaseAmount = originalTotal * increaseRate;
+    //   return originalTotal + increaseAmount;
+    // }
     return originalTotal;
   }
 
@@ -704,24 +722,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                         items: [
-                          // 6-12 months (15% increase)
+                         
                           for (int i = 6; i <= 12; i++)
                             DropdownMenuItem<int>(
                               value: i,
                               child: Text('$i ${AppTexts.months}'),
                             ),
-                          // 18-24 months (20% increase)
+                          
                           for (int i = 18; i <= 24; i += 6)
                             DropdownMenuItem<int>(
                               value: i,
                               child: Text('$i ${AppTexts.months}'),
                             ),
-                          // 30-36 months (25% increase)
-                          for (int i = 30; i <= 36; i += 6)
-                            DropdownMenuItem<int>(
-                              value: i,
-                              child: Text('$i ${AppTexts.months}'),
-                            ),
+                    
                         ],
                         onChanged: (value) {
                           setState(() {
@@ -775,27 +788,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 ],
                               ),
                               SizedBox(height: 8.h),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    AppTexts.increaseAmount,
-                                    style: TextStyle(
-                                      color: AppColors.textSecondary,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${(_calculateOriginalTotal() * _getIncreaseRate(_selectedInstallmentMonths!)).toStringAsFixed(2)} ${AppTexts.eGP}',
-                                    style: TextStyle(
-                                      color: AppColors.warning,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                              // Row(
+                              //   mainAxisAlignment:
+                              //       MainAxisAlignment.spaceBetween,
+                              //   children: [
+                              //     Text(
+                              //       AppTexts.increaseAmount,
+                              //       style: TextStyle(
+                              //         color: AppColors.textSecondary,
+                              //         fontSize: 14.sp,
+                              //       ),
+                              //     ),
+                              //     Text(
+                              //       '${(_calculateOriginalTotal() * _getIncreaseRate(_selectedInstallmentMonths!)).toStringAsFixed(2)} ${AppTexts.eGP}',
+                              //       style: TextStyle(
+                              //         color: AppColors.warning,
+                              //         fontSize: 14.sp,
+                              //         fontWeight: FontWeight.w600,
+                              //       ),
+                              //     ),
+                              //   ],
+                              // ),
                               SizedBox(height: 12.h),
                               Divider(color: AppColors.border),
                               SizedBox(height: 12.h),

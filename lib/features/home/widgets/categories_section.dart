@@ -1,3 +1,4 @@
+import 'package:bounce/bounce.dart';
 import 'package:iam/core/constant/app_texts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -114,19 +115,9 @@ class _CategoriesSectionState extends State<CategoriesSection> {
   }
 
   Widget _buildCategoryItem(CategoryModel category) {
-    final colors = [
-      const Color(0xFFFF6B9D),
-      const Color(0xFF6C5CE7),
-      const Color(0xFF00B894),
-      const Color(0xFF0984E3),
-      const Color(0xFFE84393),
-    ];
-    final colorIndex = category.id % colors.length;
-    final categoryColor = colors[colorIndex];
-
     return Padding(
       padding: EdgeInsets.only(right: 16.w),
-      child: GestureDetector(
+      child: Bounce(
         onTap: () {
           Navigator.of(context).pushNamed(
             AppRoutes.categoryProducts,
@@ -142,10 +133,10 @@ class _CategoriesSectionState extends State<CategoriesSection> {
               width: 70.w,
               height: 70.w,
               decoration: BoxDecoration(
-                color: categoryColor.withOpacity(0.1),
+                color: AppColors.primary.withOpacity(0.1),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: categoryColor.withOpacity(0.3),
+                  color: AppColors.primary.withOpacity(0.8),
                   width: 2,
                 ),
               ),
@@ -156,20 +147,20 @@ class _CategoriesSectionState extends State<CategoriesSection> {
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Center(
                           child: CircularProgressIndicator(
-                            color: categoryColor,
+                            color: AppColors.primary,
                             strokeWidth: 2,
                           ),
                         ),
                         errorWidget: (context, url, error) => Icon(
                           Icons.category_outlined,
-                          color: categoryColor,
+                          color: AppColors.primary,
                           size: 32.sp,
                         ),
                       ),
                     )
                   : Icon(
                       Icons.category_outlined,
-                      color: categoryColor,
+                      color: AppColors.primary,
                       size: 32.sp,
                     ),
             ),

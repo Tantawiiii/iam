@@ -95,7 +95,10 @@ Route<dynamic> onGenerateAppRoute(RouteSettings settings) {
     case AppRoutes.addReview:
       final args = settings.arguments as Map<String, dynamic>?;
       return MaterialPageRoute(
-        builder: (_) => AddReviewScreen(productId: args?['productId'] as int),
+        builder: (_) => AddReviewScreen(
+          productId: args?['productId'] as int,
+          canWriteTextReview: args?['canWriteTextReview'] as bool? ?? true,
+        ),
       );
     case AppRoutes.settings:
       return MaterialPageRoute(builder: (_) => const SettingsScreen());

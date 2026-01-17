@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
+import '../../../core/constant/app_texts.dart';
+import '../../../core/localization/language_cubit.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../cubit/contact_us_cubit.dart';
@@ -44,18 +46,76 @@ class _ContactUsTabState extends State<ContactUsTab> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageCubit>();
+    
+    // Debug: Print current language and text values
+    debugPrint('ContactUsTab - Current Language: ${AppTexts.currentLanguage}');
+    debugPrint('ContactUsTab - getInTouch: ${AppTexts.getInTouch}');
+    debugPrint('ContactUsTab - contactUsSubtitle: ${AppTexts.contactUsSubtitle}');
+    
     return BlocListener<ContactUsCubit, ContactUsState>(
       listener: (context, state) {
         if (state is ContactUsSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.response.message ?? 'Message sent successfully!',
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
               ),
-              backgroundColor: Colors.green,
+              contentPadding: EdgeInsets.all(24.w),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 80.w,
+                    height: 80.w,
+                    decoration: BoxDecoration(
+                      color: Colors.green.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.check_circle,
+                      color: Colors.green,
+                      size: 50.sp,
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  Text(
+                    state.response.message ?? AppTexts.messageSentSuccess,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.blackTextColor,
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                      ),
+                      child: Text(
+                        AppTexts.ok,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
-          // Clear form
           _nameController.clear();
           _emailController.clear();
           _phoneController.clear();
@@ -78,7 +138,7 @@ class _ContactUsTabState extends State<ContactUsTab> {
             children: [
               SizedBox(height: 20.h),
               Text(
-                'Get in Touch',
+                AppTexts.getInTouch,
                 style: TextStyle(
                   color: AppColors.blackTextColor,
                   fontSize: 24.sp,
@@ -87,70 +147,70 @@ class _ContactUsTabState extends State<ContactUsTab> {
               ),
               SizedBox(height: 8.h),
               Text(
-                'We\'d love to hear from you. Send us a message and we\'ll respond as soon as possible.',
+                AppTexts.contactUsSubtitle,
                 style: TextStyle(
                   color: AppColors.greyTextColor,
                   fontSize: 14.sp,
                 ),
               ),
               SizedBox(height: 32.h),
-              // Name
+            
               AppTextField(
                 controller: _nameController,
-                hint: 'Name',
+                hint: AppTexts.name,
                 leadingIcon: Icons.person_outline,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your name';
+                    return AppTexts.pleaseEnterName;
                   }
                   return null;
                 },
               ),
               SizedBox(height: 16.h),
-              // Email
+          
               AppTextField(
                 controller: _emailController,
-                hint: 'Email',
+                hint: AppTexts.email,
                 leadingIcon: Icons.email_outlined,
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your email';
+                    return AppTexts.pleaseEnterEmail;
                   }
                   if (!value.contains('@')) {
-                    return 'Please enter a valid email';
+                    return AppTexts.pleaseEnterValidEmail;
                   }
                   return null;
                 },
               ),
               SizedBox(height: 16.h),
-              // Phone
+              
               AppTextField(
                 controller: _phoneController,
-                hint: 'Phone',
+                hint: AppTexts.phone,
                 leadingIcon: Icons.phone_outlined,
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your phone number';
+                    return AppTexts.pleaseEnterPhone;
                   }
                   return null;
                 },
               ),
               SizedBox(height: 16.h),
-              // Message
+             
               AppTextField(
                 controller: _messageController,
-                hint: 'Message',
+                hint: AppTexts.messageLabel,
                 leadingIcon: Icons.message_outlined,
                 keyboardType: TextInputType.multiline,
                 maxLines: 6,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Please enter your message';
+                    return AppTexts.pleaseEnterMessage;
                   }
                   if (value.trim().length < 10) {
-                    return 'Message must be at least 10 characters';
+                    return AppTexts.messageMinLengthError;
                   }
                   return null;
                 },
@@ -161,7 +221,7 @@ class _ContactUsTabState extends State<ContactUsTab> {
                 builder: (context, state) {
                   final isLoading = state is ContactUsLoading;
                   return PrimaryButton(
-                    title: isLoading ? 'Sending...' : 'Send Message',
+                    title: isLoading ? AppTexts.sending : AppTexts.sendMessage,
                     onPressed: isLoading
                         ? null
                         : () => _handleSubmit(

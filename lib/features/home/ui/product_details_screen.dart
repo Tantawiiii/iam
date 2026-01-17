@@ -78,7 +78,6 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             );
           }
-          // Refresh cart after adding to cart
           if (state is AddToCartSuccess) {
             final storageService = di.sl<StorageService>();
             final token = storageService.getToken();
@@ -292,35 +291,12 @@ class ProductDetailsScreen extends StatelessWidget {
                                       productNumber!.isNotEmpty) ||
                                   currentProduct.productNumber.isNotEmpty)
                                 _buildDetailRow(
-                                  'رقم المنتج',
+                                  AppTexts.productNumber,
                                   (productNumber != null &&
                                           productNumber!.isNotEmpty)
                                       ? productNumber!
                                       : currentProduct.productNumber,
                                 ),
-                              SizedBox(height: 24.h),
-                            ],
-                            if (isForSale) ...[
-                              // Builder(
-                              //   builder: (context) {
-                              //     final resellProductNumber = (productNumber != null &&
-                              //             productNumber!.isNotEmpty)
-                              //         ? productNumber!
-                              //         : (currentProduct.productNumber.isNotEmpty
-                              //             ? currentProduct.productNumber
-                              //             : null);
-                              //
-                              //     if (resellProductNumber == null ||
-                              //         resellProductNumber.isEmpty) {
-                              //       return const SizedBox.shrink();
-                              //     }
-                              //
-                              //     return _ResellButton(
-                              //       product: currentProduct,
-                              //       productNumber: resellProductNumber,
-                              //     );
-                              //   },
-                              // ),
                               SizedBox(height: 24.h),
                             ],
                             _buildConfidenceSection(currentProduct),
@@ -451,11 +427,13 @@ class ProductDetailsScreen extends StatelessWidget {
                               ListView.separated(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: currentProduct.reviews.length,
+                                itemCount: currentProduct.reviews.where((r) => r.comment.trim().isNotEmpty).length,
                                 separatorBuilder: (_, __) =>
                                     SizedBox(height: 6.h),
                                 itemBuilder: (context, index) {
-                                  final review = currentProduct.reviews[index];
+                                  final review = currentProduct.reviews
+                                      .where((r) => r.comment.trim().isNotEmpty)
+                                      .toList()[index];
                                   return Container(
                                     padding: EdgeInsets.all(6.w),
                                     decoration: BoxDecoration(
@@ -533,16 +511,52 @@ class ProductDetailsScreen extends StatelessWidget {
                             ],
                             OutlinedButton.icon(
                               onPressed: () async {
+                                final storageService = di.sl<StorageService>();
+                                final token = storageService.getToken();
+                                final hasToken =
+                                    token != null && token.isNotEmpty;
+
+                                if (!hasToken) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        AppTexts.pleaseLoginFirst,
+                                      ),
+                                      action: SnackBarAction(
+                                        label: AppTexts.login,
+                                        onPressed: () {
+                                          Navigator.pushNamed(
+                                            context,
+                                            AppRoutes.login,
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+
+                                final writtenReviewsCount = currentProduct
+                                    .reviews
+                                    .where((r) => r.comment.trim().isNotEmpty)
+                                    .length;
+                                final canWriteTextReview =
+                                    writtenReviewsCount < 5;
+
                                 final result = await Navigator.pushNamed(
                                   context,
                                   AppRoutes.addReview,
-                                  arguments: {'productId': currentProduct.id},
+                                  arguments: {
+                                    'productId': currentProduct.id,
+                                    'canWriteTextReview': canWriteTextReview,
+                                  },
                                 );
-                                // Refresh product details if review was added successfully
                                 if (result == true) {
-                                  context
-                                      .read<ProductDetailsCubit>()
-                                      .getProductDetails(currentProduct.id);
+                                  if (context.mounted) {
+                                    context
+                                        .read<ProductDetailsCubit>()
+                                        .getProductDetails(currentProduct.id);
+                                  }
                                 }
                               },
                               icon: Icon(

@@ -163,14 +163,14 @@ class _NotificationItem extends StatelessWidget {
                       fontSize: 14.sp,
                     ),
                   ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    _formatDate(notification.createdAt),
-                    style: TextStyle(
-                      color: AppColors.textTertiary,
-                      fontSize: 12.sp,
-                    ),
-                  ),
+                  //SizedBox(height: 8.h),
+                  // Text(
+                  //   _formatDate(notification.createdAt),
+                  //   style: TextStyle(
+                  //     color: AppColors.textTertiary,
+                  //     fontSize: 12.sp,
+                  //   ),
+                  // ),
                 ],
               ),
             ),

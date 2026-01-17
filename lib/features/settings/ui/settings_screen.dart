@@ -59,8 +59,11 @@ class SettingsScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => di.sl<ContactUsCubit>(),
+        builder: (_) => MultiBlocProvider(
+          providers: [
+            BlocProvider(create: (_) => di.sl<ContactUsCubit>()),
+            BlocProvider.value(value: context.read<LanguageCubit>()),
+          ],
           child: Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
@@ -175,32 +178,41 @@ class SettingsScreen extends StatelessWidget {
           ),
           _SettingsTile(
             icon: Icons.language_outlined,
-            iconColor: AppColors.secondary,
+            iconColor: AppColors.primary,
             title: AppTexts.language,
             subtitle: AppTexts.changeLanguage,
             trailing: const LanguageSwitcher(),
           ),
           _SettingsTile(
             icon: Icons.person_outline,
-            iconColor: AppColors.accent,
+            iconColor: AppColors.primary,
             title: AppTexts.updateProfile,
             subtitle: AppTexts.editYourInfo,
             onTap: () => _openUpdateProfile(context),
           ),
           _SettingsTile(
             icon: Icons.support_agent_outlined,
-            iconColor: AppColors.warning,
+            iconColor: AppColors.primary,
             title: AppTexts.contactUs,
             subtitle: AppTexts.sendUsMessage,
             onTap: () => _openContactUs(context),
           ),
           _SettingsTile(
-            icon: Icons.sell_outlined,
-            iconColor: Colors.orange,
-            title: AppTexts.resellProduct,
-            subtitle: AppTexts.resellProductSubtitle,
-            onTap: () => _openResellProduct(context),
+            icon: Icons.description_outlined,
+            iconColor: AppColors.primary,
+            title: AppTexts.termsAndConditions,
+            subtitle: AppTexts.readTermsAndConditions,
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.termsAndConditions);
+            },
           ),
+          // _SettingsTile(
+          //   icon: Icons.sell_outlined,
+          //   iconColor: Colors.orange,
+          //   title: AppTexts.resellProduct,
+          //   subtitle: AppTexts.resellProductSubtitle,
+          //   onTap: () => _openResellProduct(context),
+          // ),
           SizedBox(height: 16.h),
           _SettingsTile(
             icon: Icons.logout,

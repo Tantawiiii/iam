@@ -105,7 +105,6 @@ class HomeHeader extends StatelessWidget {
                 Row(
                   children: [
                     SizedBox(width: 12.w),
-                    // User Profile
                     Bounce(
                       onTap: () {
                         Navigator.pushNamed(context, AppRoutes.userInfo);
@@ -125,7 +124,7 @@ class HomeHeader extends StatelessWidget {
                               ),
                               SizedBox(height: 2.h),
                               Text(
-                                'ID: ${user?.id.toString() ?? ''}',
+                                'ID: ${user?.id != null ? ((user?.id ?? 0) + 10000) : ''}',
                                 style: TextStyle(
                                   color: AppColors.greyTextColor,
                                   fontSize: 12.sp,
@@ -136,7 +135,7 @@ class HomeHeader extends StatelessWidget {
                           ),
                           SizedBox(width: 8.w),
                           CircleAvatar(
-                            radius: 24.r,
+                            radius: 28.r,
                             backgroundColor: AppColors.textFieldBorderColor,
                             backgroundImage:
                                 (user?.avatar != null &&

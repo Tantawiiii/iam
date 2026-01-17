@@ -40,9 +40,9 @@ class ProductGridCard extends StatelessWidget {
               children: [
                 Container(
                   width: double.infinity,
-                  height: 140.h,
+                  height: 130.h,
                   decoration: BoxDecoration(
-                    color: AppColors.overlayColor,
+                    //color: AppColors.overlayColor,
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(12.r),
                     ),
@@ -54,7 +54,7 @@ class ProductGridCard extends StatelessWidget {
                           ),
                           child: CachedNetworkImage(
                             imageUrl: product.image!,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                             placeholder: (context, url) => Center(
                               child: CircularProgressIndicator(
                                 color: AppColors.primaryColor,
@@ -78,7 +78,7 @@ class ProductGridCard extends StatelessWidget {
                   Positioned(
                     top: 8.h,
                     right: 8.w,
-                    child: GestureDetector(
+                    child: Bounce(
                       onTap: onFavoriteTap,
                       child: Container(
                         padding: EdgeInsets.all(6.w),
@@ -98,34 +98,31 @@ class ProductGridCard extends StatelessWidget {
                   ),
               ],
             ),
+
             Expanded(
               child: Padding(
-                padding: EdgeInsets.all(8.w),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          product.name,
-                          style: TextStyle(
-                            color: AppColors.blackTextColor,
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
+                    Text(
+                      product.name,
+                      style: TextStyle(
+                        color: AppColors.blackTextColor,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
+                    const Spacer(),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Wrap(
-                          spacing: 8.w,
-                          runSpacing: 4.h,
+                          spacing: 6.w,
+                          runSpacing: 2.h,
                           children: [
                             Text(
                               '${product.price} ${product.currency}',
@@ -153,7 +150,7 @@ class ProductGridCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(height: 8.h),
+                        SizedBox(height: 4.h),
                         Row(
                           children: [
                             ...List.generate(5, (index) {

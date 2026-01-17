@@ -74,98 +74,21 @@ class _SplashScreenState extends State<SplashScreen>
             stops: const [0.0, 0.5, 1.0],
           ),
         ),
-        child: Stack(
-          children: [
-            Positioned(
-              top: -100.h,
-              left: -100.w,
-              child: Container(
-                width: 300.w,
-                height: 300.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.primary.withOpacity(0.2),
-                      AppColors.primary.withOpacity(0.0),
-                    ],
-                  ),
+        child: Center(
+          child: FadeTransition(
+            opacity: _fade,
+            child: ScaleTransition(
+              scale: _scale,
+              child: ClipOval(
+                child: Image.asset(
+                  AppAssets.newLogoSplash,
+                  width: 240.w,
+                  height: 240.w,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            Positioned(
-              bottom: -150.h,
-              right: -150.w,
-              child: Container(
-                width: 400.w,
-                height: 400.h,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      AppColors.accent.withOpacity(0.15),
-                      AppColors.accent.withOpacity(0.0),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Center(
-              child: FadeTransition(
-                opacity: _fade,
-                child: ScaleTransition(
-                  scale: _scale,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(28.w),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: AppColors.brandGradient,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary.withOpacity(0.5),
-                              blurRadius: 50,
-                              spreadRadius: 15,
-                            ),
-                            BoxShadow(
-                              color: AppColors.accent.withOpacity(0.3),
-                              blurRadius: 80,
-                              spreadRadius: 20,
-                            ),
-                          ],
-                        ),
-                        child: ClipOval(
-                          child: Image.asset(
-                            AppAssets.newLogoDark,
-                            width: 140.w,
-                            height: 140.w,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      // SizedBox(height: 40.h),
-                      // ShaderMask(
-                      //   shaderCallback: (bounds) =>
-                      //       AppColors.horizontalGradient.createShader(bounds),
-                      //   child: Text(
-                      //     'IAM',
-                      //     style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontSize: 48.sp,
-                      //       fontWeight: FontWeight.w900,
-                      //       letterSpacing: 3,
-                      //       height: 1.2,
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
