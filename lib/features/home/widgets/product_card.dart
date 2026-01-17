@@ -1,3 +1,4 @@
+import 'package:bounce/bounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -41,7 +42,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Bounce(
       onTap: onTap,
       child: Container(
       width: 180.w,
@@ -105,7 +106,7 @@ class ProductCard extends StatelessWidget {
                 Positioned(
                   top: 8.h,
                   right: 8.w,
-                  child: GestureDetector(
+                  child: Bounce(
                     onTap: () {
                       if (onFavoriteTap != null) {
                         onFavoriteTap!();
@@ -114,18 +115,12 @@ class ProductCard extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
-                        gradient: AppColors.glassGradient,
+                        //gradient: AppColors.glassGradient,
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: AppColors.border.withOpacity(0.5),
                           width: 1,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.shadowDark.withOpacity(0.2),
-                            blurRadius: 8,
-                          ),
-                        ],
                       ),
                       child: Icon(
                         isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -141,7 +136,7 @@ class ProductCard extends StatelessWidget {
           ),
             Flexible(
               child: Padding(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(6.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
@@ -153,10 +148,10 @@ class ProductCard extends StatelessWidget {
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 4.h),
                 Wrap(
                     spacing: 6.w,
                     runSpacing: 3.h,
@@ -172,6 +167,7 @@ class ProductCard extends StatelessWidget {
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w800,
                         ),
+
                       ),
                     ),
                     Text(
@@ -202,7 +198,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: 4.h),
                 Row(
                   children: [
                     ...List.generate(5, (index) {
@@ -232,7 +228,7 @@ class ProductCard extends StatelessWidget {
                         vertical: 6.h,
                       ),
                     decoration: BoxDecoration(
-                      gradient: AppColors.glassGradient,
+                      color: AppColors.borderLight,
                       borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
                         color: AppColors.primary.withOpacity(0.3),

@@ -80,6 +80,15 @@ class ProductModel {
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
+    var gallery = json['gallery'] as List<dynamic>? ?? [];
+    String? image = json['image'] as String?;
+
+    if (image == null && gallery.isNotEmpty) {
+      if (gallery.first != null) {
+        image = gallery.first.toString();
+      }
+    }
+
     return ProductModel(
       id: json['id'] as int,
       name: json['name'] as String,
@@ -93,8 +102,8 @@ class ProductModel {
       currency: json['currency'] as String,
       quantity: json['quantity'] as int,
       linkVideo: json['link_video'] as String?,
-      image: json['image'] as String?,
-      gallery: json['gallery'] as List<dynamic>? ?? [],
+      image: image,
+      gallery: gallery,
       category:
           json['category'] as String? ??
           (json['category_id'] != null ? json['category_id'].toString() : ''),

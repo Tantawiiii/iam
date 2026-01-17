@@ -704,30 +704,30 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
               SizedBox(height: 16.h),
               AppTextField(
                 controller: _cityController,
-                hint: AppTexts.city,
+                hint: AppTexts.state,
                 leadingIcon: Icons.location_city_outlined,
               ),
               SizedBox(height: 24.h),
-              _buildImagePicker(
-                title: AppTexts.idImage,
-                required: true,
-                file: _idImageFile,
-                currentUrl: _currentIdImageUrl,
-                onTap: () => _showImagePickSheet((file) {
-                  setState(() => _idImageFile = file);
-                }),
-              ),
-              SizedBox(height: 16.h),
+              // _buildImagePicker(
+              //   title: AppTexts.idImage,
+              //   required: true,
+              //   file: _idImageFile,
+              //   currentUrl: _currentIdImageUrl,
+              //   onTap: () => _showImagePickSheet((file) {
+              //     setState(() => _idImageFile = file);
+              //   }),
+              // ),
+              // SizedBox(height: 16.h),
 
-              _buildImagePicker(
-                title: AppTexts.bankStatementImage,
-                required: false,
-                file: _bankStatementImageFile,
-                currentUrl: _currentBankStatementImageUrl,
-                onTap: () => _showImagePickSheet((file) {
-                  setState(() => _bankStatementImageFile = file);
-                }),
-              ),
+              // _buildImagePicker(
+              //   title: AppTexts.bankStatementImage,
+              //   required: false,
+              //   file: _bankStatementImageFile,
+              //   currentUrl: _currentBankStatementImageUrl,
+              //   onTap: () => _showImagePickSheet((file) {
+              //     setState(() => _bankStatementImageFile = file);
+              //   }),
+              // ),
               // SizedBox(height: 16.h),
               //
               // _buildImagePicker(

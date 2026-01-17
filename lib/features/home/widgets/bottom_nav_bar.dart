@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_texts.dart';
+import '../../../core/localization/language_cubit.dart';
 import '../../cart/cubit/cart_cubit.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
@@ -17,6 +18,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageCubit>();
     return BottomNavigationBar(
       currentIndex: selectedIndex,
       onTap: onTap,

@@ -51,6 +51,10 @@ final class AppTexts {
   static String get onDesTitle2 => _text('onDesTitle2');
   static String get onTitle3 => _text('onTitle3');
   static String get onDesTitle3 => _text('onDesTitle3');
+  static String get onTitle4 => _text('onTitle4');
+  static String get onDesTitle4 => _text('onDesTitle4');
+  static String get onTitle5 => _text('onTitle5');
+  static String get onDesTitle5 => _text('onDesTitle5');
 
   static String get skip => _text('skip');
   static String get prev => _text('prev');
@@ -303,10 +307,58 @@ final class AppTexts {
       _text('termsAndConditionsLastUpdate');
   static String get readTermsAndConditions => _text('readTermsAndConditions');
 
+  static String get pleaseLoginFirst => _text('pleaseLoginFirst');
+  static String get messageSentSuccess => _text('messageSentSuccess');
+  static String get getInTouch => _text('getInTouch');
+  static String get contactUsSubtitle => _text('contactUsSubtitle');
+  static String get messageLabel => _text('messageLabel');
+  static String get pleaseEnterMessage => _text('pleaseEnterMessage');
+  static String get messageMinLengthError => _text('messageMinLengthError');
+  static String get sending => _text('sending');
+  static String get sendMessage => _text('sendMessage');
+
   static const Map<String, Map<AppLanguage, String>> _localizedValues = {
     'welcomeBack': {
       AppLanguage.en: 'Welcome back',
       AppLanguage.ar: 'مرحباً بعودتك',
+    },
+    'pleaseLoginFirst': {
+      AppLanguage.en: 'Please login first',
+      AppLanguage.ar: 'يرجى تسجيل الدخول أولاً',
+    },
+    'messageSentSuccess': {
+      AppLanguage.en: 'Message sent successfully!',
+      AppLanguage.ar: 'تم إرسال الرسالة بنجاح!',
+    },
+    'getInTouch': {
+      AppLanguage.en: 'Get in Touch',
+      AppLanguage.ar: 'تواصل معنا',
+    },
+    'contactUsSubtitle': {
+      AppLanguage.en:
+          'We\'d love to hear from you. Send us a message and we\'ll respond as soon as possible.',
+      AppLanguage.ar:
+          'نحب أن نسمع منك. أرسل لنا رسالة وسنرد في أقرب وقت ممكن.',
+    },
+    'messageLabel': {
+      AppLanguage.en: 'Message',
+      AppLanguage.ar: 'الرسالة',
+    },
+    'pleaseEnterMessage': {
+      AppLanguage.en: 'Please enter your message',
+      AppLanguage.ar: 'يرجى إدخال رسالتك',
+    },
+    'messageMinLengthError': {
+      AppLanguage.en: 'Message must be at least 10 characters',
+      AppLanguage.ar: 'يجب أن تكون الرسالة 10 أحرف على الأقل',
+    },
+    'sending': {
+      AppLanguage.en: 'Sending...',
+      AppLanguage.ar: 'جارٍ الإرسال...',
+    },
+    'sendMessage': {
+      AppLanguage.en: 'Send Message',
+      AppLanguage.ar: 'إرسال الرسالة',
     },
     'loginToCont': {
       AppLanguage.en: 'Login to continue',
@@ -314,7 +366,7 @@ final class AppTexts {
     },
     'email': {AppLanguage.en: 'Email', AppLanguage.ar: 'البريد الإلكتروني'},
     'total': {AppLanguage.en: 'Total', AppLanguage.ar: 'المجموع'},
-    'eGP': {AppLanguage.en: 'EGP', AppLanguage.ar: 'جنيه'},
+    'eGP': {AppLanguage.en: 'AED', AppLanguage.ar: 'درهم'},
     'checkout': {AppLanguage.en: 'Checkout', AppLanguage.ar: 'الدفع'},
     'myAccount': {AppLanguage.en: 'My Account', AppLanguage.ar: 'حسابي'},
     'noOrdersYet': {
@@ -412,10 +464,8 @@ final class AppTexts {
       AppLanguage.ar: 'إنشاء حساب',
     },
     'onTitle1': {
-      AppLanguage.en:
-          'Subscribe now and get your products on installments up to 25,000 UAE Dirhams',
-      AppLanguage.ar:
-          'اشترك الان وأحصل على منتجاتك با التقسيط بقيمة 25 الف درهم إماراتي',
+      AppLanguage.en: 'Free and secure delivery within 7 days',
+      AppLanguage.ar: 'توصيل مجاني وآمن خلال 7 أيام',
     },
     'onDesTitle1': {
       AppLanguage.en:
@@ -424,8 +474,9 @@ final class AppTexts {
           'اكتشف مجموعة واسعة من المنتجات الأصلية، جميعها بين يديك.',
     },
     'onTitle2': {
-      AppLanguage.en: 'Comfortable installments up to 3 years',
-      AppLanguage.ar: 'تقسيط مريح يصل الي 3 سنوات',
+      AppLanguage.en:
+          'Full protection for your data and transactions on every purchase.',
+      AppLanguage.ar: 'حماية كاملة لبياناتك ومعاملاتك في كل عملية شراء .',
     },
     'onDesTitle2': {
       AppLanguage.en:
@@ -434,13 +485,31 @@ final class AppTexts {
           'استخدم البحث الذكي للعثور على القطعة المناسبة لجهازك في ثوانٍ.',
     },
     'onTitle3': {
-      AppLanguage.en: 'Discounts up to 25% on cash products',
-      AppLanguage.ar: 'خصومات تصل إلي 25% علي منتجات الكاش',
+      AppLanguage.en: 'Subscribe now and become a VIP',
+      AppLanguage.ar: 'إشترك الآن وكن VIP',
     },
     'onDesTitle3': {
       AppLanguage.en:
           'Get your orders delivered quickly and safely right to your doorstep.',
       AppLanguage.ar: 'استلم طلباتك بسرعة وأمان حتى باب منزلك.',
+    },
+    'onTitle4': {
+      AppLanguage.en: 'Shop freely without the need for a subscription or offers',
+      AppLanguage.ar: 'تسوق بحرية دون الحاجة إلي إشتراك أو عروض',
+    },
+    'onDesTitle4': {
+      AppLanguage.en: 'Description 4',
+      AppLanguage.ar: 'الوصف 4',
+    },
+    'onTitle5': {
+      AppLanguage.en:
+          'Products worth 25,000 AED with payment plans up to 24 months under an independent sales agreement. App is for application only.',
+      AppLanguage.ar:
+          'منتجات بقيمة 25,000 درهم مع ترتيب الدفع لمدة  تصل إلي 24 شهر وفق إتفاقية بيع مستقل .التطبيق للتقديم فقط',
+    },
+    'onDesTitle5': {
+      AppLanguage.en: 'Description 5',
+      AppLanguage.ar: 'الوصف 5',
     },
     'skip': {AppLanguage.en: 'Skip', AppLanguage.ar: 'تخطي'},
     'prev': {AppLanguage.en: 'Prev', AppLanguage.ar: 'السابق'},
@@ -539,10 +608,10 @@ final class AppTexts {
       AppLanguage.en: 'Please enter city',
       AppLanguage.ar: 'يرجى إدخال المدينة',
     },
-    'state': {AppLanguage.en: 'State', AppLanguage.ar: 'المحافظة'},
+    'state': {AppLanguage.en: 'State', AppLanguage.ar: 'الإمارة/الولاية'},
     'pleaseEnterState': {
       AppLanguage.en: 'Please enter state',
-      AppLanguage.ar: 'يرجى إدخال المحافظة',
+      AppLanguage.ar: 'يرجى إدخال الإمارة/الولاية',
     },
     'zipCode': {AppLanguage.en: 'Zip Code', AppLanguage.ar: 'الرمز البريدي'},
     'pleaseEnterZipCode': {
@@ -837,10 +906,13 @@ final class AppTexts {
       AppLanguage.en: 'Invoice Image',
       AppLanguage.ar: 'صورة الفاتورة',
     },
-    'installment': {AppLanguage.en: 'Installment', AppLanguage.ar: 'تقسيط'},
+    'installment': {
+      AppLanguage.en: 'Flexible Purchase Request',
+      AppLanguage.ar: 'طلب شراء مرن',
+    },
     'selectInstallmentMonths': {
-      AppLanguage.en: 'Select Installment Period',
-      AppLanguage.ar: 'اختر فترة التقسيط',
+      AppLanguage.en: 'Number of Installments',
+      AppLanguage.ar: 'عدد الدفعات',
     },
     'installmentMonths': {
       AppLanguage.en: 'Installment Months',
@@ -922,9 +994,8 @@ final class AppTexts {
       AppLanguage.ar: 'يجب أن يكون رمز OTP 6 أرقام',
     },
     'enter6DigitCodeSentToEmail': {
-      AppLanguage.en: 'Enter the 6-digit code sent to your email',
-      AppLanguage.ar:
-          'أدخل الرمز المكون من 6 أرقام المرسل إلى بريدك الإلكتروني',
+      AppLanguage.en: 'Please enter your email to reset password',
+      AppLanguage.ar: 'يرجى إدخال بريدك الإلكتروني لإعادة تعيين كلمة المرور',
     },
     'verifying': {
       AppLanguage.en: 'Verifying...',
@@ -1136,166 +1207,257 @@ final class AppTexts {
       AppLanguage.ar: 'أوافق على الشروط والأحكام',
     },
     'termsAndConditionsContent': {
-      AppLanguage.en: '''Terms and Conditions for IAM Application
-
-Last updated: December 20, 2025
-
-Welcome to the IAM application, a specialized e-commerce application for electronics within the United Arab Emirates. By using or registering with the application, you acknowledge and agree to be bound by the following terms and conditions in full. If you do not agree, please do not use the application.
-
-
----
-
-1. Definitions
-
-Application: The IAM application and all its versions and services.
-
-Company: The entity that owns and operates the IAM application.
-
-User / Customer: Any person who creates an account or uses the application.
-
-Products: All electronic goods offered for sale through the application.
-
-Cash Payment: Full payment of the product price in one installment.
-
-Installment Payment: Purchase of the product at a specified total price to be paid in installments, without this being considered financing or a loan.
-
-Subscription: An amount paid in advance in exchange for enabling application for the installment system.
-
-
-
----
-
-2. Application Scope
-
-The application is an e-commerce platform for selling electronic products.
-
-Sales are conducted either in cash or by installments according to the approved terms.
-
-The application is not a financing entity, bank, or credit company.
-
-
-
----
-
-3. Account and Registration
-
-All provided data must be accurate and up to date.
-
-The application has the right to suspend or cancel any account in case of providing incorrect data or violating the terms.
-
-
-
----
-
-4. Subscription System
-
-Payment of subscription fees in advance is required to apply for purchase using the installment system.
-
-Subscription fees are non-refundable in all cases.
-
-Payment of subscription does not necessarily mean approval of the installment request.
-
-
-
----
-
-5. Installment System
-
-Installments are only available after the request is reviewed and approved by the application management.
-
-The application has the right to accept or reject an installment request without providing reasons.
-
-In case of request rejection, the customer does not have the right to claim a refund of subscription fees.
-
-The installment price is a fixed and predetermined total price and is not considered interest or financing.
-
-
-
----
-
-6. Payment and Installments
-
-The customer is obligated to pay installments on their specified due dates.''',
-      AppLanguage.ar: '''الشروط والأحكام لتطبيق IAM
-
-آخر تحديث: 20 / 12/ 2025
-
-مرحبًا بك في تطبيق IAM، وهو تطبيق متخصص في تجارة الإلكترونيات داخل دولة الإمارات العربية المتحدة. باستخدامك للتطبيق أو تسجيلك فيه، فإنك تقرّ وتوافق على الالتزام بالشروط والأحكام التالية كاملةً. في حال عدم موافقتك، يُرجى عدم استخدام التطبيق.
-
-
----
-
-1. التعريفات
-
-التطبيق: تطبيق IAM بجميع نسخه وخدماته.
-
-الشركة: الجهة المالكة والمشغلة لتطبيق IAM.
-
-المستخدم / العميل: أي شخص يقوم بإنشاء حساب أو استخدام التطبيق.
-
-المنتجات: جميع السلع الإلكترونية المعروضة للبيع عبر التطبيق.
-
-الدفع النقدي: الدفع الكامل لقيمة المنتج دفعة واحدة.
-
-الدفع بالتقسيط: شراء المنتج بسعر إجمالي محدد يُسدَّد على أقساط دون اعتبار ذلك تمويلًا أو قرضًا.
-
-الاشتراك: مبلغ يُدفع مقدمًا مقابل إتاحة التقديم على نظام التقسيط.
-
-
-
----
-
-2. نطاق عمل التطبيق
-
-التطبيق منصة تجارة إلكترونية لبيع المنتجات الإلكترونية.
-
-يتم البيع إما نقدًا أو بالتقسيط حسب الشروط المعتمدة.
-
-التطبيق ليس جهة تمويل ولا بنكًا ولا شركة ائتمان.
-
-
-
----
-
-3. الحساب والتسجيل
-
-يجب أن تكون جميع البيانات المقدمة صحيحة وحديثة.
-
-يحق للتطبيق تعليق أو إلغاء أي حساب في حال تقديم بيانات غير صحيحة أو مخالفة الشروط.
-
-
-
----
-
-4. نظام الاشتراك
-
-يشترط دفع رسوم اشتراك مقدّمة للتقدم بطلب الشراء بنظام التقسيط.
-
-رسوم الاشتراك غير قابلة للاسترداد نهائيًا في جميع الحالات.
-
-دفع الاشتراك لا يعني بالضرورة الموافقة على طلب التقسيط.
-
-
-
----
-
-5. نظام التقسيط
-
-التقسيط متاح فقط بعد دراسة الطلب والموافقة عليه من قبل إدارة التطبيق.
-
-يحق للتطبيق قبول أو رفض طلب التقسيط دون إبداء أسباب.
-
-في حال رفض الطلب، لا يحق للعميل المطالبة باسترداد رسوم الاشتراك.
-
-سعر التقسيط هو سعر إجمالي ثابت ومحدد مسبقًا ولا يُعد فائدة أو تمويلًا.
-
-
-
----
-
-6. الدفع والأقساط
-
-يلتزم العميل بسداد الأقساط في مواعيدها المحددة.''',
-    },
+      AppLanguage.en: '''Terms & Conditions 🔶️
+IAM Smart Store
+
+_ Company Information
+_ App / Platform Name: IAM Smart Store
+_ Owner & Operator: IAM SOFTWARE PUBLISHING - L.L.C - S.P.S
+_ Country / Emirate: United Arab Emirates – Abu Dhabi
+_ Commercial Registration No.: CN-6154365
+_ Official Email: iamsoftwarepublishing@gmail.com
+
+1/ Scope and Acceptance
+_ By using the App, creating an account, browsing products, or submitting any request, you confirm that you have read, understood, and agreed to these Terms & Conditions.
+_ If you do not agree with any part of these Terms, you must stop using the App immediately.
+
+2/ Definitions
+_ App / Platform: IAM Smart Store application.
+_ Company: IAM SOFTWARE PUBLISHING - L.L.C - S.P.S.
+_ User / Customer / Consumer: Any person who uses the App, purchases, or submits a request.
+_ Products: All goods and devices displayed and owned by the Company.
+_ Subscription: A paid membership that grants marketing benefits such as discounts and offers and is not part of any product price.
+_ Cash Purchase: Full payment of the product price in one single payment.
+_ Flexible Purchase Request: A non-binding request submitted by a subscriber to study a possible later purchase outside the App under a separate contract.
+
+3/ Legal Nature
+_ The App is an e-commerce platform for displaying and selling products.
+_ The App and the Company do not provide financing, installments, BNPL, loans, or any credit or banking services.
+_ All purchases inside the App are cash purchases with full payment only. Any special arrangements occur outside the App under a separate independent contract.
+
+4/ Approved Purchase Methods
+4-1) Cash Purchase without Subscription
+_ Users may purchase products at the full listed price with immediate full payment. No discounts or additional benefits apply.
+4-2) Cash Purchase with Subscription and Discounts
+_ Subscribers may access discounts, but all payments remain full and cash only. Subscription is not part of the product price and does not create financing.
+4-3) Flexible Purchase Request (Subscribers Only)
+_ Available only to subscribers. Requests are non-binding and not contracts.
+_ Submitting a flexible purchase request does not create any obligation on the Company.
+_ The Company does not guarantee approval and reserves the right to reject any request without justification. If approved, the process occurs outside the App under a separate contract. No financing – No installments – No BNPL.
+
+5/ Accounts and Use
+_ Users must use the App lawfully and keep credentials secure.
+
+6/ Prices, Invoices, and Taxes
+_ Prices are valid at the time of ordering.
+_ The Company reserves the right to change prices before confirming any order.
+_ Invoices are issued according to UAE regulations.
+
+7/ Consumer Protection
+_ The Company complies with UAE consumer protection laws.
+_ Consumers have the right to products matching their description, free from material defects, and covered by warranty if applicable.
+
+8/ Return and Exchange Policy
+_ Return period: 14 days from delivery.
+_ Product must be unused and in original condition and packaging. Subscriptions are non-refundable after activation.
+_ Refunds (if approved) will be processed within a reasonable time according to applicable procedures.
+
+9/ Delivery and Address
+_ User is responsible for providing a correct delivery address.
+_ Return period starts from the confirmed delivery date recorded by the delivery or shipping company.
+
+10/ Warranty and After-Sales
+_ Warranty applies as per its terms provided by the Company or the manufacturer.
+_ Warranty does not cover misuse, negligence, accidents, breakage, or unauthorized modifications.
+
+11/ Complaints and Support
+_ Complaints and support requests can be submitted via the official email: iamsoftwarepublishing@gmail.com
+_ The Company will respond and attempt to resolve the issue within a reasonable time.
+
+12/ Privacy and Data Protection
+_ The Company protects user data in accordance with applicable UAE laws.
+_ Data is used only for operational, legal, and regulatory purposes related to providing the services.
+
+13/ Cybersecurity
+_ Any illegal or abusive use of the App, including hacking or tampering attempts, is strictly prohibited.
+_ The Company reserves the right to take appropriate legal action against any violator.
+
+14/ Limitation of Liability
+_ The App is provided “as is”.
+_ The Company shall not be liable for any indirect, incidental, or consequential damages to the maximum extent permitted by law.
+
+15/ Intellectual Property
+_ All rights related to the App name, trademarks, content, design, and software belong to the Company or are licensed to it.
+_ No part of the App or its content may be copied or reused without prior written consent.
+
+16/ Amendments
+_ The Company may amend these Terms & Conditions at any time as it deems appropriate.
+_ Continued use of the App after publishing the amendments constitutes acceptance.
+
+17/ Governing Law and Jurisdiction
+_ These Terms & Conditions are governed by the laws of the United Arab Emirates.
+_ The competent UAE courts have exclusive jurisdiction over any dispute.
+
+18/ General Provisions
+_ If any provision of these Terms is invalid, the remaining provisions remain in force.
+_ Headings are for convenience only and do not affect interpretation.
+
+19/ Technical & Pricing Errors
+_ The Company reserves the right to cancel or reject any order in case of a technical or pricing error.
+_ The Company is not obliged to honor any order resulting from an obvious or unintended error.
+
+20/ Right to Refuse Service or Suspend Accounts
+_ The Company reserves the right to refuse service, suspend, or delete an account in case of misuse or illegal activity.
+
+21/ Marketing Content & Illustrations
+_ All images and descriptions are for illustrative and marketing purposes only. Actual specifications may vary slightly.
+
+22/ No Marketing Commitment
+_ No advertising or promotional content in the App shall be considered binding unless officially confirmed.
+
+23/ Force Majeure
+_ The Company shall not be liable for any delay or failure caused by events beyond its reasonable control such as natural disasters, government actions, or system failures.
+
+24/ Additional Limitation of Liability
+_ The Company shall not be liable for loss of profits, data, or any indirect damages.
+
+25/ No Partnership or Agency
+_ Use of the App does not create any partnership, agency, or joint venture between the user and the Company.
+
+26/ Prevailing Language
+_ In case of any discrepancy between the Arabic and English versions, the Arabic version shall prevail.
+
+27/ Official Notices
+_ Communications via the official email are considered valid legal notices between the Company and the User.
+
+User Agreement Confirmation
+_ By clicking “Agree”, you acknowledge that you have read, understood, and accepted these Terms & Conditions without limitation, condition, or reservation.''',
+      AppLanguage.ar: '''الشروط والأحكام 🔶️
+IAM Smart Store
+
+_ معلومات الشركة
+_ اسم التطبيق / المنصة: IAM Smart Store
+_ المالك والمشغّل: IAM SOFTWARE PUBLISHING - L.L.C - S.P.S
+_ الدولة / الإمارة: الإمارات العربية المتحدة – أبوظبي
+_ رقم السجل التجاري: CN-6154365
+_ البريد الإلكتروني الرسمي: iamsoftwarepublishing@gmail.com
+
+١/ نطاق التطبيق والموافقة
+_ باستخدامك للتطبيق أو إنشاء حساب أو تصفح المنتجات أو تقديم أي طلب، فإنك تقر بأنك قرأت هذه الشروط والأحكام وفهمتها ووافقت عليها بالكامل.
+_ إذا كنت لا توافق على أي بند، يجب عليك التوقف فورًا عن استخدام التطبيق.
+
+2/ التعريفات
+_ التطبيق / المنصة: تطبيق IAM Smart Store.
+_ الشركة: IAM SOFTWARE PUBLISHING - L.L.C - S.P.S.
+_ المستخدم / العميل / المستهلك: كل من يستخدم التطبيق أو يشتري أو يقدّم طلبًا.
+_ المنتجات: جميع السلع والأجهزة المعروضة والمملوكة للشركة.
+_ الاشتراك: عضوية مدفوعة تمنح مزايا تسويقية مثل الخصومات والعروض، ولا تُعد جزءًا من ثمن أي منتج.
+_ الشراء النقدي: دفع كامل ثمن المنتج دفعة واحدة.
+_ طلب الشراء المرن: طلب غير ملزم يقدّمه المشترك لدراسة شراء لاحق خارج التطبيق بموجب عقد مستقل.
+
+3/ الطبيعة القانونية للتطبيق
+_ التطبيق منصة تجارة إلكترونية لعرض وبيع المنتجات.
+_ لا يقدّم التطبيق أو الشركة تمويلاً أو تقسيطًا أو BNPL أو قروضًا أو أي خدمات ائتمانية أو مصرفية.
+_ جميع عمليات الشراء داخل التطبيق نقدية وبالسداد الكامل فقط. أي ترتيبات خاصة تتم خارج التطبيق بعقد مستقل.
+
+4/ طرق الشراء المعتمدة
+4-1) الشراء النقدي بدون اشتراك
+_ يُسمح للمستخدم بشراء أي منتج بالسعر الكامل والدفع فورًا. لا تُمنح خصومات في هذه الحالة.
+4-2) الشراء النقدي باشتراك وخصومات
+_ يحق للمشتركين الحصول على خصومات، لكن جميع المدفوعات تبقى نقدية وكاملة.
+_ الاشتراك لا يُعد دفعة مقدمة ولا تمويلاً، ولا يُعتبر جزءًا من ثمن أي منتج.
+4-3) طلب الشراء المرن (للمشتركين فقط)
+_ الخدمة متاحة فقط للمشتركين. الطلب غير ملزم ولا يُعتبر عقدًا. تقديم الطلب لا ينشئ أي التزام على الشركة.
+_ الشركة لا تضمن الموافقة على أي طلب وتحتفظ بحقها في رفض أي طلب دون إبداء أسباب.
+_ في حال الموافقة، تتم الإجراءات خارج التطبيق بعقد مستقل. لا تمويل – لا تقسيط – لا BNPL.
+
+5/ الحسابات والاستخدام
+_ يجب على المستخدم استخدام التطبيق استخدامًا قانونيًا والحفاظ على سرية بيانات حسابه.
+
+6/ الأسعار والفواتير والضرائب
+_ الأسعار المعروضة سارية وقت الطلب فقط.
+_ تحتفظ الشركة بحقها في تعديل الأسعار قبل تأكيد الطلب.
+_ تصدر الفواتير وفق القوانين المعمول بها في دولة الإمارات العربية المتحدة.
+
+7/ حماية المستهلك
+_ تلتزم الشركة بقوانين حماية المستهلك في دولة الإمارات العربية المتحدة.
+_ يحق للمستهلك الحصول على منتج مطابق للوصف، وخالٍ من العيوب الجوهرية، ومشمول بالضمان عند توفره.
+
+8/ سياسة الإرجاع والاستبدال
+_ مدة الإرجاع: 14 يومًا من تاريخ الاستلام.
+_ يجب أن يكون المنتج غير مستخدم وبحالته الأصلية وبعبوته الأصلية. الاشتراكات غير قابلة للاسترجاع بعد التفعيل.
+_ يتم استرداد المبلغ (إن استحق) خلال مدة معقولة ووفق الإجراءات المعتمدة.
+
+9/ التوصيل والعنوان
+_ المستخدم مسؤول عن صحة عنوان التسليم.
+_ تبدأ مدة الإرجاع من تاريخ الاستلام المثبت في نظام التوصيل أو شركة الشحن.
+
+10/ الضمان وخدمات ما بعد البيع
+_ يُطبق الضمان وفق شروط الشركة أو الشركة المصنعة.
+_ لا يشمل الضمان الأعطال الناتجة عن سوء الاستخدام أو الإهمال أو الكسر أو التعديل غير المعتمد.
+
+11/ الشكاوى وخدمة العملاء
+_ يتم تقديم الشكاوى عبر البريد الإلكتروني الرسمي: iamsoftwarepublishing@gmail.com
+_ تلتزم الشركة بالرد خلال مدة زمنية معقولة.
+
+12/ الخصوصية وحماية البيانات
+_ تلتزم الشركة بحماية بيانات المستخدمين وفق القوانين الإماراتية.
+_ تُستخدم البيانات فقط للأغراض التشغيلية والقانونية والتنظيمية.
+
+13/ الأمن السيبراني
+_ يُمنع أي استخدام غير مشروع للتطبيق أو محاولة اختراق أو إساءة استخدام.
+_ تحتفظ الشركة بحق اتخاذ الإجراءات القانونية ضد أي مخالف.
+
+14/ حدود المسؤولية
+_ يُقدَّم التطبيق “كما هو”.
+_ لا تتحمل الشركة أي مسؤولية عن الأضرار غير المباشرة أو التبعية أو الخاصة ضمن الحدود التي يسمح بها القانون.
+
+15/ الملكية الفكرية
+_ جميع الحقوق المتعلقة بالتطبيق والعلامة التجارية والمحتوى مملوكة للشركة أو مرخّصة لها.
+_ لا يجوز نسخ أو إعادة استخدام أي جزء دون موافقة خطية مسبقة.
+
+16/ تعديل الشروط
+_ يحق للشركة تعديل الشروط في أي وقت.
+_ يُعد استمرار الاستخدام موافقة على التعديلات.
+
+17/ القانون والاختصاص القضائي
+_ تخضع هذه الشروط لقوانين دولة الإمارات العربية المتحدة.
+_ تختص المحاكم الإماراتية وحدها بالنظر في أي نزاع يتعلق بها.
+
+18/ أحكام عامة
+_ بطلان أي بند لا يؤثر على باقي البنود.
+_ العناوين وضعت للتسهيل فقط ولا تؤثر على التفسير القانوني.
+
+19/ الأخطاء التقنية وأخطاء التسعير
+_ تحتفظ الشركة بحق إلغاء أو رفض أي طلب في حال وجود خطأ تقني أو سعري أو خلل في الدفع.
+_ لا تتحمل الشركة التزامًا بتنفيذ أي طلب ناتج عن خطأ واضح أو غير مقصود.
+
+20/ الحق في رفض الخدمة أو إيقاف الحساب
+_ تحتفظ الشركة بحقها في رفض الخدمة أو تعليق أو حذف الحساب في حال إساءة الاستخدام أو النشاط غير القانوني.
+
+21/ المحتوى التسويقي والصور التوضيحية
+_ جميع الصور والنصوص لأغراض العرض والتسويق فقط. قد تختلف المواصفات الفعلية اختلافًا طفيفًا.
+
+22/ عدم اعتبار الإعلانات التزامًا تعاقديًا
+_ لا يُعد أي محتوى ترويجي داخل التطبيق التزامًا على الشركة إلا بعد تأكيد الطلب رسميًا.
+
+23/ القوة القاهرة
+_ لا تتحمل الشركة مسؤولية عن التأخير أو الإخفاق الناتج عن ظروف خارجة عن إرادتها مثل الكوارث الطبيعية أو القرارات الحكومية أو الأعطال العامة.
+
+24/ حدود إضافية للمسؤولية
+_ لا تتحمل الشركة مسؤولية فقدان الأرباح أو البيانات أو أي أضرار غير مباشرة.
+
+25/ العلاقة القانونية
+_ استخدام التطبيق لا ينشئ علاقة شراكة أو وكالة أو تمثيل قانوني بين المستخدم والشركة.
+
+26/ اللغة المعتمدة
+_ في حال وجود تعارض بين النص العربي والإنجليزي، يُعتد بالنص العربي.
+
+27/ الإخطارات والمراسلات الرسمية
+_ تُعد المراسلات عبر البريد الإلكتروني الرسمي وسيلة إخطار قانونية معتمدة بين الشركة والمستخدم.
+
+نص الموافقة الرسمية
+_ بالضغط على “موافق”، فإنك تقر بأنك قرأت هذه الشروط والأحكام وفهمت مضمونها ووافقت عليها دون أي قيد أو شرط أو تحفظ.''',
+    }
   };
 }

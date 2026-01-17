@@ -135,7 +135,7 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
         Container(
           width: double.infinity,
           height: 300.h,
-          color: AppColors.overlayColor,
+          // color: AppColors.overlayColor,
           child: PageView.builder(
             controller: _pageController,
             onPageChanged: (index) {
@@ -208,7 +208,7 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
   Widget _buildImageItem(String imageUrl) {
     return CachedNetworkImage(
       imageUrl: imageUrl,
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       width: double.infinity,
       height: double.infinity,
       placeholder: (context, url) => Center(

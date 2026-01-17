@@ -81,11 +81,11 @@ class UserInfoScreen extends StatelessWidget {
                       _buildUserInfoSection(state.user),
                       SizedBox(height: 32.h),
                       _buildOrdersSection(context, state.orders),
-                      SizedBox(height: 32.h),
-                      _buildProductsForSaleSection(
-                        context,
-                        state.productsForSale,
-                      ),
+                      // SizedBox(height: 32.h),
+                      // _buildProductsForSaleSection(
+                      //   context,
+                      //   state.productsForSale,
+                      // ),
                       SizedBox(height: 32.h),
                       _buildShareAppSection(context),
                       SizedBox(height: 32.h),

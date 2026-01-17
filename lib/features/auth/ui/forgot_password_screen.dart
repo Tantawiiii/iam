@@ -80,28 +80,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           backgroundColor: AppColors.background,
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SizedBox(height: 40.h),
-                    Text(
-                      AppTexts.forgetPassword,
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 28.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: 26.h),
                     Text(
                       AppTexts.enter6DigitCodeSentToEmail,
                       style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 16.sp,
+                        fontWeight: FontWeight.w800,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -121,7 +112,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 92.h),
                     BlocBuilder<ForgotPasswordCubit, ForgotPasswordState>(
                       builder: (context, state) {
                         final isLoading = state is ForgotPasswordLoading;

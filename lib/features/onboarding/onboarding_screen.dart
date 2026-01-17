@@ -1,11 +1,14 @@
 import 'package:iam/core/constant/app_texts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iam/features/onboarding/widgets/dots_widget.dart';
+import 'package:iam/features/onboarding/widgets/onboard_page.dart';
 
 import '../../core/constant/app_assets.dart';
 import '../../core/constant/app_colors.dart';
 import '../../core/routing/app_routes.dart';
 import '../../shared/widgets/language_switcher.dart';
+import 'model/onboard_model.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -18,10 +21,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int _index = 0;
 
-  List<_OnboardData> get _pages => [
-    _OnboardData(image: AppAssets.onboard1Img, title: AppTexts.onTitle1),
-    _OnboardData(image: AppAssets.onboard2Img, title: AppTexts.onTitle2),
-    _OnboardData(image: AppAssets.onboard3Img, title: AppTexts.onTitle3),
+  List<OnboardData> get _pages => [
+    OnboardData(image: AppAssets.onboard1Img, title: AppTexts.onTitle1),
+    OnboardData(image: AppAssets.onboard2Img, title: AppTexts.onTitle2),
+    OnboardData(image: AppAssets.onboard3Img, title: AppTexts.onTitle3),
+    OnboardData(image: AppAssets.onboard4Img, title: AppTexts.onTitle4),
+    OnboardData(image: AppAssets.onboard5Img, title: AppTexts.onTitle5),
   ];
 
   void _goNext() {
@@ -96,11 +101,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 controller: _controller,
                 onPageChanged: (i) => setState(() => _index = i),
                 itemCount: _pages.length,
-                itemBuilder: (_, i) => _OnboardPage(data: _pages[i]),
+                itemBuilder: (_, i) => OnboardPage(data: _pages[i]),
               ),
             ),
             SizedBox(height: 16.h),
-            _Dots(index: _index, length: _pages.length),
+            Dots(index: _index, length: _pages.length),
             SizedBox(height: 24.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
@@ -169,103 +174,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _Dots extends StatelessWidget {
-  const _Dots({required this.index, required this.length});
-  final int index;
-  final int length;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(length, (i) {
-        final bool active = i == index;
-        return AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          margin: EdgeInsets.symmetric(horizontal: 4.w),
-          width: active ? 32.w : 8.w,
-          height: 8.h,
-          decoration: BoxDecoration(
-            gradient: active ? AppColors.primaryGradient : null,
-            color: active ? null : AppColors.border,
-            borderRadius: BorderRadius.circular(4.r),
-            boxShadow: active
-                ? [
-                    BoxShadow(
-                      color: AppColors.primary.withOpacity(0.4),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-        );
-      }),
-    );
-  }
-}
-
-class _OnboardData {
-  const _OnboardData({required this.image, required this.title});
-  final String image;
-  final String title;
-}
-
-class _OnboardPage extends StatelessWidget {
-  const _OnboardPage({required this.data});
-  final _OnboardData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: Container(
-                padding: EdgeInsets.all(20.w),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(24.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.shadowLight,
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Image.asset(
-                    data.image,
-                    width: 240.w,
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 22.h),
-          Text(
-            data.title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
-              height: 1.2,
-            ),
-          ),
-          SizedBox(height: 20.h),
-        ],
       ),
     );
   }
