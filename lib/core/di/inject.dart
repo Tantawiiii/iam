@@ -1,4 +1,5 @@
 import 'package:iam/features/contact_us/servises/contact_servises.dart';
+import 'package:iam/core/network/payment_service.dart';
 import 'package:iam/features/orders/services/orders_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +26,7 @@ import '../../features/home/cubit/offers_cubit.dart';
 import '../../features/home/cubit/search_cubit.dart';
 import '../../features/cart/cubit/cart_cubit.dart';
 import '../../features/checkout/cubit/order_cubit.dart';
+import '../../features/checkout/services/coupon_service.dart';
 import '../../features/favorites/cubit/favorites_cubit.dart';
 import '../../features/reviews/cubit/review_cubit.dart';
 import '../../features/settings/services/settings_service.dart';
@@ -34,6 +36,7 @@ import '../../features/contact_us/cubit/contact_us_cubit.dart';
 import '../../features/settings/cubit/user_info_cubit.dart';
 import '../../features/orders/cubit/order_details_cubit.dart';
 import '../../features/notifications/cubit/notifications_cubit.dart';
+import '../../features/settings/cubit/public_setting_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -74,6 +77,12 @@ Future<void> init() async {
   // Orders Service
   sl.registerLazySingleton(() => OrdersService(sl<ApiService>()));
 
+  // Payment Service
+  sl.registerLazySingleton(() => PaymentService(sl<ApiService>()));
+
+  // Coupon Service
+  sl.registerLazySingleton(() => CouponService(sl<ApiService>()));
+
   // Localization Cubit
   sl.registerLazySingleton(() => LanguageCubit(sl<StorageService>()));
 
@@ -101,13 +110,13 @@ Future<void> init() async {
   sl.registerFactory(() => SearchCubit(sl<ProductsService>()));
 
   // Cart Cubit
-  sl.registerFactory(() => CartCubit(sl<ProductsService>()));
+  sl.registerLazySingleton(() => CartCubit(sl<ProductsService>()));
 
   // Order Cubit
   sl.registerFactory(() => OrderCubit(sl<ProductsService>()));
 
   // Favorites Cubit
-  sl.registerFactory(() => FavoritesCubit(sl<ProductsService>()));
+  sl.registerLazySingleton(() => FavoritesCubit(sl<ProductsService>()));
 
   // Review Cubit
   sl.registerFactory(() => ReviewCubit(sl<ProductsService>()));
@@ -115,9 +124,10 @@ Future<void> init() async {
   // Settings Cubits
   sl.registerFactory(() => UpdateProfileCubit(sl<AuthService>()));
   sl.registerFactory(() => ContactUsCubit(sl<ContactService>()));
-  sl.registerFactory(() => UserInfoCubit(sl<SettingsService>()));
+  sl.registerLazySingleton(() => UserInfoCubit(sl<SettingsService>(), sl<StorageService>()));
   sl.registerFactory(() => OrderDetailsCubit(sl<OrdersService>()));
   sl.registerFactory(() => ResellProductCubit(sl<SettingsService>()));
+  sl.registerFactory(() => PublicSettingCubit(sl<ApiService>()));
 
   // Notifications Cubit
   sl.registerLazySingleton(() => NotificationsCubit());

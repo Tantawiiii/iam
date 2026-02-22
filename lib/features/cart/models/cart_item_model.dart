@@ -5,8 +5,7 @@ class CartItemModel {
   final int userId;
   final int cardId;
   final int quantity;
-  final String createdAt;
-  final String updatedAt;
+  final String? color;
   final ProductModel card;
 
   CartItemModel({
@@ -14,8 +13,7 @@ class CartItemModel {
     required this.userId,
     required this.cardId,
     required this.quantity,
-    required this.createdAt,
-    required this.updatedAt,
+    this.color,
     required this.card,
   });
 
@@ -25,8 +23,8 @@ class CartItemModel {
       userId: json['user_id'] as int,
       cardId: json['card_id'] as int,
       quantity: json['quantity'] as int,
-      createdAt: json['created_at'] as String,
-      updatedAt: json['updated_at'] as String,
+
+      color: json['color'] as String?,
       card: ProductModel.fromJson(json['card'] as Map<String, dynamic>),
     );
   }
@@ -37,8 +35,7 @@ class CartItemModel {
       'user_id': userId,
       'card_id': cardId,
       'quantity': quantity,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
+      'color': color,
       'card': card.toJson(),
     };
   }

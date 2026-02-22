@@ -379,7 +379,6 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
                 onTap: () {
                     Navigator.pop(sheetContext);
                     debugPrint('Gallery button pressed for avatar');
-                    // Wait for modal to dismiss before opening picker
                     Future.delayed(const Duration(milliseconds: 300)).then((_) {
                       if (mounted) {
                         debugPrint('Calling _pickAvatar for gallery');
@@ -414,17 +413,17 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
         return;
       }
     }
-
-    if (_idImageFile == null &&
-        (_currentIdImageUrl == null || _currentIdImageUrl!.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppTexts.pleaseUploadIdImage),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
+    //
+    // if (_idImageFile == null &&
+    //     (_currentIdImageUrl == null || _currentIdImageUrl!.isEmpty)) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(
+    //       content: Text(AppTexts.pleaseUploadIdImage),
+    //       backgroundColor: Colors.red,
+    //     ),
+    //   );
+    //   return;
+    // }
 
     cubit.updateProfile(
       name: _nameController.text.trim(),
@@ -438,9 +437,9 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
       country: _countryController.text.trim(),
       city: _cityController.text.trim(),
       avatar: _avatarFile,
-      idImage: _idImageFile,
-      bankStatementImage: _bankStatementImageFile,
-      invoiceImage: _invoiceImageFile,
+      // idImage: _idImageFile,
+      // bankStatementImage: _bankStatementImageFile,
+      // invoiceImage: _invoiceImageFile,
     );
   }
 
@@ -466,7 +465,6 @@ class _UpdateProfileTabState extends State<UpdateProfileTab> {
             final userInfoCubit = di.sl<UserInfoCubit>();
             if (!userInfoCubit.isClosed) {
               await userInfoCubit.checkAuth();
-              // Update notifications again after checkAuth
               if (userInfoCubit.state is UserInfoSuccess) {
                 final userInfoState = userInfoCubit.state as UserInfoSuccess;
                 notificationsCubit.updateNotificationsFromUser(

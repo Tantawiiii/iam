@@ -2,14 +2,17 @@ import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
 import '../../auth/models/user_model.dart';
 import '../models/check_auth_response_model.dart';
+import '../../../core/services/storage_service.dart';
 import '../services/settings_service.dart';
 
 part 'user_info_state.dart';
 
 class UserInfoCubit extends Cubit<UserInfoState> {
   final SettingsService _settingsService;
+  final StorageService _storageService;
 
-  UserInfoCubit(this._settingsService) : super(UserInfoInitial());
+  UserInfoCubit(this._settingsService, this._storageService)
+      : super(UserInfoInitial());
 
   /// Fetch user info and orders
   Future<void> checkAuth() async {
@@ -21,6 +24,8 @@ class UserInfoCubit extends Cubit<UserInfoState> {
       final checkAuthResponse = CheckAuthResponseModel.fromJson(
         response.data as Map<String, dynamic>,
       );
+
+      await _storageService.updateStoredUser(checkAuthResponse.data);
 
       emit(UserInfoSuccess(
         user: checkAuthResponse.data,

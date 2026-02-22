@@ -14,16 +14,25 @@ import '../../auth/models/user_model.dart';
 import '../cubit/user_info_cubit.dart';
 import '../../notifications/cubit/notifications_cubit.dart';
 
-class UserInfoScreen extends StatelessWidget {
+class UserInfoScreen extends StatefulWidget {
   const UserInfoScreen({super.key});
 
   @override
+  State<UserInfoScreen> createState() => _UserInfoScreenState();
+}
+
+class _UserInfoScreenState extends State<UserInfoScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger a fresh fetch every time the screen is opened
+    context.read<UserInfoCubit>().checkAuth();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => di.sl<UserInfoCubit>()..checkAuth()),
-        BlocProvider.value(value: di.sl<NotificationsCubit>()),
-      ],
+    return BlocProvider.value(
+      value: di.sl<NotificationsCubit>(),
       child: BlocListener<UserInfoCubit, UserInfoState>(
         listener: (context, state) {
           if (state is UserInfoSuccess) {
@@ -41,7 +50,7 @@ class UserInfoScreen extends StatelessWidget {
           ),
           body: BlocBuilder<UserInfoCubit, UserInfoState>(
             builder: (context, state) {
-              if (state is UserInfoLoading) {
+              if (state is UserInfoLoading || state is UserInfoInitial) {
                 return const Center(child: CircularProgressIndicator());
               }
 

@@ -22,10 +22,7 @@ class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   void _openMyAccount(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const UserInfoScreen()),
-    );
+    Navigator.pushNamed(context, AppRoutes.userInfo);
   }
 
   void _openUpdateProfile(BuildContext context) {

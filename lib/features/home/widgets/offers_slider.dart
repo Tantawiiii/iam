@@ -87,11 +87,8 @@ class _OffersSliderState extends State<OffersSlider> {
           return Column(
             children: [
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 12.h),
-                height: 220.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(26.r),
-                ),
+                margin: EdgeInsets.symmetric(vertical: 6.h),
+                height: 240.h,
                 child: PageView.builder(
                   controller: _pageController,
                   onPageChanged: (index) {
@@ -135,7 +132,6 @@ class _OffersSliderState extends State<OffersSlider> {
             }
           : null,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
         child: CachedNetworkImage(
           imageUrl: offer.avatar,
           fit: BoxFit.contain,

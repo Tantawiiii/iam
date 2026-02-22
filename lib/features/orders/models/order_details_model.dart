@@ -14,6 +14,9 @@ class OrderDetailsModel {
   final String paymentMethod;
   final String paymentStatus;
   final String? promoCode;
+  final String? totalAmount;
+  final String? invoicePdfPath;
+  final String? invoicePdfUrl;
   final List<OrderCardItemModel> cards;
   final String createdAt;
   final String updatedAt;
@@ -33,6 +36,9 @@ class OrderDetailsModel {
     required this.paymentMethod,
     required this.paymentStatus,
     this.promoCode,
+    this.totalAmount,
+    this.invoicePdfPath,
+    this.invoicePdfUrl,
     required this.cards,
     required this.createdAt,
     required this.updatedAt,
@@ -54,6 +60,9 @@ class OrderDetailsModel {
       paymentMethod: json['payment_method'] as String,
       paymentStatus: json['payment_status'] as String,
       promoCode: json['promo_code'] as String?,
+      totalAmount: json['total_amount']?.toString(),
+      invoicePdfPath: json['invoice_pdf_path'] as String?,
+      invoicePdfUrl: json['invoice_pdf_url'] as String?,
       cards:
           (json['cards'] as List<dynamic>?)
               ?.map(
@@ -83,6 +92,9 @@ class OrderDetailsModel {
       'payment_method': paymentMethod,
       'payment_status': paymentStatus,
       'promo_code': promoCode,
+      'total_amount': totalAmount,
+      'invoice_pdf_path': invoicePdfPath,
+      'invoice_pdf_url': invoicePdfUrl,
       'cards': cards.map((c) => c.toJson()).toList(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
@@ -90,5 +102,3 @@ class OrderDetailsModel {
     };
   }
 }
-
-

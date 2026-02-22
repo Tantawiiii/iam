@@ -140,9 +140,9 @@ class _ProductsSectionState extends State<ProductsSection> {
                               builder: (context, favoritesState) {
                                 bool isFavorite = false;
                                 if (favoritesState is FavoritesSuccess) {
-                                  isFavorite = favoritesState.response.data.any(
-                                    (fav) => fav.card.id == product.id,
-                                  );
+                                  isFavorite = favoritesState.response.data
+                                      .any((fav) =>
+                                          fav.card?.id == product.id);
                                 }
 
                                 return ProductCard(
@@ -178,23 +178,44 @@ class _ProductsSectionState extends State<ProductsSection> {
                                   onAddToCart: cartQuantity > 0
                                       ? null
                                       : () {
-                                          _addToCart(context, product.id);
+                                          _addToCart(
+                                            context,
+                                            product.id,
+                                            color: product.colorList
+                                                    .isNotEmpty
+                                                ? product.colorList.first
+                                                : null,
+                                          );
                                         },
                                   onRemoveFromCart: cartQuantity > 0
                                       ? () {
+                                          final cartItem = (cartState
+                                                  as CartSuccess)
+                                              .response
+                                              .data
+                                              .firstWhere((item) =>
+                                                  item.cardId == product.id);
                                           _updateCart(
                                             context,
                                             product.id,
                                             'minus',
+                                            color: cartItem.color,
                                           );
                                         }
                                       : null,
                                   onIncreaseQuantity: cartQuantity > 0
                                       ? () {
+                                          final cartItem = (cartState
+                                                  as CartSuccess)
+                                              .response
+                                              .data
+                                              .firstWhere((item) =>
+                                                  item.cardId == product.id);
                                           _updateCart(
                                             context,
                                             product.id,
                                             'plus',
+                                            color: cartItem.color,
                                           );
                                         }
                                       : null,
@@ -309,7 +330,7 @@ class _ProductsSectionState extends State<ProductsSection> {
     );
   }
 
-  void _addToCart(BuildContext context, int productId) async {
+  void _addToCart(BuildContext context, int productId, {String? color}) async {
     final storageService = di.sl<StorageService>();
     final token = storageService.getToken();
     final hasToken = token != null && token.isNotEmpty;
@@ -318,7 +339,11 @@ class _ProductsSectionState extends State<ProductsSection> {
 
     final productsService = di.sl<ProductsService>();
     try {
-      await productsService.addToCart(productId: productId, method: 'add');
+      await productsService.addToCart(
+        productId: productId,
+        method: 'add',
+        color: color,
+      );
       if (context.mounted) {
         context.read<CartCubit>().getCart();
       }
@@ -334,7 +359,12 @@ class _ProductsSectionState extends State<ProductsSection> {
     }
   }
 
-  void _updateCart(BuildContext context, int productId, String method) async {
+  void _updateCart(
+    BuildContext context,
+    int productId,
+    String method, {
+    String? color,
+  }) async {
     final storageService = di.sl<StorageService>();
     final token = storageService.getToken();
     final hasToken = token != null && token.isNotEmpty;
@@ -343,7 +373,11 @@ class _ProductsSectionState extends State<ProductsSection> {
 
     final productsService = di.sl<ProductsService>();
     try {
-      await productsService.addToCart(productId: productId, method: method);
+      await productsService.addToCart(
+        productId: productId,
+        method: method,
+        color: color,
+      );
       if (context.mounted) {
         context.read<CartCubit>().getCart();
       }

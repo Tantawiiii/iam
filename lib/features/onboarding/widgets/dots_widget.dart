@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constant/app_colors.dart';
 
 class Dots extends StatelessWidget {
-  const Dots({required this.index, required this.length});
+  const Dots({super.key, required this.index, required this.length});
   final int index;
   final int length;
 

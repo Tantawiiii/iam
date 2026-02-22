@@ -1,7 +1,9 @@
+import '../config/env_config.dart';
+
 final class ApiConstants {
   ApiConstants._();
 
-  static const String baseUrl = 'https://backiam.dentin.cloud';
+  static String get baseUrl => EnvConfig.baseUrl;
 
   static const String register = '/api/front/register';
   static const String login = '/api/front/login';
@@ -20,13 +22,17 @@ final class ApiConstants {
   static const String updateProfile = '/api/front/update-profile';
   static const String contactUs = '/api/contacts';
   static const String checkAuth = '/api/front/check-auth';
+  static const String couponsSearch = '/api/coupons/search';
 
-  static String orderDetails(String orderNumber) =>
-      '/api/front/order/$orderNumber';
+  static String orderDetails(String orderNumber) => '/api/front/order/$orderNumber';
   static String deleteOrder(int orderId) => '/api/front/order/$orderId';
+  static String addReview(int productId) => '/api/front/cards/$productId/review';
+
+
   static String orderChangeStatus(int orderId) =>
       '/api/orders/change-status/$orderId';
   static String orderById(int orderId) => '/api/orders/$orderId';
   static const String deleteAccount = '/api/user/delete';
   static const String userProducts = '/api/user-products';
+  static const String publicSetting = '/api/public-setting';
 }

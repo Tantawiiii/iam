@@ -14,7 +14,60 @@ class NotificationsScreen extends StatelessWidget {
     return BlocBuilder<NotificationsCubit, NotificationsState>(
       builder: (context, state) {
         final cubit = context.read<NotificationsCubit>();
-        final notifications = cubit.notifications;
+        final dynamicNotifications = cubit.notifications;
+
+        final staticNotifications = [
+          NotificationModel(
+            id: 'static_welcome',
+            title: AppTexts.notifWelcomeTitle,
+            message: AppTexts.notifWelcomeBody,
+            createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
+            type: NotificationType.welcome,
+            isRead: true,
+          ),
+          // NotificationModel(
+          //   id: 'static_1',
+          //   title: AppTexts.notifSubscribedTitle,
+          //   message: AppTexts.notifSubscribedBody,
+          //   createdAt: DateTime.now().subtract(const Duration(hours: 1)),
+          //   type: NotificationType.subscriptionSuccess,
+          //   isRead: true,
+          // ),
+          // NotificationModel(
+          //   id: 'static_2',
+          //   title: AppTexts.notifOrderAppliedTitle,
+          //   message: AppTexts.notifOrderAppliedBody,
+          //   createdAt: DateTime.now().subtract(const Duration(hours: 2)),
+          //   type: NotificationType.orderApplied,
+          //   isRead: true,
+          // ),
+          // NotificationModel(
+          //   id: 'static_3',
+          //   title: AppTexts.notifOrderAcceptedTitle,
+          //   message: AppTexts.notifOrderAcceptedBody,
+          //   createdAt: DateTime.now().subtract(const Duration(hours: 3)),
+          //   type: NotificationType.orderAccepted,
+          //   isRead: true,
+          // ),
+          // NotificationModel(
+          //   id: 'static_4',
+          //   title: AppTexts.notifOrderRejectedTitle,
+          //   message: AppTexts.notifOrderRejectedBody,
+          //   createdAt: DateTime.now().subtract(const Duration(hours: 4)),
+          //   type: NotificationType.orderRejected,
+          //   isRead: true,
+          // ),
+          // NotificationModel(
+          //   id: 'static_5',
+          //   title: AppTexts.notifCashOrderSuccessTitle,
+          //   message: AppTexts.notifCashOrderSuccessBody,
+          //   createdAt: DateTime.now().subtract(const Duration(hours: 5)),
+          //   type: NotificationType.cashOrderSuccess,
+          //   isRead: true,
+          // ),
+        ];
+
+        final notifications = [...dynamicNotifications, ...staticNotifications];
 
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -24,7 +77,7 @@ class NotificationsScreen extends StatelessWidget {
             centerTitle: true,
             elevation: 0,
             actions: [
-              if (notifications.isNotEmpty && cubit.unreadCount > 0)
+              if (dynamicNotifications.isNotEmpty && cubit.unreadCount > 0)
                 TextButton(
                   onPressed: () {
                     cubit.markAllAsRead();
@@ -87,10 +140,16 @@ class _NotificationItem extends StatelessWidget {
   Color _getNotificationColor() {
     switch (notification.type) {
       case NotificationType.accountApproved:
+      case NotificationType.subscriptionSuccess:
+      case NotificationType.orderAccepted:
+      case NotificationType.cashOrderSuccess:
+      case NotificationType.welcome:
         return AppColors.success;
       case NotificationType.accountRejected:
+      case NotificationType.orderRejected:
         return AppColors.error;
       case NotificationType.underReview:
+      case NotificationType.orderApplied:
         return AppColors.warning;
     }
   }
@@ -98,10 +157,16 @@ class _NotificationItem extends StatelessWidget {
   IconData _getNotificationIcon() {
     switch (notification.type) {
       case NotificationType.accountApproved:
+      case NotificationType.subscriptionSuccess:
+      case NotificationType.orderAccepted:
+      case NotificationType.cashOrderSuccess:
+      case NotificationType.welcome:
         return Icons.check_circle;
       case NotificationType.accountRejected:
+      case NotificationType.orderRejected:
         return Icons.cancel;
       case NotificationType.underReview:
+      case NotificationType.orderApplied:
         return Icons.hourglass_empty;
     }
   }

@@ -18,7 +18,6 @@ class ProductsService {
 
   ProductsService(this._apiService);
 
-  /// Fetch product details by ID
   Future<ProductDetailsResponseModel> getProductDetails(int productId) async {
     try {
       final response = await _apiService.get(
@@ -38,14 +37,16 @@ class ProductsService {
   Future<AddToCartResponseModel> addToCart({
     required int productId,
     String method = 'add',
+    String? color,
   }) async {
     try {
+      final data = {'card_id': productId, 'method': method};
+      if (color != null && color.isNotEmpty) {
+        data['color'] = color;
+      }
       final response = await _apiService.post(
         ApiConstants.cart,
-        data: {
-          'card_id': productId,
-          'method': method,
-        },
+        data: data,
       );
 
       return AddToCartResponseModel.fromJson(
@@ -65,7 +66,7 @@ class ProductsService {
       if (response.statusCode != null && response.statusCode! >= 400) {
         final errorData = response.data;
         String errorMessage = 'An error occurred. Please try again.';
-        
+
         if (errorData is Map<String, dynamic>) {
           if (errorData.containsKey('message')) {
             errorMessage = errorData['message'].toString();
@@ -73,7 +74,7 @@ class ProductsService {
             errorMessage = errorData['error'].toString();
           }
         }
-        
+
         throw DioException(
           requestOptions: response.requestOptions,
           response: response,
@@ -82,9 +83,7 @@ class ProductsService {
         );
       }
 
-      return CartResponseModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return CartResponseModel.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       rethrow;
     }
@@ -92,7 +91,8 @@ class ProductsService {
 
   /// Create order
   Future<CreateOrderResponseModel> createOrder(
-      CreateOrderRequestModel orderData) async {
+    CreateOrderRequestModel orderData,
+  ) async {
     try {
       final response = await _apiService.post(
         ApiConstants.createOrder,
@@ -107,8 +107,6 @@ class ProductsService {
     }
   }
 
-  /// Get products list
-  /// [sort] can be null for all products or 'most_popular' for best products
   Future<ProductsListResponseModel> getProducts({String? sort}) async {
     try {
       String endpoint = ApiConstants.cards;
@@ -126,8 +124,7 @@ class ProductsService {
     }
   }
 
-  /// Add or remove favorite
-  /// [method] can be: "add" or "delete"
+  
   Future<AddFavoriteResponseModel> toggleFavorite({
     required int cardId,
     required String method,
@@ -135,10 +132,7 @@ class ProductsService {
     try {
       final response = await _apiService.post(
         ApiConstants.favorite,
-        data: {
-          'card_id': cardId,
-          'method': method,
-        },
+        data: {'card_id': cardId, 'method': method},
       );
 
       return AddFavoriteResponseModel.fromJson(
@@ -149,7 +143,7 @@ class ProductsService {
     }
   }
 
-  /// Get all favorites
+
   Future<FavoritesResponseModel> getFavorites() async {
     try {
       final response = await _apiService.get(ApiConstants.favorite);
@@ -162,14 +156,13 @@ class ProductsService {
     }
   }
 
-  /// Add review for a product
   Future<AddReviewResponseModel> addReview({
     required int productId,
     required AddReviewRequestModel reviewData,
   }) async {
     try {
       final response = await _apiService.post(
-        '${ApiConstants.cards}/$productId/review',
+        ApiConstants.addReview(productId),
         data: reviewData.toJson(),
       );
 
@@ -209,4 +202,3 @@ class ProductsService {
     }
   }
 }
-

@@ -27,17 +27,26 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
 
   List<String> get _allImages {
     final List<String> images = [];
+    final mainImage = widget.image?.trim();
+    final seen = <String>{};
 
-    if (widget.image != null && widget.image!.isNotEmpty) {
-      images.add(widget.image!);
+    void addIfNew(String url) {
+      final u = url.trim();
+      if (u.isEmpty || seen.contains(u)) return;
+      seen.add(u);
+      images.add(u);
+    }
+
+    if (mainImage != null && mainImage.isNotEmpty) {
+      addIfNew(mainImage);
     }
 
     if (widget.gallery.isNotEmpty) {
       for (var item in widget.gallery) {
         if (item is String && item.isNotEmpty) {
-          images.add(item);
+          addIfNew(item);
         } else if (item is Map && item['url'] != null) {
-          images.add(item['url'].toString());
+          addIfNew(item['url'].toString());
         }
       }
     }
@@ -132,7 +141,7 @@ class _ProductImageSliderState extends State<ProductImageSlider> {
 
     return Stack(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 300.h,
           // color: AppColors.overlayColor,

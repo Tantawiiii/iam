@@ -6,7 +6,7 @@ class CreateOrderRequestModel {
   final String addressLine;
   final String city;
   final String state;
-  final String zipCode;
+  final String? zipCode;
   final String paymentMethod;
   final String? promoCode;
   final String? paymentType;
@@ -21,7 +21,7 @@ class CreateOrderRequestModel {
     required this.addressLine,
     required this.city,
     required this.state,
-    required this.zipCode,
+    this.zipCode,
     required this.paymentMethod,
     this.promoCode,
     this.paymentType,
@@ -38,7 +38,7 @@ class CreateOrderRequestModel {
       'address_line': addressLine,
       'city': city,
       'state': state,
-      'zip_code': zipCode,
+      'zip_code': "77",
       'payment_method': paymentMethod,
       if (promoCode != null && promoCode!.isNotEmpty) 'promo_code': promoCode,
       if (paymentType != null) 'payment_type': paymentType,

@@ -124,9 +124,8 @@ class CategoryProductsScreen extends StatelessWidget {
                       // Check if product is in favorites
                       bool isFavorite = false;
                       if (favoritesState is FavoritesSuccess) {
-                        isFavorite = favoritesState.response.data.any(
-                          (fav) => fav.card.id == product.id,
-                        );
+                        isFavorite = favoritesState.response.data
+                            .any((fav) => fav.card?.id == product.id);
                       }
 
                       return ProductGridCard(
