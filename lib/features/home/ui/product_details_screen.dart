@@ -11,11 +11,9 @@ import '../models/product_model.dart';
 import '../widgets/product_image_slider.dart';
 import '../../cart/cubit/cart_cubit.dart';
 import '../../home/services/products_service.dart';
-import '../../settings/services/settings_service.dart';
 import '../../../core/services/storage_service.dart';
-import 'package:dio/dio.dart';
 
-class ProductDetailsScreen extends StatelessWidget {
+class ProductDetailsScreen extends StatefulWidget {
   final int productId;
   final bool isForSale;
   final String? productNumber;
@@ -28,41 +26,37 @@ class ProductDetailsScreen extends StatelessWidget {
   });
 
   @override
+  State<ProductDetailsScreen> createState() => _ProductDetailsScreenState();
+}
+
+class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
+  String? _selectedColor;
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
           create: (context) =>
-              di.sl<ProductDetailsCubit>()..getProductDetails(productId),
-        ),
-        BlocProvider(
-          create: (context) {
-            final storageService = di.sl<StorageService>();
-            final token = storageService.getToken();
-            final hasToken = token != null && token.isNotEmpty;
-
-            try {
-              final existingCubit = context.read<CartCubit>();
-              if (hasToken) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  existingCubit.getCart();
-                });
-              }
-              return existingCubit;
-            } catch (e) {
-              final newCubit = di.sl<CartCubit>();
-              if (hasToken) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  newCubit.getCart();
-                });
-              }
-              return newCubit;
-            }
-          },
+              di.sl<ProductDetailsCubit>()..getProductDetails(widget.productId),
         ),
       ],
       child: BlocListener<ProductDetailsCubit, ProductDetailsState>(
         listener: (context, state) {
+          if (state is ProductDetailsSuccess) {
+            if (_selectedColor == null &&
+                state.response.data.colorList.isNotEmpty) {
+              setState(() {
+                _selectedColor = state.response.data.colorList.first;
+              });
+            }
+            // تحديث السلة عند فتح التفاصيل عشان الكمية اللي اختارها من الهوم تظهر
+            final storageService = di.sl<StorageService>();
+            final token = storageService.getToken();
+            if (token != null && token.isNotEmpty) {
+              context.read<CartCubit>().getCart();
+            }
+          }
           if (state is AddToCartSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -71,6 +65,7 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
             );
           } else if (state is AddToCartFailure) {
+            print(state.message);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -112,6 +107,7 @@ class ProductDetailsScreen extends StatelessWidget {
               }
 
               if (state is ProductDetailsFailure) {
+                print(state.message);
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -130,7 +126,7 @@ class ProductDetailsScreen extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           context.read<ProductDetailsCubit>().getProductDetails(
-                            productId,
+                            widget.productId,
                           );
                         },
                         child: Text(AppTexts.retry),
@@ -261,7 +257,9 @@ class ProductDetailsScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 24.h),
                             if (currentProduct.type.isNotEmpty ||
-                                currentProduct.color.isNotEmpty ||
+                                currentProduct.colorList.isNotEmpty ||
+                                (currentProduct.brand != null &&
+                                    currentProduct.brand!.isNotEmpty) ||
                                 currentProduct.quantity > 0) ...[
                               Text(
                                 AppTexts.productDetails,
@@ -272,48 +270,92 @@ class ProductDetailsScreen extends StatelessWidget {
                                 ),
                               ),
                               SizedBox(height: 12.h),
+                              if (currentProduct.brand != null &&
+                                  currentProduct.brand!.isNotEmpty)
+                                _buildDetailRow(
+                                  AppTexts.brand,
+                                  currentProduct.brand!,
+                                ),
                               if (currentProduct.type.isNotEmpty)
                                 _buildDetailRow(
                                   AppTexts.type,
                                   currentProduct.type,
-                                ),
-                              if (currentProduct.color.isNotEmpty)
-                                _buildDetailRow(
-                                  AppTexts.color,
-                                  currentProduct.color,
                                 ),
                               if (currentProduct.quantity > 0)
                                 _buildDetailRow(
                                   AppTexts.quantityAvailable,
                                   currentProduct.quantity.toString(),
                                 ),
-                              if ((productNumber != null &&
-                                      productNumber!.isNotEmpty) ||
+                              if ((widget.productNumber != null &&
+                                      widget.productNumber!.isNotEmpty) ||
                                   currentProduct.productNumber.isNotEmpty)
                                 _buildDetailRow(
                                   AppTexts.productNumber,
-                                  (productNumber != null &&
-                                          productNumber!.isNotEmpty)
-                                      ? productNumber!
+                                  (widget.productNumber != null &&
+                                          widget.productNumber!.isNotEmpty)
+                                      ? widget.productNumber!
                                       : currentProduct.productNumber,
                                 ),
                               SizedBox(height: 24.h),
                             ],
                             _buildConfidenceSection(currentProduct),
                             SizedBox(height: 24.h),
-                            if (!isForSale)
+                             if (!widget.isForSale)
+                              BlocBuilder<CartCubit, CartState>(
+                                builder: (context, cartState) {
+                                  if (currentProduct.colorList.isNotEmpty) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        _buildColorRow(
+                                          context,
+                                          currentProduct,
+                                          cartState,
+                                        ),
+                                        SizedBox(height: 24.h),
+                                      ],
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            if (!widget.isForSale)
                               BlocBuilder<CartCubit, CartState>(
                                 builder: (context, cartState) {
                                   int cartQuantity = 0;
                                   if (cartState is CartSuccess) {
                                     try {
-                                      final cartItem = cartState.response.data
-                                          .firstWhere(
-                                            (item) =>
-                                                item.cardId ==
-                                                currentProduct.id,
-                                          );
-                                      cartQuantity = cartItem.quantity;
+                                      final data = cartState.response.data;
+                                      final itemsForProduct = data
+                                          .where((item) =>
+                                              item.cardId ==
+                                              currentProduct.id)
+                                          .toList();
+                                      if (itemsForProduct.isEmpty) {
+                                        cartQuantity = 0;
+                                      } else if (currentProduct
+                                          .colorList.isNotEmpty) {
+                                        // منتج فيه ألوان: نطابق حسب اللون المختار (أو أول لون لو لسه مش متحدد)
+                                        final effectiveColor = _selectedColor ??
+                                            currentProduct.colorList.first;
+                                        final match = itemsForProduct
+                                            .where((item) =>
+                                                (item.color ?? '') ==
+                                                effectiveColor)
+                                            .toList();
+                                        if (match.isNotEmpty) {
+                                          cartQuantity = match.first.quantity;
+                                        } else {
+                                          // لو اللون المختار مش في السلة، نعرض مجموع الكميات أو أول صنف
+                                          cartQuantity =
+                                              itemsForProduct.first.quantity;
+                                        }
+                                      } else {
+                                        // منتج بدون ألوان: أول آيتيم بنفس card_id
+                                        cartQuantity =
+                                            itemsForProduct.first.quantity;
+                                      }
                                     } catch (e) {
                                       cartQuantity = 0;
                                     }
@@ -407,6 +449,7 @@ class ProductDetailsScreen extends StatelessWidget {
                                                     .addToCart(
                                                       productId:
                                                           currentProduct.id,
+                                                      color: _selectedColor,
                                                     );
                                               },
                                       );
@@ -691,13 +734,18 @@ class ProductDetailsScreen extends StatelessWidget {
   ) async {
     final productsService = di.sl<ProductsService>();
     try {
-      await productsService.addToCart(productId: productId, method: method);
+      await productsService.addToCart(
+        productId: productId,
+        method: method,
+        color: _selectedColor,
+      );
       if (context.mounted) {
         context.read<CartCubit>().getCart();
         context.read<ProductDetailsCubit>().getProductDetails(productId);
       }
     } catch (e) {
       if (context.mounted) {
+        print(e.toString());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('${AppTexts.failedToUpdateCart}: ${e.toString()}'),
@@ -706,6 +754,84 @@ class ProductDetailsScreen extends StatelessWidget {
         );
       }
     }
+  }
+
+  Widget _buildColorRow(BuildContext context, ProductModel product, CartState cartState) {
+    final colors = product.colorList;
+    return Padding(
+      padding: EdgeInsets.only(bottom: 12.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140.w,
+            child: Text(
+              '${AppTexts.color}:',
+              style: TextStyle(
+                color: AppColors.greyTextColor,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: colors.map((colorName) {
+                final isSelected = _selectedColor == colorName;
+                return GestureDetector(
+                  onTap: () {
+                    if (isSelected) return;
+                    
+                    setState(() {
+                      _selectedColor = colorName;
+                    });
+
+                    // If already in cart, update color immediately
+                    if (cartState is CartSuccess) {
+                      final isInCart = cartState.response.data.any(
+                        (item) => item.cardId == product.id,
+                      );
+                      if (isInCart) {
+                        _updateQuantity(context, product.id, 'add');
+                      }
+                    }
+                  },
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.primaryColor
+                          : AppColors.primaryColor.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primaryColor
+                            : AppColors.primaryColor.withOpacity(0.3),
+                        width: isSelected ? 2 : 1,
+                      ),
+                    ),
+                    child: Text(
+                      colorName,
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : AppColors.blackTextColor,
+                        fontSize: 14.sp,
+                        fontWeight:
+                            isSelected ? FontWeight.w600 : FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDetailRow(String label, String value) {
@@ -736,84 +862,6 @@ class ProductDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _ResellButton extends StatefulWidget {
-  final ProductModel product;
-  final String productNumber;
-
-  const _ResellButton({required this.product, required this.productNumber});
-
-  @override
-  State<_ResellButton> createState() => _ResellButtonState();
-}
-
-class _ResellButtonState extends State<_ResellButton> {
-  bool _isLoading = false;
-
-  Future<void> _handleResell() async {
-    if (_isLoading) return;
-
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final settingsService = di.sl<SettingsService>();
-      final response = await settingsService.resellProduct(
-        name: widget.product.name,
-        description: widget.product.description,
-        price: widget.product.price,
-        productNumber: widget.productNumber,
-      );
-
-      if (mounted) {
-        final responseData = response.data as Map<String, dynamic>?;
-        final status = responseData?['status'] as bool?;
-        final message =
-            responseData?['message'] as String? ?? 'تم إرسال الطلب بنجاح';
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: status == true ? Colors.green : Colors.orange,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        String errorMessage = 'فشل في إرسال الطلب. يرجى المحاولة مرة أخرى.';
-
-        if (e is DioException) {
-          if (e.response != null) {
-            final errorData = e.response?.data;
-            if (errorData is Map && errorData.containsKey('message')) {
-              errorMessage = errorData['message'].toString();
-            }
-          }
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PrimaryButton(
-      title: _isLoading ? 'جاري الإرسال...' : 'إعادة بيع المنتج',
-      onPressed: _isLoading ? null : _handleResell,
-      isLoading: _isLoading,
     );
   }
 }

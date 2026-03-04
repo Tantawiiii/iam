@@ -16,4 +16,14 @@ class NotificationModel {
   });
 }
 
-enum NotificationType { accountApproved, accountRejected, underReview }
+enum NotificationType {
+  accountApproved,
+  accountRejected,
+  underReview,
+  subscriptionSuccess,
+  orderApplied,
+  orderAccepted,
+  orderRejected,
+  cashOrderSuccess,
+  welcome,
+}

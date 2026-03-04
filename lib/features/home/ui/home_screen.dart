@@ -10,6 +10,8 @@ import '../cubit/brands_cubit.dart';
 import '../cubit/products_cubit.dart';
 import '../cubit/offers_cubit.dart';
 import '../../favorites/cubit/favorites_cubit.dart';
+import '../../cart/cubit/cart_cubit.dart';
+import '../../settings/cubit/user_info_cubit.dart';
 import '../widgets/home_header.dart';
 import '../widgets/categories_section.dart';
 import '../widgets/brands_section.dart';
@@ -109,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen>
       final token = storageService.getToken();
       final hasToken = token != null && token.isNotEmpty;
 
-      // Check cache validity
       final isCacheValid =
           _lastRefreshTime != null &&
           now.difference(_lastRefreshTime!) < _cacheDuration;
@@ -142,18 +143,25 @@ class _HomeScreenState extends State<HomeScreen>
           futures.add(brandsCubit.getBrands());
         }
 
-        // Load favorites if authenticated
+        // Load favorites and cart if authenticated
         if (hasToken) {
           final favoritesCubit = context.read<FavoritesCubit>();
+          final userInfoCubit = context.read<UserInfoCubit>();
+          final cartCubit = context.read<CartCubit>();
           final favoritesState = favoritesCubit.state;
+
           if (forceRefresh ||
               favoritesState is! FavoritesSuccess ||
               !isCacheValid) {
             futures.add(favoritesCubit.getFavorites());
           }
+          if (forceRefresh || !isCacheValid) {
+            futures.add(userInfoCubit.checkAuth());
+            futures.add(cartCubit.getCart());
+          }
         }
 
-        // Load all in parallel - this is much faster than sequential
+
         if (futures.isNotEmpty) {
           await Future.wait(futures, eagerError: false);
         }
@@ -169,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen>
         }
       }
     } catch (e) {
-      // Silently handle errors - let BlocBuilder handle UI state
       debugPrint('Error refreshing home data: $e');
     }
   }
@@ -182,11 +189,9 @@ class _HomeScreenState extends State<HomeScreen>
         BlocProvider(create: (context) => di.sl<CategoriesCubit>()),
         BlocProvider(create: (context) => di.sl<BrandsCubit>()),
         BlocProvider(create: (context) => di.sl<OffersCubit>()),
-        BlocProvider(create: (context) => di.sl<FavoritesCubit>()),
       ],
       child: Builder(
         builder: (ctx) {
-          // Store providers context
           _providersContext = ctx;
 
           if (!_hasInitialized) {

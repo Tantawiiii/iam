@@ -137,9 +137,8 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
                     builder: (context, favoritesState) {
                       bool isFavorite = false;
                       if (favoritesState is FavoritesSuccess) {
-                        isFavorite = favoritesState.response.data.any(
-                          (fav) => fav.card.id == product.id,
-                        );
+                        isFavorite = favoritesState.response.data
+                            .any((fav) => fav.card?.id == product.id);
                       }
 
                       return ProductGridCard(

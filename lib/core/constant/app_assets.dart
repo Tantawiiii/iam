@@ -8,6 +8,10 @@ final class AppAssets {
   static const String onboard3Img = 'assets/pngs/on3.jpeg';
   static const String onboard4Img = 'assets/pngs/on4.jpeg';
   static const String onboard5Img = 'assets/pngs/on5.jpeg';
+  static const String onboard6Img = 'assets/pngs/on6.jpeg';
+
+
+  static const String vipImg = 'assets/pngs/vip.png';
 
 
   static const String newLogoSplash = 'assets/pngs/new_yellow_logo.jpeg';

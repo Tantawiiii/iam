@@ -18,8 +18,8 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final storageService = di.sl<StorageService>();
-    return BlocProvider(
-      create: (context) => di.sl<NotificationsCubit>(),
+    return BlocProvider.value(
+      value: di.sl<NotificationsCubit>(),
       child: ValueListenableBuilder<UserModel?>(
         valueListenable: storageService.userNotifier,
         builder: (context, user, _) {
@@ -36,71 +36,79 @@ class HomeHeader extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                BlocBuilder<NotificationsCubit, NotificationsState>(
-                  builder: (context, state) {
-                    final unreadCount = context
-                        .read<NotificationsCubit>()
-                        .unreadCount;
-                    return Bounce(
-                      onTap: () {
-                        final notificationsCubit = context
-                            .read<NotificationsCubit>();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: notificationsCubit,
-                              child: const NotificationsScreen(),
-                            ),
+                Row(
+                  children: [
+                    BlocBuilder<NotificationsCubit, NotificationsState>(
+                      builder: (context, state) {
+                        final unreadCount = context
+                            .read<NotificationsCubit>()
+                            .unreadCount;
+                        return Bounce(
+                          onTap: () {
+                            final notificationsCubit = context
+                                .read<NotificationsCubit>();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value: notificationsCubit,
+                                  child: const NotificationsScreen(),
+                                ),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Align(
+                                alignment: Alignment.topLeft,
+                                child: ClipOval(
+                                  child: Image.asset(
+                                    AppAssets.newLogoLight,
+                                    height: 60.h,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              if (unreadCount > 0)
+                                Positioned(
+                                  right: -4.w,
+                                  top: -4.h,
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.w),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.error,
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: AppColors.background,
+                                        width: 2,
+                                      ),
+                                    ),
+                                    constraints: BoxConstraints(
+                                      minWidth: 18.w,
+                                      minHeight: 18.w,
+                                    ),
+                                    child: Text(
+                                      unreadCount > 9 ? '9+' : '$unreadCount',
+                                      style: TextStyle(
+                                        color: AppColors.textOnPrimary,
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                            ],
                           ),
                         );
                       },
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: ClipOval(
-                              child: Image.asset(
-                                AppAssets.newLogoLight,
-                                height: 60.h,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          if (unreadCount > 0)
-                            Positioned(
-                              right: -4.w,
-                              top: -4.h,
-                              child: Container(
-                                padding: EdgeInsets.all(4.w),
-                                decoration: BoxDecoration(
-                                  color: AppColors.error,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppColors.background,
-                                    width: 2,
-                                  ),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 18.w,
-                                  minHeight: 18.w,
-                                ),
-                                child: Text(
-                                  unreadCount > 9 ? '9+' : '$unreadCount',
-                                  style: TextStyle(
-                                    color: AppColors.textOnPrimary,
-                                    fontSize: 10.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
+                    ),
+                    if (user != null && user.active) ...[
+                      SizedBox(width: 8.w),
+                      Image.asset(AppAssets.vipImg, height: 60, width: 60),
+                    ],
+                  ],
                 ),
                 Row(
                   children: [

@@ -48,7 +48,7 @@ class _ContactUsTabState extends State<ContactUsTab> {
   Widget build(BuildContext context) {
     context.watch<LanguageCubit>();
     
-    // Debug: Print current language and text values
+
     debugPrint('ContactUsTab - Current Language: ${AppTexts.currentLanguage}');
     debugPrint('ContactUsTab - getInTouch: ${AppTexts.getInTouch}');
     debugPrint('ContactUsTab - contactUsSubtitle: ${AppTexts.contactUsSubtitle}');
@@ -216,7 +216,6 @@ class _ContactUsTabState extends State<ContactUsTab> {
                 },
               ),
               SizedBox(height: 32.h),
-              // Submit Button
               BlocBuilder<ContactUsCubit, ContactUsState>(
                 builder: (context, state) {
                   final isLoading = state is ContactUsLoading;

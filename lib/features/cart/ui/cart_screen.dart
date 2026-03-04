@@ -22,6 +22,9 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen>
     with AutomaticKeepAliveClientMixin, WidgetsBindingObserver {
+
+  final Map<int, String> _selectedColorByCartItemId = {};
+
   @override
   bool get wantKeepAlive => true;
 
@@ -281,10 +284,20 @@ class _CartScreenState extends State<CartScreen>
                             ),
                             child: ElevatedButton(
                               onPressed: () {
+                                final itemColors = cartItems.map((item) {
+                                  return _selectedColorByCartItemId[item.id] ??
+                                      item.color ??
+                                      (item.card.colorList.isNotEmpty
+                                          ? item.card.colorList.first
+                                          : '');
+                                }).toList();
                                 Navigator.pushNamed(
                                   context,
                                   AppRoutes.checkout,
-                                  arguments: cartItems,
+                                  arguments: {
+                                    'cartItems': cartItems,
+                                    'itemColors': itemColors,
+                                  },
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -408,13 +421,19 @@ class _CartScreenState extends State<CartScreen>
                     ),
                   ),
                 ),
+                // if (product.colorList.isNotEmpty) ...[
+                //   SizedBox(height: 8.h),
+                //   _buildColorSelector(cartItem),
+                // ],
                 SizedBox(height: 8.h),
                 Row(
                   children: [
                     _buildQuantityButton(
                       icon: Icons.remove,
                       onTap: () {
-                        _updateQuantity(cartItem.cardId, 'minus');
+                        final color = _selectedColorByCartItemId[cartItem.id] ??
+                            cartItem.color;
+                        _updateQuantity(cartItem.cardId, 'minus', color: color);
                       },
                     ),
                     SizedBox(width: 16.w),
@@ -440,7 +459,9 @@ class _CartScreenState extends State<CartScreen>
                     _buildQuantityButton(
                       icon: Icons.add,
                       onTap: () {
-                        _updateQuantity(cartItem.cardId, 'plus');
+                        final color = _selectedColorByCartItemId[cartItem.id] ??
+                            cartItem.color;
+                        _updateQuantity(cartItem.cardId, 'plus', color: color);
                       },
                     ),
                     const Spacer(),
@@ -451,7 +472,11 @@ class _CartScreenState extends State<CartScreen>
                       ),
                       child: IconButton(
                         onPressed: () {
-                          _updateQuantity(cartItem.cardId, 'delete');
+                          _updateQuantity(
+                            cartItem.cardId,
+                            'delete',
+                            color: cartItem.color,
+                          );
                         },
                         icon: Icon(
                           Icons.delete_outline,
@@ -467,6 +492,73 @@ class _CartScreenState extends State<CartScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildColorSelector(CartItemModel cartItem) {
+    final product = cartItem.card;
+    final colors = product.colorList;
+    if (colors.isEmpty) return const SizedBox.shrink();
+    final selected =
+        _selectedColorByCartItemId[cartItem.id] ?? cartItem.color ?? colors.first;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '${AppTexts.color}:',
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(height: 6.h),
+        Wrap(
+          spacing: 8.w,
+          runSpacing: 6.h,
+          children: colors.map((colorName) {
+            final isSelected = selected == colorName;
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedColorByCartItemId[cartItem.id] = colorName;
+                });
+                _updateQuantity(
+                  cartItem.cardId,
+                  'add',
+                  color: colorName,
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primary
+                      : AppColors.primary.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.primary.withOpacity(0.3),
+                    width: isSelected ? 2 : 1,
+                  ),
+                ),
+                child: Text(
+                  colorName,
+                  style: TextStyle(
+                    color: isSelected
+                        ? AppColors.textOnPrimary
+                        : AppColors.textPrimary,
+                    fontSize: 13.sp,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -495,7 +587,7 @@ class _CartScreenState extends State<CartScreen>
     );
   }
 
-  void _updateQuantity(int cardId, String method) async {
+  void _updateQuantity(int cardId, String method, {String? color}) async {
     final storageService = di.sl<StorageService>();
     final token = storageService.getToken();
     final hasToken = token != null && token.isNotEmpty;
@@ -504,7 +596,11 @@ class _CartScreenState extends State<CartScreen>
 
     final productsService = di.sl<ProductsService>();
     try {
-      await productsService.addToCart(productId: cardId, method: method);
+      await productsService.addToCart(
+        productId: cardId,
+        method: method,
+        color: color,
+      );
       if (mounted) {
         context.read<CartCubit>().getCart();
       }

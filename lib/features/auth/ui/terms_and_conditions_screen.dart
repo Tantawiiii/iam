@@ -38,12 +38,13 @@ class TermsAndConditionsScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.sp,
               color: AppColors.textPrimary,
-              height: 1,
+              height: 1.5,
             ),
             textAlign: TextAlign.start,
           ),
         ),
       ),
     );
-  }}
+  }
+}
 

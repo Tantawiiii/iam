@@ -10,18 +10,28 @@ import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../../auth/services/auth_service.dart';
 import '../../settings/cubit/update_profile_cubit.dart';
+import '../../settings/models/check_auth_response_model.dart';
 import '../../settings/ui/update_profile_tab.dart';
 import '../cubit/order_cubit.dart';
 import '../models/create_order_request_model.dart';
+import '../models/create_order_data_model.dart';
 import '../models/order_card_model.dart';
-import '../models/check_auth_response_model.dart';
+import '../models/coupon_model.dart';
+import '../services/coupon_service.dart';
 import '../../cart/models/cart_item_model.dart';
+import '../../home/services/products_service.dart';
 import '../../../core/services/storage_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartItemModel> cartItems;
+  /// Selected color per cart item (same order as cartItems). Optional.
+  final List<String>? itemColors;
 
-  const CheckoutScreen({super.key, required this.cartItems});
+  const CheckoutScreen({
+    super.key,
+    required this.cartItems,
+    this.itemColors,
+  });
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -34,16 +44,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   final _addressLineController = TextEditingController();
   final _cityController = TextEditingController();
   final _stateController = TextEditingController();
-  final _zipCodeController = TextEditingController();
+ // final _zipCodeController = TextEditingController();
   final _promoCodeController = TextEditingController();
   final String _paymentMethod = 'card';
   String _paymentType = 'cash';
   int? _selectedInstallmentMonths;
 
+  bool _isCheckingPromo = false;
+  CouponModel? _appliedCoupon;
+  String? _promoErrorMessage;
+
   @override
   void initState() {
     super.initState();
     _prefillUserData();
+    _promoCodeController.addListener(_onPromoCodeChanged);
+  }
+
+  void _onPromoCodeChanged() {
+    if (_appliedCoupon != null || _promoErrorMessage != null) {
+      setState(() {
+        _appliedCoupon = null;
+        _promoErrorMessage = null;
+      });
+    }
   }
 
   void _prefillUserData() {
@@ -61,12 +85,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   void dispose() {
+    _promoCodeController.removeListener(_onPromoCodeChanged);
     _emailController.dispose();
     _phoneController.dispose();
     _addressLineController.dispose();
     _cityController.dispose();
     _stateController.dispose();
-    _zipCodeController.dispose();
+    //_zipCodeController.dispose();
     _promoCodeController.dispose();
     super.dispose();
   }
@@ -83,22 +108,66 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   double _getIncreaseRate(int months) {
-    if (months >= 6 && months <= 12) {
-      return 0.15; // 15%
-    } else if (months >= 18 && months <= 24) {
-      return 0.20; // 20%
-    }
     return 0.0;
   }
 
+  double _calculateBaseTotal() {
+    return _calculateOriginalTotal();
+  }
+
   double _calculateTotalAmount() {
-    final originalTotal = _calculateOriginalTotal();
-    // if (_paymentType == 'installment' && _selectedInstallmentMonths != null) {
-    //  // final increaseRate = _getIncreaseRate(_selectedInstallmentMonths!);
-    //   final increaseAmount = originalTotal * increaseRate;
-    //   return originalTotal + increaseAmount;
-    // }
-    return originalTotal;
+    final baseTotal = _calculateBaseTotal();
+    if (_appliedCoupon == null) return baseTotal;
+    final coupon = _appliedCoupon!;
+    if (coupon.isPercentage) {
+      final discount = baseTotal * (coupon.numericValue / 100);
+      return (baseTotal - discount).clamp(0.0, double.infinity);
+    }
+    return (baseTotal - coupon.numericValue).clamp(0.0, double.infinity);
+  }
+
+  Future<void> _applyPromoCode() async {
+    final code = _promoCodeController.text.trim();
+    if (code.isEmpty) {
+      setState(() {
+        _promoErrorMessage = AppTexts.invalidPromoCode;
+      });
+      return;
+    }
+    setState(() {
+      _isCheckingPromo = true;
+      _promoErrorMessage = null;
+    });
+    try {
+      final couponService = di.sl<CouponService>();
+      final coupon = await couponService.searchCoupon(code);
+      if (!mounted) return;
+      setState(() {
+        _appliedCoupon = coupon;
+        _isCheckingPromo = false;
+        _promoErrorMessage = null;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppTexts.couponApplied),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      final message = e is Exception ? e.toString().replaceFirst('Exception: ', '') : AppTexts.invalidPromoCode;
+      setState(() {
+        _appliedCoupon = null;
+        _isCheckingPromo = false;
+        _promoErrorMessage = message;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   Future<void> _checkAuthAndSubmitOrder(BuildContext context) async {
@@ -135,27 +204,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       final user = checkAuthResponse.data;
 
-      if (!user.active) {
-        if (user.idImage == null || user.idImage!.isEmpty) {
-          await _showMissingIdImageDialog(context);
-          return;
-        }
+      if (_paymentType == 'installment' && !user.active) {
 
-        final missingBankStatement =
-            user.bankStatementImage == null || user.bankStatementImage!.isEmpty;
-        final missingInvoice =
-            user.invoiceImage == null || user.invoiceImage!.isEmpty;
-
-        if (missingBankStatement || missingInvoice) {
-          await _showMissingImagesDialog(
-            context,
-            missingBankStatement,
-            missingInvoice,
-          );
-          return;
-        }
-
-        await _showDataUnderReviewDialog(context);
+        await _showInstallmentEnrollmentDialog(context);
         return;
       }
 
@@ -181,19 +232,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   void _createOrder(BuildContext context) {
-    final cards = widget.cartItems.map((item) {
-      return OrderCardModel(id: item.cardId, qty: item.quantity);
+    final colors = widget.itemColors;
+    final cards = widget.cartItems.asMap().entries.map((entry) {
+      final index = entry.key;
+      final item = entry.value;
+      final color = (colors != null && index < colors.length)
+          ? (colors[index].isEmpty ? null : colors[index])
+          : null;
+      return OrderCardModel(id: item.cardId, qty: item.quantity, color: color);
     }).toList();
 
-    final originalTotal = _calculateOriginalTotal();
     double? increaseRate;
-    double? totalAmount;
+    double totalAmount = _calculateTotalAmount();
 
     if (_paymentType == 'installment' && _selectedInstallmentMonths != null) {
       increaseRate = _getIncreaseRate(_selectedInstallmentMonths!);
-      totalAmount = originalTotal + (originalTotal * increaseRate);
-    } else if (_paymentType == 'cash') {
-      totalAmount = originalTotal;
     }
 
     final orderData = CreateOrderRequestModel(
@@ -202,7 +255,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       addressLine: _addressLineController.text.trim(),
       city: _cityController.text.trim(),
       state: _stateController.text.trim(),
-      zipCode: _zipCodeController.text.trim(),
+   //   zipCode: _zipCodeController.text.trim(),
       paymentMethod: _paymentMethod,
       promoCode: _promoCodeController.text.trim().isEmpty
           ? null
@@ -217,110 +270,244 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     context.read<OrderCubit>().createOrder(orderData);
   }
 
-  Future<void> _showMissingIdImageDialog(BuildContext context) async {
+  Future<void> _showInstallmentEnrollmentDialog(BuildContext context) async {
     await showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(24.r),
         ),
-        title: Text(
-          AppTexts.updateYourData,
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        content: Text(
-          AppTexts.pleaseUpdateYourData,
-          style: TextStyle(fontSize: 16.sp, color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppTexts.cancel,
-              style: TextStyle(fontSize: 16.sp, color: AppColors.textSecondary),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _navigateToUpdateProfile(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(24.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-            ),
-            child: Text(
-              AppTexts.goToUpdateProfile,
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: AppColors.textOnPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            ],
           ),
-        ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  gradient: AppColors.horizontalGradient,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.error_outline_sharp,
+                  color: Colors.white,
+                  size: 40.sp,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                AppTexts.vipFeatureTitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                AppTexts.vipFeatureMessage,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              SizedBox(height: 32.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text(
+                        AppTexts.cancel,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Navigator.pop(ctx);
+                        await _navigateToVipProduct(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        AppTexts.subscribeToVipNow,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Future<void> _showMissingImagesDialog(
-    BuildContext context,
-    bool missingBankStatement,
-    bool missingInvoice,
-  ) async {
+  /// جلب عرض VIP من /api/front/offers والانتقال لصفحة المنتج (product_id)
+  Future<void> _navigateToVipProduct(BuildContext context) async {
+    try {
+      final productsService = di.sl<ProductsService>();
+      final offersResponse = await productsService.getOffers();
+      final vipList = offersResponse.data
+          .where((offer) =>
+              offer.product?.toUpperCase().contains('VIP') == true ||
+              offer.product == 'VIP CARD')
+          .toList();
+      final vipOffer =
+          vipList.isNotEmpty ? vipList.first : (offersResponse.data.isNotEmpty ? offersResponse.data.first : null);
+      final productId = vipOffer?.productId;
+      if (!context.mounted) return;
+      if (productId != null) {
+        Navigator.of(context).pushNamed(
+          AppRoutes.productDetails,
+          arguments: {
+            'productId': productId,
+            'isForSale': false,
+            'productNumber': null,
+          },
+        );
+      }
+    } catch (_) {}
+  }
+
+
+
+
+  /// عند نجاح طلب التقسيط: نعرض دايالوج نجاح ثم نودي للصفحة الرئيسية
+  Future<void> _showInstallmentOrderSuccessDialog(BuildContext context) async {
     await showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      barrierDismissible: false,
+      builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(24.r),
         ),
-        title: Text(
-          AppTexts.uploadMissingImages,
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        content: Text(
-          AppTexts.pleaseUploadMissingImages,
-          style: TextStyle(fontSize: 16.sp, color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppTexts.cancel,
-              style: TextStyle(fontSize: 16.sp, color: AppColors.textSecondary),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              _navigateToUpdateProfile(context);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(24.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-            ),
-            child: Text(
-              AppTexts.goToUpdateProfile,
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: AppColors.textOnPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            ],
           ),
-        ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.check_circle_rounded,
+                  color: Colors.green,
+                  size: 48.sp,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                AppTexts.orderSubmittedSuccessTitle,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                AppTexts.orderSubmittedSuccessMessage,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              SizedBox(height: 32.h),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                      AppRoutes.home,
+                      (route) => false,
+                      arguments: {'triggerRefresh': true},
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 14.h),
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: Text(
+                    AppTexts.ok,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -328,95 +515,139 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _showDataUnderReviewDialog(BuildContext context) async {
     await showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
+      builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(24.r),
         ),
-        title: Text(
-          AppTexts.dataUnderReview,
-          style: TextStyle(
-            fontSize: 20.sp,
-            fontWeight: FontWeight.bold,
-            color: AppColors.primary,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(24.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80.w,
+                height: 80.w,
+                decoration: BoxDecoration(
+                  color: Colors.amber.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.hourglass_empty_rounded,
+                  color: Colors.amber,
+                  size: 40.sp,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                AppTexts.dataUnderReview,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22.sp,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                AppTexts.dataUnderReviewMessage,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
+              ),
+              SizedBox(height: 32.h),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(vertical: 14.h),
+                    backgroundColor: AppColors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: Text(
+                    AppTexts.ok,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        content: Text(
-          AppTexts.dataUnderReviewMessage,
-          style: TextStyle(fontSize: 16.sp, color: AppColors.textSecondary),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-            ),
-            child: Text(
-              AppTexts.ok,
-              style: TextStyle(
-                fontSize: 16.sp,
-                color: AppColors.textOnPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
 
-  void _navigateToUpdateProfile(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider(
-          create: (_) => di.sl<UpdateProfileCubit>(),
-          child: Scaffold(
-            backgroundColor: AppColors.background,
-            appBar: AppBar(
-              title: ShaderMask(
-                shaderCallback: (bounds) =>
-                    AppColors.horizontalGradient.createShader(bounds),
-                child: Text(
-                  AppTexts.updateProfile,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-            ),
-            body: const UpdateProfileTab(),
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => di.sl<OrderCubit>(),
-      child: BlocListener<OrderCubit, OrderState>(
+        child: BlocListener<OrderCubit, OrderState>(
         listener: (context, state) {
           if (state is OrderSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.response.message),
-                backgroundColor: Colors.green,
-              ),
-            );
-            Navigator.of(
-              context,
-            ).pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+            if (_paymentType == 'installment') {
+              _showInstallmentOrderSuccessDialog(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.response.message),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              final orderData = CreateOrderDataModel.fromResponseData(
+                state.response.data,
+              );
+              if (orderData != null) {
+                Navigator.of(context).pushNamedAndRemoveUntil(
+                  AppRoutes.checkoutSuccess,
+                  (route) => route.settings.name == AppRoutes.home,
+                  arguments: orderData,
+                );
+              } else {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(AppRoutes.home, (route) => false);
+              }
+            }
           } else if (state is OrderFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+            if (state.message.contains('installment') ||
+                state.message.contains('active')) {
+              _showInstallmentEnrollmentDialog(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           }
         },
         child: Scaffold(
@@ -519,18 +750,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.h),
-                    AppTextField(
-                      controller: _zipCodeController,
-                      hint: AppTexts.zipCode,
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return AppTexts.pleaseEnterZipCode;
-                        }
-                        return null;
-                      },
-                    ),
+                    // SizedBox(height: 16.h),
+                    // AppTextField(
+                    //   controller: _zipCodeController,
+                    //   hint: AppTexts.zipCode,
+                    //   keyboardType: TextInputType.number,
+                    //   validator: (value) {
+                    //     if (value == null || value.isEmpty) {
+                    //       return AppTexts.pleaseEnterZipCode;
+                    //     }
+                    //     return null;
+                    //   },
+                    // ),
                     SizedBox(height: 24.h),
                     Text(
                       AppTexts.paymentMethod,
@@ -552,7 +783,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               });
                             },
                             child: Container(
-                              padding: EdgeInsets.all(18.w),
+                              padding: EdgeInsets.all(12.w),
                               decoration: BoxDecoration(
                                 gradient: _paymentType == 'cash'
                                     ? AppColors.primaryGradient
@@ -589,23 +820,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                         : AppColors.textSecondary,
                                     size: 24.sp,
                                   ),
-                                  SizedBox(width: 10.w),
-                                  Text(
-                                    AppTexts.cash,
-                                    style: TextStyle(
-                                      color: _paymentType == 'cash'
-                                          ? AppColors.textOnPrimary
-                                          : AppColors.textSecondary,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w700,
+                                    SizedBox(width: 10.w),
+                                    Flexible(
+                                      child: Text(
+                                        AppTexts.cash,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          color: _paymentType == 'cash'
+                                              ? AppColors.textOnPrimary
+                                              : AppColors.textSecondary,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(width: 12.w),
+                        SizedBox(width: 6.w),
                         Expanded(
                           child: GestureDetector(
                             onTap: () {
@@ -614,7 +849,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                               });
                             },
                             child: Container(
-                              padding: EdgeInsets.all(18.w),
+                              padding: EdgeInsets.all(12.w),
                               decoration: BoxDecoration(
                                 gradient: _paymentType == 'installment'
                                     ? AppColors.primaryGradient
@@ -653,17 +888,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                         : AppColors.textSecondary,
                                     size: 24.sp,
                                   ),
-                                  SizedBox(width: 10.w),
-                                  Text(
-                                    AppTexts.installment,
-                                    style: TextStyle(
-                                      color: _paymentType == 'installment'
-                                          ? AppColors.textOnPrimary
-                                          : AppColors.textSecondary,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w700,
+                                    SizedBox(width: 10.w),
+                                    Flexible(
+                                      child: Text(
+                                        AppTexts.installment,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          color: _paymentType == 'installment'
+                                              ? AppColors.textOnPrimary
+                                              : AppColors.textSecondary,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -722,19 +961,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           fontWeight: FontWeight.w500,
                         ),
                         items: [
-                         
                           for (int i = 6; i <= 12; i++)
                             DropdownMenuItem<int>(
                               value: i,
                               child: Text('$i ${AppTexts.months}'),
                             ),
-                          
+
                           for (int i = 18; i <= 24; i += 6)
                             DropdownMenuItem<int>(
                               value: i,
                               child: Text('$i ${AppTexts.months}'),
                             ),
-                    
                         ],
                         onChanged: (value) {
                           setState(() {
@@ -742,102 +979,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           });
                         },
                       ),
-                      if (_selectedInstallmentMonths != null) ...[
-                        SizedBox(height: 24.h),
-                        Container(
-                          padding: EdgeInsets.all(16.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(
-                              color: AppColors.border,
-                              width: 1,
-                            ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                AppTexts.totalAmount,
-                                style: TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              SizedBox(height: 12.h),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    AppTexts.originalAmount,
-                                    style: TextStyle(
-                                      color: AppColors.textSecondary,
-                                      fontSize: 14.sp,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${_calculateOriginalTotal().toStringAsFixed(2)} ${AppTexts.eGP}',
-                                    style: TextStyle(
-                                      color: AppColors.textPrimary,
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8.h),
-                              // Row(
-                              //   mainAxisAlignment:
-                              //       MainAxisAlignment.spaceBetween,
-                              //   children: [
-                              //     Text(
-                              //       AppTexts.increaseAmount,
-                              //       style: TextStyle(
-                              //         color: AppColors.textSecondary,
-                              //         fontSize: 14.sp,
-                              //       ),
-                              //     ),
-                              //     Text(
-                              //       '${(_calculateOriginalTotal() * _getIncreaseRate(_selectedInstallmentMonths!)).toStringAsFixed(2)} ${AppTexts.eGP}',
-                              //       style: TextStyle(
-                              //         color: AppColors.warning,
-                              //         fontSize: 14.sp,
-                              //         fontWeight: FontWeight.w600,
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ),
-                              SizedBox(height: 12.h),
-                              Divider(color: AppColors.border),
-                              SizedBox(height: 12.h),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    AppTexts.totalAmount,
-                                    style: TextStyle(
-                                      color: AppColors.textPrimary,
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                  Text(
-                                    '${_calculateTotalAmount().toStringAsFixed(2)} ${AppTexts.eGP}',
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                      fontSize: 18.sp,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+
                     ],
                     SizedBox(height: 24.h),
 
@@ -850,10 +992,55 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                     SizedBox(height: 16.h),
-                    AppTextField(
-                      controller: _promoCodeController,
-                      hint: AppTexts.enterPromoCode,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: AppTextField(
+                            controller: _promoCodeController,
+                            hint: AppTexts.enterPromoCode,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        SizedBox(
+                          width: 100.w,
+                          child: PrimaryButton(
+                            title: AppTexts.applyPromoCode,
+                            onPressed: _isCheckingPromo ? null : _applyPromoCode,
+                            isLoading: _isCheckingPromo,
+                          ),
+                        ),
+                      ],
                     ),
+                    if (_promoErrorMessage != null) ...[
+                      SizedBox(height: 8.h),
+                      Text(
+                        _promoErrorMessage!,
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 13.sp,
+                        ),
+                      ),
+                    ],
+                    if (_appliedCoupon != null) ...[
+                      SizedBox(height: 8.h),
+                      Row(
+                        children: [
+                          Icon(Icons.check_circle, color: Colors.green, size: 20.sp),
+                          SizedBox(width: 8.w),
+                          Expanded(
+                            child: Text(
+                              '${_appliedCoupon!.code} (${_appliedCoupon!.isPercentage ? '${_appliedCoupon!.value}% off' : '${_appliedCoupon!.value} ${AppTexts.eGP} off'})',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontSize: 13.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                     SizedBox(height: 32.h),
 
                     BlocBuilder<OrderCubit, OrderState>(
@@ -877,7 +1064,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
         ),
-      ),
+
+    ),
     );
   }
 }

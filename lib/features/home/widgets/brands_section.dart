@@ -148,107 +148,32 @@ class _BrandsSectionState extends State<BrandsSection> {
             arguments: {'brandId': brand.id, 'brandName': brand.name},
           );
         },
-        child: Container(
-          width: 120.w,
-          decoration: BoxDecoration(
-            gradient: gradient,
-            borderRadius: BorderRadius.circular(20.r),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.shadowGlow.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20.r),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withOpacity(0.1),
-                        Colors.black.withOpacity(0.1),
-                      ],
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+          child: brand.image != null
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: CachedNetworkImage(
+                    imageUrl: brand.image!,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.textOnPrimary,
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.branding_watermark,
+                      color: AppColors.textOnPrimary,
+                      size: 40.sp,
                     ),
                   ),
+                )
+              : Icon(
+                  Icons.branding_watermark,
+                  color: AppColors.textOnPrimary,
+                  size: 40.sp,
                 ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 90.w,
-                      height: 90.w,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 2,
-                        ),
-                      ),
-                      child: brand.image != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(10.r),
-                              child: CachedNetworkImage(
-                                imageUrl: brand.image!,
-                                fit: BoxFit.cover,
-                                placeholder: (context, url) => Center(
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.textOnPrimary,
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Icon(
-                                  Icons.branding_watermark,
-                                  color: AppColors.textOnPrimary,
-                                  size: 40.sp,
-                                ),
-                              ),
-                            )
-                          : Icon(
-                              Icons.branding_watermark,
-                              color: AppColors.textOnPrimary,
-                              size: 40.sp,
-                            ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Flexible(
-                      child: Text(
-                        brand.name,
-                        style: TextStyle(
-                          color: AppColors.textOnPrimary,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w700,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
         ),
       ),
     );

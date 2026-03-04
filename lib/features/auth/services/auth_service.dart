@@ -25,10 +25,10 @@ class AuthService {
         'email': email,
         'phone': phone,
         'password': password,
-        'age': age,
+        'age': int.tryParse(age) ?? age,
         'gender': gender,
-        'country': country,
-        'city': city,
+        'country': int.tryParse(country) ?? country,
+        'city': int.tryParse(city) ?? city,
         if (avatar != null)
           'avatar': await MultipartFile.fromFile(
             avatar.path,
@@ -39,7 +39,6 @@ class AuthService {
       final response = await _apiService.post(
         ApiConstants.register,
         data: formData,
-        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
       );
 
       return response;
@@ -83,10 +82,12 @@ class AuthService {
         'email': email,
         'phone': phone,
         if (password != null && password.isNotEmpty) 'password': password,
-        if (age != null && age.isNotEmpty) 'age': age,
+        if (age != null && age.isNotEmpty) 'age': int.tryParse(age) ?? age,
         if (gender != null && gender.isNotEmpty) 'gender': gender,
-        if (country != null && country.isNotEmpty) 'country': country,
-        if (city != null && city.isNotEmpty) 'city': city,
+        if (country != null && country.isNotEmpty)
+          'country': int.tryParse(country) ?? country,
+        if (city != null && city.isNotEmpty)
+          'city': int.tryParse(city) ?? city,
         if (avatar != null)
           'avatar': await MultipartFile.fromFile(
             avatar.path,
@@ -112,7 +113,6 @@ class AuthService {
       final response = await _apiService.post(
         ApiConstants.updateProfile,
         data: formData,
-        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
       );
 
       return response;

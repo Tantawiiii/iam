@@ -13,9 +13,12 @@ import '../../favorites/cubit/favorites_cubit.dart';
 import '../ui/search_screen.dart';
 import '../cubit/search_cubit.dart';
 import '../../settings/ui/settings_screen.dart';
+import '../../settings/cubit/user_info_cubit.dart';
 
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({super.key});
+  final bool triggerRefresh;
+
+  const MainNavigationScreen({super.key, this.triggerRefresh = false});
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -29,6 +32,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    if (widget.triggerRefresh) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _homeRefreshNotifier.value++;
+      });
+    }
   }
 
   @override
@@ -69,34 +77,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => di.sl<CartCubit>()),
-        BlocProvider(create: (context) => di.sl<FavoritesCubit>()),
-        BlocProvider(create: (context) => di.sl<SearchCubit>()),
-      ],
-      child: Builder(
-        builder: (builderContext) {
-          final screens = [
-            _buildWishlistScreen(),
-            _buildCartScreen(),
-            _buildHomeScreen(),
-            _buildSearchScreen(),
-            _buildSettingsScreen(),
-          ];
+    final screens = [
+      _buildWishlistScreen(),
+      _buildCartScreen(),
+      _buildHomeScreen(),
+      _buildSearchScreen(),
+      _buildSettingsScreen(),
+    ];
 
-          return Scaffold(
-            backgroundColor: AppColors.background,
-            resizeToAvoidBottomInset: false,
-            extendBody: true,
-
-            body: IndexedStack(index: _selectedIndex, children: screens),
-            bottomNavigationBar: CustomBottomNavBar(
-              selectedIndex: _selectedIndex,
-              onTap: (index) => _onNavItemTapped(builderContext, index),
-            ),
-          );
-        },
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      resizeToAvoidBottomInset: false,
+      extendBody: true,
+      body: IndexedStack(index: _selectedIndex, children: screens),
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: _selectedIndex,
+        onTap: (index) => _onNavItemTapped(context, index),
       ),
     );
   }

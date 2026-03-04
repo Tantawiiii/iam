@@ -16,6 +16,7 @@ class ProductModel {
   final String? image;
   final List<dynamic> gallery;
   final String category;
+  final String? brand;
   final bool active;
   final double averageRating;
   final int reviewsCount;
@@ -55,6 +56,7 @@ class ProductModel {
     this.image,
     required this.gallery,
     required this.category,
+    this.brand,
     required this.active,
     required this.averageRating,
     required this.reviewsCount,
@@ -107,6 +109,7 @@ class ProductModel {
       category:
           json['category'] as String? ??
           (json['category_id'] != null ? json['category_id'].toString() : ''),
+      brand: json['brand'] as String?,
       active: json['active'] as bool,
       averageRating: (json['average_rating'] as num?)?.toDouble() ?? 0.0,
       reviewsCount: json['reviews_count'] as int? ?? 0,
@@ -122,7 +125,7 @@ class ProductModel {
       timeInEar: json['time_in_ear'] as String? ?? '',
       endCuring: json['end_curing'] as String? ?? '',
       viscosity: json['viscosity'] as String? ?? '',
-      color: json['color'] as String? ?? '',
+      color: _parseColor(json['color']),
       packaging: json['packaging'] as String? ?? '',
       itemNumber: json['item_number'] as String? ?? '',
       mixGun: json['mix_gun'] as String? ?? '',
@@ -135,6 +138,30 @@ class ProductModel {
       freeDelivery: json['free_delevery'] as bool? ?? false,
       oneYearWarranty: json['one_year_warranty'] as bool? ?? false,
     );
+  }
+
+  /// Colors as list (from API array or parsed from "a - b" string).
+  List<String> get colorList {
+    if (color.isEmpty) return [];
+    if (color.contains(' - ') || color.contains('،') || color.contains(',')) {
+      return color
+          .split(RegExp(r'\s*[-،,]\s*'))
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+    return [color];
+  }
+
+  static String _parseColor(dynamic value) {
+    if (value == null) return '';
+    if (value is List) {
+      return value
+          .map((e) => e?.toString().trim() ?? '')
+          .where((e) => e.isNotEmpty)
+          .join(' - ');
+    }
+    return value.toString().trim();
   }
 
   Map<String, dynamic> toJson() {
@@ -154,6 +181,7 @@ class ProductModel {
       'image': image,
       'gallery': gallery,
       'category': category,
+      'brand': brand,
       'active': active,
       'average_rating': averageRating,
       'reviews_count': reviewsCount,

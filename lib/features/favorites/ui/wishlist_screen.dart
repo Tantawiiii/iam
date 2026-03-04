@@ -150,7 +150,10 @@ class _WishlistScreenState extends State<WishlistScreen>
             }
 
             if (state is FavoritesSuccess) {
-              final favorites = state.response.data;
+              // Filter out favorites whose product was deleted (card is null)
+              final favorites = state.response.data
+                  .where((item) => item.card != null)
+                  .toList();
 
               if (favorites.isEmpty) {
                 return Center(
@@ -189,7 +192,7 @@ class _WishlistScreenState extends State<WishlistScreen>
                 itemCount: favorites.length,
                 itemBuilder: (context, index) {
                   final favoriteItem = favorites[index];
-                  final product = favoriteItem.card;
+                  final product = favoriteItem.card!;
                   return ProductGridCard(
                     product: product,
                     isFavorite: true,

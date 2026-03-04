@@ -17,6 +17,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
   void updateNotificationsFromUser(UserModel? user) {
     if (user == null) {
       _notifications = [];
+      if (isClosed) return;
       emit(NotificationsLoaded(_notifications));
       return;
     }
@@ -67,6 +68,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
 
     _notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
+    if (isClosed) return;
     emit(NotificationsLoaded(_notifications));
   }
 
@@ -81,6 +83,7 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         isRead: true,
         type: _notifications[index].type,
       );
+      if (isClosed) return;
       emit(NotificationsLoaded(_notifications));
     }
   }
@@ -96,11 +99,13 @@ class NotificationsCubit extends Cubit<NotificationsState> {
         type: n.type,
       );
     }).toList();
+    if (isClosed) return;
     emit(NotificationsLoaded(_notifications));
   }
 
   void reset() {
     _notifications = [];
+    if (isClosed) return;
     emit(NotificationsInitial());
   }
 }

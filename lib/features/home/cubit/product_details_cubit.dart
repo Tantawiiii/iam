@@ -62,6 +62,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   Future<void> addToCart({
     required int productId,
     String method = 'add',
+    String? color,
   }) async {
     if (isClosed) return;
     emit(AddToCartLoading());
@@ -70,6 +71,7 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
       final response = await _productsService.addToCart(
         productId: productId,
         method: method,
+        color: color,
       );
 
       if (isClosed) return;

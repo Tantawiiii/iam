@@ -125,9 +125,8 @@ class BrandProductsScreen extends StatelessWidget {
                     builder: (context, favoritesState) {
                       bool isFavorite = false;
                       if (favoritesState is FavoritesSuccess) {
-                        isFavorite = favoritesState.response.data.any(
-                          (fav) => fav.card.id == product.id,
-                        );
+                        isFavorite = favoritesState.response.data
+                            .any((fav) => fav.card?.id == product.id);
                       }
 
                       return ProductGridCard(

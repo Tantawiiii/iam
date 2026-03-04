@@ -9,7 +9,9 @@ import '../../../core/constant/app_assets.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/localization/app_language.dart';
 import '../../../core/routing/app_routes.dart';
+import '../../../core/localization/language_cubit.dart';
 import '../../../shared/widgets/app_text_field.dart';
+import '../../../shared/widgets/language_switcher.dart';
 import '../../../shared/widgets/primary_button.dart';
 import '../cubit/login_cubit.dart';
 
@@ -77,17 +79,26 @@ class _LoginScreenState extends State<LoginScreen> {
             );
           }
         },
-        child: Scaffold(
-          backgroundColor: AppColors.background,
-          body: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 26.h),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(height: 32.h),
-                  ClipOval(
+        child: BlocBuilder<LanguageCubit, Locale>(
+          buildWhen: (prev, next) => prev != next,
+          builder: (context, locale) {
+            AppTexts.updateLocale(locale);
+            return Scaffold(
+              backgroundColor: AppColors.background,
+              body: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 26.h),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 32.h),
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: const LanguageSwitcher(compact: true),
+                      ),
+                      SizedBox(height: 16.h),
+                      ClipOval(
                     child: Image.asset(
                       AppAssets.newLogoDark,
                       width: 140.w,
@@ -314,6 +325,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+        );
+          },
         ),
       ),
     );

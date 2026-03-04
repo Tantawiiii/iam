@@ -141,6 +141,14 @@ class DioClient {
       if (normalizedPath == normalizedEndpoint ||
           normalizedPath.startsWith('$normalizedEndpoint/') ||
           normalizedPath.startsWith('$normalizedEndpoint?')) {
+        // Special case: /review is NEVER public even if it starts with a public endpoint prefix (like /api/front/cards)
+        if (normalizedPath.contains('/review')) {
+          debugPrint(
+            'Protected endpoint detected (override): $path (normalized: $normalizedPath)',
+          );
+          return true;
+        }
+
         debugPrint(
           'Public endpoint detected: $endpoint in path: $path (normalized: $normalizedPath)',
         );
@@ -161,15 +169,15 @@ class DioClient {
           _dio.options.headers['lang'] = languageCode;
 
           final path = options.path;
-          if (_requiresAuth(path)) {
-            final token = _cachedToken ?? _storageService.getToken();
-            if (token != null && token.isNotEmpty) {
-              options.headers['Authorization'] = 'Bearer $token';
-            } else {
-              options.headers.remove('Authorization');
+          
+          // Allow manual Authorization header override for external APIs like Tap
+          if (!options.headers.containsKey('Authorization')) {
+            if (_requiresAuth(path)) {
+              final token = _cachedToken ?? _storageService.getToken();
+              if (token != null && token.isNotEmpty) {
+                options.headers['Authorization'] = 'Bearer $token';
+              }
             }
-          } else {
-            options.headers.remove('Authorization');
           }
 
           return handler.next(options);
