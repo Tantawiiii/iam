@@ -1278,8 +1278,8 @@ final class AppTexts {
       AppLanguage.ar: '⏳ طلبك قيد المراجعة',
     },
     'accountApprovedTitle': {
-      AppLanguage.en: '✅ Installment Request Approved',
-      AppLanguage.ar: 'تم قبول طلب التقسيط',
+      AppLanguage.en: '✅ VIP Subscription Activated Successfully',
+      AppLanguage.ar: 'تم تفعيل اشتراك VIP بنجاح',
     },
     'accountRejectedTitle': {
       AppLanguage.en: '❌ Installment Request Not Approved',
@@ -1287,9 +1287,9 @@ final class AppTexts {
     },
     'accountApprovedMessage': {
       AppLanguage.en:
-          'We would like to inform you that your installment request has been successfully approved. You can now use the available credit limit to complete purchases within the application.',
+          'We would like to inform you that your IAM VIP subscription has been successfully activated.\nYou can now enjoy all membership benefits, including the ability to place flexible purchase requests and take advantage of all exclusive discounts within the app.',
       AppLanguage.ar:
-          'نود إعلامك بأنه تم قبول طلبك في نظام التقسيط بنجاح.\nيمكنك الآن استخدام الحد المتاح لإتمام عمليات الشراء من داخل التطبيق.',
+          'نود إعلامك بأنه تم تفعيل اشتراكك في IAM VIP بنجاح.\nيمكنك الآن الاستفادة من جميع مزايا العضوية، بما في ذلك إمكانية طلب الشراء بالأجل و الاستفاده من جميع الخصومات الحصرية داخل التطبيق.',
     },
     'accountRejectedMessage': {
       AppLanguage.en:

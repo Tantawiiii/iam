@@ -34,7 +34,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 20.h),
           child: Text(
-            AppTexts.termsAndConditionsStatic,
+            AppTexts.termsAndConditionsContent,
             style: TextStyle(
               fontSize: 16.sp,
               color: AppColors.textPrimary,
